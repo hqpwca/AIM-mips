@@ -1,13 +1,13 @@
 /* Copyright (C) 2016 David Gao <davidgao1001@gmail.com>
  *
- * This file is part of AIM.
+ * This file is part of AIMv6.
  *
- * AIM is free software: you can redistribute it and/or modify
+ * AIMv6 is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * AIM is distributed in the hope that it will be useful,
+ * AIMv6 is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -20,12 +20,40 @@
 #include <config.h>
 #endif /* HAVE_CONFIG_H */
 
-#define __LDSCRIPT__
-
 /*
  * Using the C preprocessor, we allow includes and macro expansion in this
  * linker script.
  */
 
 ENTRY(_start)
+
+PHDRS
+{
+	text PT_LOAD;
+}
+SECTIONS
+{
+	. = 0x7c00;
+	.text :
+	{
+		*(.entry)
+		*(.text)
+	} : text
+	
+	.data : {*(.data)}
+	
+	.rodata : {*(.rodata)}
+	
+	__bss_start = .;
+	.bss ALIGN(4) : {*(.bss) *(COMMON)}
+	__bss_end = .;
+	
+	/DISCARD/ :
+	{
+		*(.note.gnu.build-id)
+		*(.eh_frame)
+		*(.eh_frame_hdr)
+	}
+}
+
 

@@ -29,3 +29,30 @@
 
 ENTRY(_start)
 
+PHDRS
+{
+	text PT_LOAD;
+}
+SECTIONS
+{
+	. = 0x10000;
+	.text :
+	{
+		*(.text)
+	} : text
+	
+	.data : {*(.data)}
+	
+	.rodata : {*(.rodata)}
+	
+	__bss_start = .;
+	.bss ALIGN(4) : {*(.bss) *(COMMON)}
+	__bss_end = .;
+	
+	/DISCARD/ :
+	{
+		*(.note.gnu.build-id)
+		*(.eh_frame)
+		*(.eh_frame_hdr)
+	}
+}

@@ -24,7 +24,24 @@
 typedef uint32_t	pde_t;
 typedef uint32_t	pte_t;
 
-typedef pde_t	pgindex_t;
+typedef union {
+	struct
+	{
+		uint32_t pfaddr:20;
+		uint8_t avail:3;
+		uint8_t zero1:2;
+		uint8_t dirty:1;
+		uint8_t a:1;
+		uint8_t zero2:2;
+		uint8_t user_super:1;
+		uint8_t read_write:1;
+		uint8_t present:1;
+	};
+	
+	pde_t value;
+}pgindex_t;
+
+//typedef pde_t	pgindex_t;
 
 #endif /* !__ASSEMBLER__ */
 

@@ -27,6 +27,9 @@ __noreturn
 void master_early_init(void)
 {
 	arch_early_init();
+	
+	mm_init();
+	
 	goto panic;
 
 panic:

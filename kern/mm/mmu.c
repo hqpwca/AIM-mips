@@ -43,6 +43,16 @@
  * These data structure are kept in memory, and will later be used to
  * initialize the page allocator and the kmmap subsystem.
  */
+ 
+void page_index_clear(pgindex_t *addr)
+{
+	addr = init_pgindex();
+}
+
+int page_index_early_map(pgindex_t *pgindex, addr_t paddr, void *vaddr, size_t size)
+{
+	return map_pages(pgindex, vaddr, paddr, size, 0);
+}
 
 int page_index_init(pgindex_t *boot_page_index)
 {
@@ -89,5 +99,10 @@ void mmu_handlers_apply(void)
 	for (int i = 0; i < __mmu_handler_queue_size; ++i) {
 		__mmu_handler_queue[i]();
 	}
+}
+
+void mm_init(void)
+{
+	
 }
 

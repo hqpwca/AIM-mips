@@ -22,9 +22,10 @@
 
 #include <sys/types.h>
 #include <aim/init.h>
+#include <aim/mmu.h>
 
 void arch_early_init(void)
 {
-
+	arch_mm_init();
 }
 

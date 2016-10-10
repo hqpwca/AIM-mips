@@ -50,6 +50,11 @@ void early_mapping_clear(void)
 	kpdebug("Early mappings cleared.\n");
 }
 
+bool early_mapping_valid(struct early_mapping *entry)
+{
+	return true;
+}
+
 int early_mapping_add(struct early_mapping *entry)
 {
 	/* Prevent damage in case of bad data structure. */
