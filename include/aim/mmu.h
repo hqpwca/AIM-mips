@@ -67,30 +67,29 @@
 #define NSEGS     7
 
 struct segdesc {
-  uint lim_15_0 : 16;  // Low bits of segment limit
-  uint base_15_0 : 16; // Low bits of segment base address
-  uint base_23_16 : 8; // Middle bits of segment base address
-  uint type : 4;       // Segment type (see STS_ constants)
-  uint s : 1;          // 0 = system, 1 = application
-  uint dpl : 2;        // Descriptor Privilege Level
-  uint p : 1;          // Present
-  uint lim_19_16 : 4;  // High bits of segment limit
-  uint avl : 1;        // Unused (available for software use)
-  uint rsv1 : 1;       // Reserved
-  uint db : 1;         // 0 = 16-bit segment, 1 = 32-bit segment
-  uint g : 1;          // Granularity: limit scaled by 4K when set
-  uint base_31_24 : 8; // High bits of segment base address
+  addr_t lim_15_0 : 16;  // Low bits of segment limit
+  addr_t base_15_0 : 16; // Low bits of segment base address
+  addr_t base_23_16 : 8; // Middle bits of segment base address
+  addr_t type : 4;       // Segment type (see STS_ constants)
+  addr_t s : 1;          // 0 = system, 1 = application
+  addr_t dpl : 2;        // Descriptor Privilege Level
+  addr_t p : 1;          // Present
+  addr_t lim_19_16 : 4;  // High bits of segment limit
+  addr_t avl : 1;        // Unused (available for software use)
+  addr_t rsv1 : 1;       // Reserved
+  addr_t db : 1;         // 0 = 16-bit segment, 1 = 32-bit segment
+  addr_t g : 1;          // Granularity: limit scaled by 4K when set
+  addr_t base_31_24 : 8; // High bits of segment base address
 };
 
 #define SEG(type, base, lim, dpl) (struct segdesc)    \
-{ ((lim) >> 12) & 0xffff, (uint)(base) & 0xffff,      \
-  ((uint)(base) >> 16) & 0xff, type, 1, dpl, 1,       \
-  (uint)(lim) >> 28, 0, 0, 1, 1, (uint)(base) >> 24 }
+{ ((lim) >> 12) & 0xffff, (addr_t)(base) & 0xffff,      \
+  ((addr_t)(base) >> 16) & 0xff, type, 1, dpl, 1,       \
+  (addr_t)(lim) >> 28, 0, 0, 1, 1, (addr_t)(base) >> 24 }
 #define SEG16(type, base, lim, dpl) (struct segdesc)  \
-{ (lim) & 0xffff, (uint)(base) & 0xffff,              \
-  ((uint)(base) >> 16) & 0xff, type, 1, dpl, 1,       \
-  (uint)(lim) >> 16, 0, 0, 1, 0, (uint)(base) >> 24 }
-#endif
+{ (lim) & 0xffff, (addr_t)(base) & 0xffff,              \
+  ((addr_t)(base) >> 16) & 0xff, type, 1, dpl, 1,       \
+  (addr_t)(lim) >> 16, 0, 0, 1, 0, (addr_t)(base) >> 24 }
 
 #define DPL_USER    0x3     // User DPL
 
@@ -116,13 +115,13 @@ struct segdesc {
 #define STS_IG32    0xE     // 32-bit Interrupt Gate
 #define STS_TG32    0xF     // 32-bit Trap Gate
 
-#define PDX(va)         (((uint)(va) >> PDXSHIFT) & 0x3FF)
+#define PDX(va)         (((uint32_t)(va) >> PDXSHIFT) & 0x3FF)
 
 // page table index
-#define PTX(va)         (((uint)(va) >> PTXSHIFT) & 0x3FF)
+#define PTX(va)         (((uint32_t)(va) >> PTXSHIFT) & 0x3FF)
 
 // construct virtual address from indexes and offset
-#define PGADDR(d, t, o) ((uint)((d) << PDXSHIFT | (t) << PTXSHIFT | (o)))
+#define PGADDR(d, t, o) ((uint32_t)((d) << PDXSHIFT | (t) << PTXSHIFT | (o)))
 
 // Page directory and page table constants.
 #define NPDENTRIES      1024    // # directory entries per page directory
@@ -148,8 +147,12 @@ struct segdesc {
 #define PTE_MBZ         0x180   // Bits must be zero
 
 // Address in page table or page directory entry
-#define PTE_ADDR(pte)   ((uint)(pte) & ~0xFFF)
-#define PTE_FLAGS(pte)  ((uint)(pte) &  0xFFF)
+#define PTE_ADDR(pte)   ((uint32_t)(pte) & ~0xFFF)
+#define PTE_FLAGS(pte)  ((uint32_t)(pte) &  0xFFF)
+
+#define KERN_END 0x80200000
+#define MEM_STOP 0x3f000000
+#define MEMORY_SIZE 0x40000000
 
 addr_t get_mem_physbase();
 addr_t get_mem_size();

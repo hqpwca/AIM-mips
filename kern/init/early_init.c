@@ -22,13 +22,17 @@
 
 #include <sys/types.h>
 #include <aim/init.h>
+#include <aim/mmu.h>
 
 __noreturn
 void master_early_init(void)
 {
-	arch_early_init();
+	early_mm_init();
 	
-	mm_init();
+	uint32_t cr0;
+	asm volatile("movl %%cr4,%0" : "=r" (cr0));
+	cr0 |= CR0_PG;
+	asm volatile("movl %0,%%cr4" : : "r" (cr0));
 	
 	goto panic;
 

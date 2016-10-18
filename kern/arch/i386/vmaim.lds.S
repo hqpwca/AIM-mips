@@ -35,19 +35,32 @@ PHDRS
 }
 SECTIONS
 {
-	. = 0x10000;
-	.text :
+	. = 0x80100000;
+	
+	.text : AT(ADDR(.text) - 0x80000000)
 	{
 		*(.text)
 	} : text
 	
-	.data : {*(.data)}
+	.rodata : AT(ADDR(.rodata) - 0x80000000)
+	{
+		*(.rodata)
+	}
 	
-	.rodata : {*(.rodata)}
+	.data : AT(ADDR(.data) - 0x80000000)
+	{
+		*(.data)
+	}
 	
 	__bss_start = .;
-	.bss ALIGN(4) : {*(.bss) *(COMMON)}
+	.bss ALIGN(4) : AT(ADDR(.bss) - 0x80000000) 
+	{
+		*(.bss) *(COMMON)
+	}
 	__bss_end = .;
+	
+	pgindex = .;
+	end = . + 0x1000;
 	
 	/DISCARD/ :
 	{

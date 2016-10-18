@@ -21,9 +21,18 @@
 
 #ifndef __ASSEMBLER__
 
+#define __premap_addr(a) (a - KERN_BASE)
+#define __postmap_addr(a) (a + KERN_BASE)
+
+#define PGSIZE2 0x3fffff
+
+#define PGROUNDUP2(sz)  (((sz)+PGSIZE2-1) & ~(PGSIZE2-1))
+#define PGROUNDDOWN2(a) (((a)) & ~(PGSIZE2-1))
+
 typedef uint32_t	pde_t;
 typedef uint32_t	pte_t;
 
+/*
 typedef union {
 	struct
 	{
@@ -40,8 +49,9 @@ typedef union {
 	
 	pde_t value;
 }pgindex_t;
+*/
 
-//typedef pde_t	pgindex_t;
+typedef pde_t	pgindex_t;
 
 #endif /* !__ASSEMBLER__ */
 

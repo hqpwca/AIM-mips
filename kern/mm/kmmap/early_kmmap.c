@@ -37,16 +37,19 @@
 
 /* TODO move this to configuration */
 #define EARLY_MAPPING_QUEUE_LENGTH	10
+#define USER_BASE 0
 
 static struct early_mapping queue[EARLY_MAPPING_QUEUE_LENGTH];
 static int queue_size;
-static void *mem_top, *kmmap_top;
+static void *mem_top, *kmmap_top, *umem_top;
 
 void early_mapping_clear(void)
 {
 	queue_size = 0;
 	mem_top = (void *)KERN_BASE;
 	kmmap_top = (void *)KMMAP_BASE;
+	umem_top = (void *)USER_BASE;
+	
 	kpdebug("Early mappings cleared.\n");
 }
 
@@ -118,6 +121,24 @@ void *early_mapping_add_kmmap(addr_t base, size_t size)
 		return 0;
 	kmmap_top += size;
 	return (void *)entry.vaddr;
+}
+
+size_t early_mapping_add_umem(addr_t base, size_t size)
+{
+	if ((size_t)umem_top >= KERN_BASE)
+		return NULL;
+	if (size > KERN_BASE - (size_t)umem_top)
+		size = KERN_BASE - (size_t)umem_top;
+	struct early_mapping entry = {
+		.paddr	= base,
+		.vaddr	= umem_top,
+		.size	= (size_t)size,
+		.type	= EARLY_MAPPING_MEMORY
+	};
+	if (early_mapping_add(&entry) < 0)
+		return 0;
+	umem_top += size;
+	return size;
 }
 
 /*

@@ -28,35 +28,12 @@
 _start:
 	cli
 	
-	xorw    %ax,%ax
-	movw    %ax,%ds
-	movw    %ax,%es
-	movw    %ax,%ss
-	
 clean_bss:
   	movl	_bss_start, %edi
   	movl	_bss_end, %ecx
   	subl	_bss_start, %ecx
   	xorb	%al, %al
   	repz stosb
-  	
-set_gdt:  	
-  	lgdt    gdtdesc
-  	movl    %cr0, %eax
-	orl     $CR0_PE, %eax
-	movl    %eax, %cr0
-	
-	ljmp    $(SEG_KCODE<<3), $chgseg
-
-chgseg:
-
-	movw    $(SEG_KDATA<<3), %ax
-	movw    %ax, %ds
-	movw    %ax, %es
-	movw    %ax, %ss
-	movw    $0, %ax
-	movw    %ax, %fs
-	movw    %ax, %gs
   	
   	movl	$0x8000000, %esp
   	
@@ -67,14 +44,6 @@ spin:
 
 .data
 .p2align 2
-gdt:
-	SEG_NULLASM
-	SEG_ASM(STA_X|STA_R, 0x0, 0xffffffff)
-	SEG_ASM(STA_W, 0x0, 0xffffffff)
-
-gdtdesc:
-	.word   (gdtdesc - gdt - 1)
-	.long   gdt
 
 .globl _bss_start
 _bss_start:
