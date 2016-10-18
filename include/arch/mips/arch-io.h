@@ -16,26 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif /* HAVE_CONFIG_H */
+#ifndef _ARCH_IO_H
+#define _ARCH_IO_H
 
-#include <sys/types.h>
-#include <aim/early_kmmap.h>
-#include <aim/init.h>
-#include <aim/mmu.h>
+#ifndef __ASSEMBLER__
 
-__noreturn
-void master_early_init(void)
-{
-	early_mapping_clear();
-	early_mm_init();
-	mmu_handlers_clear();
-	arch_early_init();
-	
-	goto panic;
+#endif /* !__ASSEMBLER__ */
 
-panic:
-	while (1);
-}
+#endif /* _ARCH_IO_H */
 

@@ -16,26 +16,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif /* HAVE_CONFIG_H */
+#ifndef _ARCH_IO_H
+#define _ARCH_IO_H
 
-#include <sys/types.h>
-#include <aim/early_kmmap.h>
-#include <aim/init.h>
-#include <aim/mmu.h>
+#ifndef __ASSEMBLER__
 
-__noreturn
-void master_early_init(void)
-{
-	early_mapping_clear();
-	early_mm_init();
-	mmu_handlers_clear();
-	arch_early_init();
-	
-	goto panic;
+/*
+ * We use macros here so that, when involved in lab assignments, students
+ * do not have to implement them all to compile the whole project.
+ * In this way, only invoked routines need to be implemented.
+ */
 
-panic:
-	while (1);
-}
+#define in8(port)	inb(port)
+#define in16(port)	inw(port)
+#define in32(port)	inl(port)
+
+#define out8(port, data)	outb(port, data)
+#define out16(port, data)	outw(port, data)
+#define out32(port, data)	outl(port, data)
+
+#endif /* !__ASSEMBLER__ */
+
+#endif /* _ARCH_IO_H */
 

@@ -21,17 +21,25 @@
 #endif /* HAVE_CONFIG_H */
 
 #include <sys/types.h>
+#include <aim/early_kmmap.h>
 #include <aim/mmu.h>
 #include <aim/panic.h>
 #include <arch-mmu.h>
+#include <libc/string.h>
 
-// TODO: change the use of runlist to avoid address error.
+bool early_mapping_valid(struct early_mapping *entry)
+{
+	return true;
+}
 
 void page_index_clear(pgindex_t *addr)
 {
+/*
 	pgindex_t *a;
 	for(; a < addr + PGSIZE; a++)
 		*a = 0;
+*/
+	memset(addr, 0, PGSIZE);
 }
 
 int page_index_early_map(pgindex_t *pgindex, addr_t paddr, void *vaddr, size_t size)
@@ -50,6 +58,13 @@ int page_index_early_map(pgindex_t *pgindex, addr_t paddr, void *vaddr, size_t s
 		paddr += PGSIZE2;
 	}
 	return 0;
+}
+
+extern pgindex_t *pgindex, *end;
+
+void arch_mm_init()
+{
+	page_index_init(pgindex);
 }
 
 void mmu_init(pgindex_t *boot_page_index)

@@ -16,26 +16,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif /* HAVE_CONFIG_H */
-
-#include <sys/types.h>
-#include <aim/early_kmmap.h>
-#include <aim/init.h>
-#include <aim/mmu.h>
-
-__noreturn
-void master_early_init(void)
+static inline
+uint8_t inb(uint16_t port)
 {
-	early_mapping_clear();
-	early_mm_init();
-	mmu_handlers_clear();
-	arch_early_init();
-	
-	goto panic;
+	return 0;
+}
 
-panic:
-	while (1);
+static inline
+uint16_t inw(uint16_t port)
+{
+	return 0;
+}
+
+static inline
+uint32_t inl(uint16_t port)
+{
+	return 0;
+}
+
+static inline
+void outb(uint16_t port, uint8_t data)
+{
+}
+
+static inline
+void outw(uint16_t port, uint8_t data)
+{
+}
+
+static inline
+void outl(uint16_t port, uint8_t data)
+{
 }
 
