@@ -53,11 +53,6 @@ void early_mapping_clear(void)
 	kpdebug("Early mappings cleared.\n");
 }
 
-bool early_mapping_valid(struct early_mapping *entry)
-{
-	return true;
-}
-
 int early_mapping_add(struct early_mapping *entry)
 {
 	/* Prevent damage in case of bad data structure. */
@@ -126,7 +121,7 @@ void *early_mapping_add_kmmap(addr_t base, size_t size)
 size_t early_mapping_add_umem(addr_t base, size_t size)
 {
 	if ((size_t)umem_top >= KERN_BASE)
-		return NULL;
+		return 0;
 	if (size > KERN_BASE - (size_t)umem_top)
 		size = KERN_BASE - (size_t)umem_top;
 	struct early_mapping entry = {

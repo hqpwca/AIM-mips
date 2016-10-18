@@ -289,12 +289,8 @@ void mmu_handlers_apply(void)
 	}
 }
 
-extern pgindex_t *pgindex, *end;
-
 void early_mm_init(void)
 {
-	early_mapping_clear();
-	
 	if(early_mapping_add_memory(0x0, 0x400000) == 0)
 		panic("error early mapping memory\n");
 	if(early_mapping_add_memory(0x400000, MEM_STOP - 0x400000) == 0)
@@ -303,7 +299,5 @@ void early_mm_init(void)
 		panic("error early mapping kmmap\n");
 	if(early_mapping_add_umem(0x0, MEM_STOP) == 0)
 		panic("error early mapping memory\n");
-	
-	page_index_init(pgindex);
 }
 
