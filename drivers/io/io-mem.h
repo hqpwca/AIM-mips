@@ -16,16 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _AIM_INIT_H
-#define _AIM_INIT_H
+#ifndef _DRIVERS_IO_MEM_H
+#define _DRIVERS_IO_MEM_H
 
-#ifndef __ASSEMBLER__
+#ifdef IO_MEM_ROOT
+__attribute__ ((visibility ("hidden")))
+extern struct bus_device early_memory_bus;
+#endif /* IO_MEM_ROOT */
 
-void load_segment(void);
+int io_mem_init(struct bus_device *memory_bus);
 
-void arch_early_init(void);
-
-#endif /* !__ASSEMBLER__ */
-
-#endif /* !_AIM_INIT_H */
+#endif /* _DRIVERS_IO_MEM_H */
 

@@ -20,37 +20,66 @@
 #include <config.h>
 #endif /* HAVE_CONFIG_H */
 
+#include <aim/mmu.h>
 #include <arch-boot.h>
 
-.text
+.section .entry
 
 .globl _start
 _start:
 	cli
+	cld
 	
 clean_bss:
-  	movl	_bss_start, %edi
-  	movl	_bss_end, %ecx
-  	subl	_bss_start, %ecx
+  	movl	$__premap_addr(_bss_start), %edi
+  	movl	$__premap_addr(_bss_end), %ecx
+  	subl	%edi, %ecx
   	xorb	%al, %al
   	repz stosb
   	
-  	movl	$0x400000, %esp
+load_segment:
+	lgdt    gdtdesc
+	movl    %cr0, %eax
+	orl     $CR0_PE, %eax
+	movl    %eax, %cr0
+	
+	movw    $(SEG_KDATA<<3), %ax
+	movw    %ax, %ds
+	movw    %ax, %es
+	movw    %ax, %ss
+	movw    $0, %ax
+	movw    %ax, %fs
+	movw    %ax, %gs
+
+	ljmp    $(SEG_KCODE<<3), $prepare_stack
+	
+prepare_stack:  	
+  	movl	$__premap_addr(boot_stack), %esp
+  	movl	%esp, %ebp
   	
-  	call	master_early_init
+jump_to_main:
+  	movl	$__premap_addr(master_early_init), %eax
+  	call	*%eax
   	
 spin:
 	jmp		spin
 
-.data
+.globl high_address_entry	
+.text
+high_address_entry:
+	movl	$boot_stack, %esp
+	movl	$master_init, %eax
+	call	*%eax
+
+.section .edata
 .p2align 2
+gdt:
+	SEG_NULLASM
+	SEG_ASM(STA_X|STA_R, 0x0, 0xffffffff)
+	SEG_ASM(STA_W, 0x0, 0xffffffff)
 
-.globl _bss_start
-_bss_start:
-	.long __bss_start
-
-.globl _bss_end
-_bss_end:
-	.long __bss_end
+gdtdesc:
+	.word   (gdtdesc - gdt - 1)
+	.long   gdt
 
 

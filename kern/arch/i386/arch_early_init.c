@@ -23,6 +23,37 @@
 #include <sys/types.h>
 #include <aim/init.h>
 #include <aim/mmu.h>
+#include <aim/early_kmmap.h>
+#include <aim/panic.h>
+#include <arch-mmu.h>
+#include <libc/string.h>
+
+void abs_jump(void *addr)
+{
+	asm volatile("jmp *%0" : : "r"(addr));
+}
+
+static struct segdesc gdt[NSEGS];
+
+void load_segment(void)
+{
+	gdt[SEG_KCODE] = SEG(STA_X|STA_R, 0x0, 0xffffffff, 0);
+	gdt[SEG_KDATA] = SEG(STA_W, 0x0, 0xffffffff,0);
+	
+	lgdt(gdt, sizeof(gdt));
+}
+
+void arch_mm_init(void)
+{
+	if(early_mapping_add_memory(0x0, KERN_START) == 0)
+		panic("error early mapping memory\n");
+	if(early_mapping_add_memory(KERN_START, MEM_SIZE - KERN_START - 0x1000000) == 0)
+		panic("error early mapping memory\n");
+	if(early_mapping_add_kmmap(MEM_SIZE - 0x1000000, 0x1000000) == 0)
+		panic("error early mapping kmmap\n");
+	if(early_mapping_add_umem(0x0, USERTOP) == 0)
+		panic("error early mapping memory\n");
+}
 
 void arch_early_init(void)
 {

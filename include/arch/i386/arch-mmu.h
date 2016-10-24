@@ -19,10 +19,15 @@
 #ifndef _ARCH_MMU_H
 #define _ARCH_MMU_H
 
-#ifndef __ASSEMBLER__
+/* addresses before and after early MMU mapping */
+#define __premap_addr(kva)	(ULCAST(kva) - KERN_BASE)
+#define __postmap_addr(pa)	(ULCAST(pa) + KERN_BASE)
 
-#define __premap_addr(a) (a - KERN_BASE)
-#define __postmap_addr(a) (a + KERN_BASE)
+/* kernel virtual address and physical address conversion */
+#define kva2pa(kva)		(ULCAST(kva) - KERN_BASE)
+#define pa2kva(pa)		(PTRCAST(pa) + KERN_BASE)
+
+#ifndef __ASSEMBLER__
 
 #define PGSIZE2 0x3fffff
 
@@ -54,8 +59,6 @@ typedef union {
 typedef pde_t	pgindex_t;
 
 #endif /* !__ASSEMBLER__ */
-
-extern pgindex_t *pgindex, *end;
 
 #endif /* !_ARCH_MMU_H */
 

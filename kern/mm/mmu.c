@@ -291,15 +291,3 @@ void mmu_handlers_apply(void)
 	}
 }
 
-void early_mm_init(void)
-{
-	if(early_mapping_add_memory(0x0, 0x400000) == 0)
-		panic("error early mapping memory\n");
-	if(early_mapping_add_memory(0x400000, MEM_STOP - 0x400000) == 0)
-		panic("error early mapping memory\n");
-	if(early_mapping_add_kmmap(MEM_STOP, MEMORY_SIZE - MEM_STOP) == 0)
-		panic("error early mapping kmmap\n");
-	if(early_mapping_add_umem(0x0, MEM_STOP) == 0)
-		panic("error early mapping memory\n");
-}
-

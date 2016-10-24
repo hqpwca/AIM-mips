@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 David Gao <davidgao1001@gmail.com>
+/* Copyright (C) 2016 Gan Quan <coin2028@hotmail.com>
  *
  * This file is part of AIM.
  *
@@ -16,16 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _AIM_INIT_H
-#define _AIM_INIT_H
+#ifndef _PLATFORM_H
+#define _PLATFORM_H
 
-#ifndef __ASSEMBLER__
+/* port base for x86 UART */
+#define COM1		0x3f8
 
-void load_segment(void);
+/* for UART */
+#define UART_BASE	COM1
+#define UART_FREQ	1843200
 
-void arch_early_init(void);
+#define EARLY_CONSOLE_BUS	(&early_port_bus)
+#define EARLY_CONSOLE_BASE	UART_BASE
+#define EARLY_CONSOLE_MAPPING	MAP_NONE
 
-#endif /* !__ASSEMBLER__ */
-
-#endif /* !_AIM_INIT_H */
+#endif
 

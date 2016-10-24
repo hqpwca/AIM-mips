@@ -1,4 +1,5 @@
 /* Copyright (C) 2016 David Gao <davidgao1001@gmail.com>
+ * Copyright (C) 2016 Gan Quan <coin2028@hotmail.com>
  *
  * This file is part of AIM.
  *
@@ -16,16 +17,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _AIM_INIT_H
-#define _AIM_INIT_H
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif /* HAVE_CONFIG_H */
 
-#ifndef __ASSEMBLER__
+/* from uart driver */
+#include <uart.h>
+/* from libc */
+#include <libc/stdio.h>
 
-void load_segment(void);
+#define BUFSIZ	1024
 
-void arch_early_init(void);
+#ifdef RAW /* baremetal driver */
 
-#endif /* !__ASSEMBLER__ */
+#else /* not RAW, or kernel driver */
 
-#endif /* !_AIM_INIT_H */
-
+#endif /* RAW */

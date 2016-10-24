@@ -1,4 +1,5 @@
-/* Copyright (C) 2016 David Gao <davidgao1001@gmail.com>
+/* Copyright (C) 2016 Gan Quan <coin2028@hotmail.com>
+ * Copyright (C) 2016 David Gao <davidgao1001@gmail.com>
  *
  * This file is part of AIM.
  *
@@ -16,16 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _AIM_INIT_H
-#define _AIM_INIT_H
+#ifndef _PLATFORM_H
+#define _PLATFORM_H
 
-#ifndef __ASSEMBLER__
+#include <mach-platform.h>
 
-void load_segment(void);
-
-void arch_early_init(void);
-
-#endif /* !__ASSEMBLER__ */
-
-#endif /* !_AIM_INIT_H */
+#endif
 

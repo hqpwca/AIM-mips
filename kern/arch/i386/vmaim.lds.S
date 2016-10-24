@@ -29,38 +29,77 @@
 
 ENTRY(_start)
 
+MEMORY
+{
+	P(WX) :
+		ORIGIN = KERN_START,
+		LENGTH = 0x1000000
+	V(WX) :
+		ORIGIN = KERN_BASE,
+		LENGTH = 0x1000000
+}
+
 PHDRS
 {
+	entry PT_LOAD;
+	edata PT_LOAD;
 	text PT_LOAD;
+	rodata PT_LOAD;
+	data PT_LOAD;
 }
+
 SECTIONS
 {
-	. = 0x80100000;
-	
-	.text : AT(ADDR(.text) - 0x80000000)
+	.entry :
 	{
+		_entry_start = .;
+		*(.entry)
+		_entry_end = .;
+	} >P AT>P : entry
+	
+	.edata :
+	{
+		_edata_start = .;
+		*(.edata)
+		_edata_end = .;
+	} >P AT>P : edata
+	
+	.text :
+	{
+		_text_start = .;
 		*(.text)
-	} : text
+		_text_end = .;
+	} >V AT>P : text
 	
-	.rodata : AT(ADDR(.rodata) - 0x80000000)
+	.rodata :
 	{
+		_rodata_start = .;
 		*(.rodata)
-	}
+		_rodata_end = .;
+	} >V AT>P : rodata
 	
-	.data : AT(ADDR(.data) - 0x80000000)
+	.data :
 	{
+		_data_start = .;
 		*(.data)
-	}
+		_data_end = .;
+	} >V AT>P : data
 	
-	__bss_start = .;
-	.bss ALIGN(4) : AT(ADDR(.bss) - 0x80000000) 
+	.bss ALIGN(4) :
 	{
+		_bss_start = .;
 		*(.bss) *(COMMON)
-	}
-	__bss_end = .;
+		_bss_end = .;
+	}>V AT>P
 	
-	pgindex = .;
-	end = . + 0x1000;
+	.boot :
+	{
+		PROVIDE(pgindex = .);
+		. += 32K;
+		PROVIDE(boot_stack = .);
+	}>V AT>V
+	
+	PROVIDE(kern_end = .);
 	
 	/DISCARD/ :
 	{

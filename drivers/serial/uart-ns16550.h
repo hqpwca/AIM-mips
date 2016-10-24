@@ -1,4 +1,5 @@
-/* Copyright (C) 2016 David Gao <davidgao1001@gmail.com>
+/* Copyright (C) 2016 Gan Quan <coin2028@hotmail.com>
+ * Copyright (C) 2016 David Gao <davidgao1001@gmail.com>
  *
  * This file is part of AIM.
  *
@@ -16,16 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _AIM_INIT_H
-#define _AIM_INIT_H
+#ifndef _DRIVERS_SERIAL_UART_NS16550_H
+#define _DRIVERS_SERIAL_UART_NS16550_H
 
-#ifndef __ASSEMBLER__
+#ifdef RAW /* baremetal driver */
 
-void load_segment(void);
+#else /* not RAW, or kernel driver */
 
-void arch_early_init(void);
+#endif /* RAW */
 
-#endif /* !__ASSEMBLER__ */
 
-#endif /* !_AIM_INIT_H */
+#endif
 

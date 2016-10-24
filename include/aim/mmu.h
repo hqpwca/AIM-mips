@@ -21,10 +21,15 @@
 #define _AIM_MMU_H
 
 #include <arch-mmu.h>
+#include <util.h>
 
 #ifndef PAGE_SIZE
 #define PAGE_SIZE	4096
 #endif /* !PAGE_SIZE */
+
+#ifndef EARLY_PAGE_SIZE
+#define EARLY_PAGE_SIZE	PAGE_SIZE
+#endif /* !EARLY_PAGE_SIZE */
 
 #ifndef __ASSEMBLER__
 
@@ -154,9 +159,9 @@ struct segdesc {
 #define PTE_ADDR(pte)   ((uint32_t)(pte) & ~0xFFF)
 #define PTE_FLAGS(pte)  ((uint32_t)(pte) &  0xFFF)
 
-#define KERN_END 0x80200000
-#define MEM_STOP 0x3f000000
-#define MEMORY_SIZE 0x40000000
+extern pgindex_t *pgindex;
+
+extern void *kern_end;
 
 static inline void
 lgdt(struct segdesc *p, int size)
