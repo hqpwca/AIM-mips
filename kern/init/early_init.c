@@ -24,6 +24,9 @@
 #include <aim/early_kmmap.h>
 #include <aim/init.h>
 #include <aim/mmu.h>
+#include <aim/vmm.h>
+#include <aim/pmm.h>
+#include <libc/string.h>
 
 __noreturn
 void master_early_init(void)
@@ -32,6 +35,13 @@ void master_early_init(void)
 	early_mm_init();
 	mmu_handlers_clear();
 	arch_early_init();
+	
+	asm volatile("subl $0x8000, %esp");
+	void *esp;
+	asm volatile("movl %%esp,%0" : "=r" (esp));
+	simple_allocator_bootstrap(esp,0x8000);
+	
+	page_allocator_init();
 	
 	goto panic;
 

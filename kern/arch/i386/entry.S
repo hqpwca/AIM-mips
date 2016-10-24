@@ -35,7 +35,7 @@ clean_bss:
   	xorb	%al, %al
   	repz stosb
   	
-  	movl	$0x8000000, %esp
+  	movl	$0x400000, %esp
   	
   	call	master_early_init
   	

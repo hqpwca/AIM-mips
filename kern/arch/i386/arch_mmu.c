@@ -60,13 +60,6 @@ int page_index_early_map(pgindex_t *pgindex, addr_t paddr, void *vaddr, size_t s
 	return 0;
 }
 
-extern pgindex_t *pgindex, *end;
-
-void arch_mm_init()
-{
-	page_index_init(pgindex);
-}
-
 void mmu_init(pgindex_t *boot_page_index)
 {
 	uint32_t cr4;
@@ -75,5 +68,35 @@ void mmu_init(pgindex_t *boot_page_index)
 	cr4 |= CR4_PSE;
 	asm volatile("movl %0,%%cr4" : : "r" (cr4));
 	asm volatile("movl %0,%%cr3" : : "r" (boot_page_index));
+}
+
+void jump_to_high_addr()
+{
+	
+}
+
+struct segdesc gdt[8];
+
+void change_gdt()
+{
+	gdt[SEG_KCODE] = SEG(STA_X|STA_R, 0x0, 0xffffffff, 0);
+	gdt[SEG_KDATA] = SEG(STA_W, 0x0, 0xffffffff,0);
+	
+	lgdt(gdt, sizeof(gdt));
+}
+
+void arch_mm_init()
+{
+	page_index_init(pgindex);
+	mmu_init(pgindex);
+	
+	uint32_t cr0;
+	asm volatile("movl %%cr0,%0" : "=r" (cr0));
+	cr0 |= CR0_PG;
+	asm volatile("movl %0,%%cr0" : : "r" (cr0));
+	
+	jump_to_high_addr();
+	
+	
 }
 

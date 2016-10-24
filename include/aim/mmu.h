@@ -158,6 +158,18 @@ struct segdesc {
 #define MEM_STOP 0x3f000000
 #define MEMORY_SIZE 0x40000000
 
+static inline void
+lgdt(struct segdesc *p, int size)
+{
+  volatile unsigned short pd[3];
+
+  pd[0] = size - 1;
+  pd[1] = (unsigned)p;
+  pd[2] = (unsigned)p >> 16;
+
+  asm volatile("lgdt (%0)" : : "r" (pd));
+}
+
 addr_t get_mem_physbase();
 addr_t get_mem_size();
 

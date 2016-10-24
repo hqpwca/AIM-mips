@@ -55,5 +55,7 @@ typedef pde_t	pgindex_t;
 
 #endif /* !__ASSEMBLER__ */
 
+extern pgindex_t *pgindex, *end;
+
 #endif /* !_ARCH_MMU_H */
 

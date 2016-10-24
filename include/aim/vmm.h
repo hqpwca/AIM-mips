@@ -40,6 +40,9 @@
 
 /* currently ignored */
 
+void *simple1_bottom,*simple1_top;
+size_t simple1_size;
+
 struct simple_allocator {
 	void *(*alloc)(size_t size, gfp_t flags);
 	void (*free)(void *obj);

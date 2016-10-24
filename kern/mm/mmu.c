@@ -67,6 +67,7 @@ int page_index_init(pgindex_t *boot_page_index)
 	return 0;
 }
 
+/*
 struct run{
 	struct run *next;
 };
@@ -256,6 +257,7 @@ void *uva2kva(pgindex_t *pgindex, void *uaddr)
 		return 0;
 	return (void *)postmap_addr(PTE_ADDR(*pte));
 }
+*/
 
 /* handlers after mmu start and after jump */
 #define MMU_HANDLER_QUEUE_LENGTH	10
