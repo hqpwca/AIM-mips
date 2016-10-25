@@ -87,21 +87,13 @@ panic:
 		asm volatile("hlt");
 }
 
-void allocator_init()
-{
-	asm volatile("subl $0x8000, %esp");
-	void *esp;
-	asm volatile("movl %%esp,%0" : "=r" (esp));
-	simple_allocator_bootstrap(esp,0x8000);
-
-	page_allocator_init();
-	asm volatile("addl $0x8000, %esp");
-}
-
 __noreturn
 void master_init(void)
 {
-	allocator_init();
+	extern uint32_t simple1_start;
+	simple_allocator_bootstrap(&simple1_start, 0x8000);
+	page_allocator_init();
+
 	kprintf("Test kprintf\n");
 	kpdebug("Test kpdebug\n");
 
