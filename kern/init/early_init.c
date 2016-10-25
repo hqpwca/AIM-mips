@@ -72,7 +72,7 @@ void master_early_init(void)
 		EARLY_CONSOLE_MAPPING
 	) < 0)
 		panic("Early console init failed.\n");
-	//kputs("Hello, world!\n");
+	kputs("Hello, world!\n");
 	
 	arch_early_init();
 	early_mm_init();
@@ -93,13 +93,16 @@ void allocator_init()
 	void *esp;
 	asm volatile("movl %%esp,%0" : "=r" (esp));
 	simple_allocator_bootstrap(esp,0x8000);
+
+	page_allocator_init();
 }
 
 __noreturn
 void master_init(void)
 {
 	allocator_init();
-	kpdebug("here\n");
+	kprintf("Test kprintf\n");
+	kpdebug("Test kpdebug\n");
 
 	goto panic;
 panic:

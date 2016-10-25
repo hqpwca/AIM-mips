@@ -7,6 +7,7 @@
 //#include <aim/sync.h>
 #include <aim/mmu.h>
 #include <aim/pmm.h>
+#include <aim/vmm.h>
 #include <aim/panic.h>
 #include <libc/string.h>
 #include <util.h>
@@ -58,9 +59,9 @@ static inline void free(struct pages *pages)
 	struct mem_block *a,*i;
 
 	if(pages->size % PAGE_SIZE)
-		return -1;
+		return;
 	if(pages->size % PAGE_SIZE)
-		return -1;
+		return;
 
 	a = kmalloc(sizeof(struct mem_block),0);
 	if(a == NULL)
@@ -69,7 +70,7 @@ static inline void free(struct pages *pages)
 	a->size = pages->size;
 	
 	for(i = head->next; i != tail; i = i->next)
-		if(i.paddr >= a.paddr)
+		if(i->paddr >= a->paddr)
 			break;
 
 	a->prev = i->prev;
