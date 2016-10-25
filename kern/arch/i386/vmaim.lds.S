@@ -46,6 +46,7 @@ PHDRS
 	entry PT_LOAD;
 	edata PT_LOAD;
 	text PT_LOAD;
+	got PT_LOAD;
 	rodata PT_LOAD;
 	data PT_LOAD;
 }
@@ -73,34 +74,34 @@ SECTIONS
 		_text_end = .;
 	} >VIRT AT>PHDR : text
 	
-	.got : ALIGN(4)
+	.got : ALIGN(0x1000)
 	{
 		*(.got*)
 		*(.igot*)
-	} >VIRT AT>PHDR :rodata
+	} >VIRT AT>PHDR :got
 	
-	.rodata : ALIGN(4)
+	.rodata : ALIGN(0x1000)
 	{
 		_rodata_start = .;
 		*(.rodata*)
 		_rodata_end = .;
 	} >VIRT AT>PHDR : rodata
 	
-	.data : ALIGN(32)
+	.data : ALIGN(0x1000)
 	{
 		_data_start = .;
 		*(.data*)
 		_data_end = .;
 	} >VIRT AT>PHDR : data
 	
-	.bss ALIGN(32) :
+	.bss ALIGN(0x1000) :
 	{
 		_bss_start = .;
 		*(.bss)
 		_bss_end = .;
 	}>VIRT AT>PHDR :NONE
 	
-	.boot :
+	.boot ALIGN(0x1000):
 	{
 		. = ALIGN(PAGE_SIZE);
 		PROVIDE(pgindex = .);

@@ -25,7 +25,7 @@
 #ifndef __ASSEMBLER__
 
 struct pages {
-	addr_t paddr;
+	uint32_t paddr;
 	lsize_t size;
 	gfp_t flags;
 };

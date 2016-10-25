@@ -8,6 +8,7 @@
 #include <aim/mmu.h>
 #include <aim/pmm.h>
 #include <aim/vmm.h>
+#include <aim/console.h>
 #include <aim/panic.h>
 #include <libc/string.h>
 #include <util.h>
@@ -92,8 +93,9 @@ static inline void free(struct pages *pages)
 	{
 		a->size += a->next->size;
 		a->next->next->prev = a;
+		i = a->next;
 		a->next = a->next->next;
-		kfree(a->next);
+		kfree(i);
 	}
 
 	free_size += pages->size;
