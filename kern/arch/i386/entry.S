@@ -23,7 +23,7 @@
 #include <aim/mmu.h>
 #include <arch-boot.h>
 
-.section .entry
+.section .text.entry
 
 .globl _start
 _start:
@@ -71,7 +71,7 @@ high_address_entry:
 	movl	$master_init, %eax
 	call	*%eax
 
-.section .edata
+.section .data.entry
 .p2align 2
 gdt:
 	SEG_NULLASM

@@ -22,6 +22,8 @@
 
 #define __LDSCRIPT__
 
+#include <aim/mmu.h>
+
 /*
  * Using the C preprocessor, we allow includes and macro expansion in this
  * linker script.
@@ -31,11 +33,11 @@ ENTRY(_start)
 
 MEMORY
 {
-	P(WX) :
+	PHDR(WX) :
 		ORIGIN = KERN_START,
 		LENGTH = 0x1000000
-	V(WX) :
-		ORIGIN = KERN_BASE,
+	VIRT(WX) :
+		ORIGIN = KERN_BASE + KERN_START,
 		LENGTH = 0x1000000
 }
 
@@ -50,54 +52,61 @@ PHDRS
 
 SECTIONS
 {
-	.entry :
+	.text.entry KERN_START : 
 	{
 		_entry_start = .;
-		*(.entry)
+		*(.text.entry*)
 		_entry_end = .;
-	} >P AT>P : entry
+	} >PHDR AT>PHDR : entry
 	
-	.edata :
+	.data.entry :
 	{
 		_edata_start = .;
-		*(.edata)
+		*(.data.entry*)
 		_edata_end = .;
-	} >P AT>P : edata
+	} >PHDR AT>PHDR : edata
 	
-	.text :
+	.text __postmap_addr(_edata_end) :
 	{
 		_text_start = .;
-		*(.text)
+		*(.text*)
 		_text_end = .;
-	} >V AT>P : text
+	} >VIRT AT>PHDR : text
 	
-	.rodata :
+	.got : ALIGN(4)
+	{
+		*(.got*)
+		*(.igot*)
+	} >VIRT AT>PHDR :rodata
+	
+	.rodata : ALIGN(4)
 	{
 		_rodata_start = .;
-		*(.rodata)
+		*(.rodata*)
 		_rodata_end = .;
-	} >V AT>P : rodata
+	} >VIRT AT>PHDR : rodata
 	
-	.data :
+	.data : ALIGN(32)
 	{
 		_data_start = .;
-		*(.data)
+		*(.data*)
 		_data_end = .;
-	} >V AT>P : data
+	} >VIRT AT>PHDR : data
 	
-	.bss ALIGN(4) :
+	.bss ALIGN(32) :
 	{
 		_bss_start = .;
-		*(.bss) *(COMMON)
+		*(.bss)
 		_bss_end = .;
-	}>V AT>P
+	}>VIRT AT>PHDR :NONE
 	
 	.boot :
 	{
+		. = ALIGN(PAGE_SIZE);
 		PROVIDE(pgindex = .);
 		. += 32K;
 		PROVIDE(boot_stack = .);
-	}>V AT>V
+	}>VIRT AT>PHDR :NONE
 	
 	PROVIDE(kern_end = .);
 	

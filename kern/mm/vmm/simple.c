@@ -21,16 +21,9 @@ static inline void *simple_alloc(size_t size, gfp_t flags)
 	return res;
 }
 
-static inline void simple_free(void *obj)
-{
-	panic("simple allocator 1 won't free\n");
-}
+static inline void simple_free(void *obj) {return;}
 
-static inline size_t simple_size(void *obj) 
-{
-	panic("simple allocator 1 won't get size\n");
-	return -1;
-}
+static inline size_t simple_size(void *obj) {return 0;}
 
 static inline void *alloc(size_t size, gfp_t flags)
 {
@@ -68,6 +61,7 @@ int simple_allocator_init(void)
 		.free	= free,
 		.size	= size
 	};
+	set_simple_allocator(&simple);
 	
 	return 0;
 }

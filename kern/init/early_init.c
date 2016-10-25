@@ -26,6 +26,8 @@
 #include <aim/early_kmmap.h>
 #include <aim/init.h>
 #include <aim/mmu.h>
+#include <aim/pmm.h>
+#include <aim/vmm.h>
 #include <aim/panic.h>
 #include <drivers/io/io-mem.h>
 #include <drivers/io/io-port.h>
@@ -48,8 +50,8 @@ int early_devices_init(void)
 
 void early_mm_init()
 {	
-	page_index_init(pgindex);
-	mmu_init(pgindex);
+	page_index_init((pgindex_t *)premap_addr((void *)&pgindex));
+	mmu_init((pgindex_t *)premap_addr((void *)&pgindex));
 	load_segment();
 }
 
@@ -70,7 +72,7 @@ void master_early_init(void)
 		EARLY_CONSOLE_MAPPING
 	) < 0)
 		panic("Early console init failed.\n");
-	kputs("Hello, world!\n");
+	//kputs("Hello, world!\n");
 	
 	arch_early_init();
 	early_mm_init();
@@ -80,7 +82,9 @@ void master_early_init(void)
 
 	goto panic;
 panic:
-	while (1);
+	asm volatile("cli");
+	while(1)
+		asm volatile("hlt");
 }
 
 void allocator_init()
@@ -94,6 +98,13 @@ void allocator_init()
 __noreturn
 void master_init(void)
 {
-	
+	allocator_init();
+	kpdebug("here\n");
+
+	goto panic;
+panic:
+	asm volatile("cli");
+	while(1)
+		asm volatile("hlt");
 }
 

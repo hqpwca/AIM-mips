@@ -29,7 +29,7 @@
 
 #ifndef __ASSEMBLER__
 
-#define PGSIZE2 0x3fffff
+#define PGSIZE2 0x400000
 
 #define PGROUNDUP2(sz)  (((sz)+PGSIZE2-1) & ~(PGSIZE2-1))
 #define PGROUNDDOWN2(a) (((a)) & ~(PGSIZE2-1))

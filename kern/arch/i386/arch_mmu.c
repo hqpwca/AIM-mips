@@ -47,14 +47,14 @@ int page_index_early_map(pgindex_t *pgindex, addr_t paddr, void *vaddr, size_t s
 	char *a, *last;
 	
 	a = (char *)PGROUNDDOWN2((uint32_t)vaddr);
-	last = (char *)PGROUNDDOWN2(((uint32_t)vaddr) + size - 1);
+	last = (char *)PGROUNDDOWN2(((uint32_t)vaddr) + size);
 	
 	for(; a < last; a += PGSIZE2)
 	{
 		if(pgindex[PDX(a)] & PTE_P)
 			return -1;
 		pgindex[PDX(a)] = paddr ^ (paddr & 0xfff);
-		pgindex[PDX(a)] |= PTE_P;
+		pgindex[PDX(a)] |= PTE_P | PTE_W | PTE_PS;
 		paddr += PGSIZE2;
 	}
 	return 0;
