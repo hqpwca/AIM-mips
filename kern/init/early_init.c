@@ -95,6 +95,7 @@ void allocator_init()
 	simple_allocator_bootstrap(esp,0x8000);
 
 	page_allocator_init();
+	asm volatile("addl $0x8000, %esp");
 }
 
 __noreturn

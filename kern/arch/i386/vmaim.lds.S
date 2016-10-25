@@ -104,7 +104,7 @@ SECTIONS
 	{
 		. = ALIGN(PAGE_SIZE);
 		PROVIDE(pgindex = .);
-		. += 32K;
+		. += 64K;
 		PROVIDE(boot_stack = .);
 	}>VIRT AT>PHDR :NONE
 	
