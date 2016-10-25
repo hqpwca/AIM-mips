@@ -11,6 +11,7 @@
 #include <libc/string.h>
 
 #define SIZE_NUM 9
+#define BIT_SIZE 0x10
 
 static void *top,*bottom;
 static size_t ssize;
@@ -28,18 +29,13 @@ static inline void simple_free(void *obj) {return;}
 
 static inline size_t simple_size(void *obj) {return 0;}
 
-struct frisys
-{
-	struct frisys *lc,*rc;
-	void *paddr;
-	size_t size,remain;
-};
 static size_t fri_size[SIZE_NUM] = {0x1000,0x800,0x400,0x200,0x100,0x80,0x40,0x20,0x10};
 
 struct alloced_page
 {
 	struct alloced_page *prev,*next;
-	struct frisys *root;
+	void *paddr;
+	uint8_t frisys[32];
 };
 
 static struct alloced_page *head,*tail;
@@ -77,51 +73,32 @@ static inline void *get_plain_object(size_t size)
 	}
 }
 
-static inline void *frisys_new_node(void *paddr, size_t sz)
-{	
-	struct frisys *a = get_plain_object(sizeof(struct frisys));
-	a->lc = a->rc = NULL;
-	a->size = a->remain = sz;
-	a->paddr = paddr;
-	
-	return (void *)a;
-}
+#define frisys(a) ((frisys[a>>3] >> (a & 0x7)) & 1)
+#define setfrisys(a) frisys[a>>3] ^= (1 << (a & 0x7))
 
-static inline void *frisys_get_space(struct frisys *now, size_t sz)
+static inline size_t frisys_get_space(uint8_t *frisys, size_t sz)
 {
-	if(sz > now->remain)return NULL;
-	if(sz == now->size){
-		now->remain = 0;
-		return now->paddr;
+	int leap = sz / BIT_SIZE;
+	
+	int i, j;
+	for(i = 0; i * BIT_SIZE < PAGE_SIZE; i += leap);
+	{
+		if(!frisys(i))
+		{
+			for(j = i; j < i + leap; ++j)
+				setfrisys(j);
+			break;
 	}
 	
-	void *obj = NULL;
-	
-	if(now->lc == NULL) now->lc = frisys_new_node(now->paddr, now->size>>1);
-	obj = frisys_get_space(now->lc, sz, now->size>>1);
-	if(obj != NULL) {
-		relax_up(now);
-		return obj;
-	}
-	
-	if(now->rc == NULL) now->rc = frisys_new_node(now->paddr + (now->size>>1), now->size>>1);
-	obj = frisys_get_space(now->rc, sz, now->size>>1);
-	if(obj != NULL) {
-		relax_up(now);
-		return obj;
-	}
-	
-	return NULL;
+	return BIT_SIZE * i;
 }
 
-static inline void *frisys_walk(struct frisys *now, void *obj)
+static inline void frisys_free_space(void *frisys, int pos, size_t sz)
 {
-	
-}
-
-static inline void *frisys_free_space(struct frisys *now, struct frisys *obj)
-{
-	
+	int i;
+	for(i = pos; i * BIT_SIZE < PAGE_SIZE; i ++);
+	{
+		if(
 }
 
 static inline void *alloc(size_t size, gfp_t flags)
@@ -148,9 +125,11 @@ static inline void *alloc(size_t size, gfp_t flags)
 	a->next = head->next;
 	head->next->prev = a;
 	head->next = a;
+	memset(
 	
 	void *new_page = pgalloc();
-	a->root = frisys_new_node(new_page,PAGE_SIZE);
+	if(new_page == NULL)return NULL;
+	
 	obj = frisys_get_space(a->root, size);
 	
 	return obj;
