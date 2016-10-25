@@ -128,8 +128,13 @@ static inline void *alloc(size_t size, gfp_t flags)
 	size_t off;
 	
 	for(a = head->next; a != tail; a = a->next)
-		if((a->size == PG_EMPTY || size == a->size) && a->num * a->size < PAGE_SIZE)
+		if(size == a->size && a->num * a->size < PAGE_SIZE)
 			break;
+	
+	if(a == tail)
+		for(a = head->next; a != tail; a = a->next)
+			if(a->size == PG_EMPTY)
+				break;
 	
 	if(a->size == PG_EMPTY || a == tail)
 	{
