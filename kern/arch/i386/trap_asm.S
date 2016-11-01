@@ -2,10 +2,7 @@
 #include <config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include <sys/types.h>
-#include <sys/param.h>
-#include <aim/mmu.h>
-#include <aim/trap.h>
+#include <arch-mmu.h>
 
 .globl alltraps
 alltraps:
@@ -23,7 +20,7 @@ alltraps:
 	call trap_exec
 
 .globl trapret
-trapret
+trapret:
 	movl 4(%esp), %esp
 	popal
 	popl %gs

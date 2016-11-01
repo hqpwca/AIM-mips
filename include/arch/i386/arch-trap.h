@@ -80,7 +80,7 @@ static inline void set_gate(struct gatedesc *ptr, uint32_t selector, uint32_t of
 }
 
 static inline void
-lidt(struct segdesc *p, int size)
+lidt(struct gatedesc *p, int size)
 {
   volatile unsigned short pd[3];
 

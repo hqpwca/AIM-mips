@@ -5,6 +5,8 @@
 #include <sys/types.h>
 #include <aim/early_kmmap.h>
 #include <aim/mmu.h>
+#include <aim/vmm.h>
+#include <aim/pmm.h>
 #include <aim/panic.h>
 #include <arch-mmu.h>
 #include <libc/string.h>
@@ -32,7 +34,7 @@ static pte_t *walkpgdir(pgindex_t *pgindex, const void *vaddr, int alloc)
 	} else {
 		if(!alloc || (pgtab = (pte_t*)(uint32_t)pgalloc()) == 0)
 			return 0;
-		mymemset(pgtab, 0, PGSIZE);
+		memset(pgtab, 0, PGSIZE);
 		*pde = premap_addr(pgtab) | PTE_P | PTE_W | PTE_U;
 	}
 	return &pgtab[PTX(vaddr)];

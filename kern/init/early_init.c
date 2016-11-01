@@ -28,7 +28,7 @@
 #include <aim/mmu.h>
 #include <aim/pmm.h>
 #include <aim/vmm.h>
-#include <aim/trap.h>
+#include <aim/trap.h>	
 #include <aim/panic.h>
 #include <drivers/io/io-mem.h>
 #include <drivers/io/io-port.h>
