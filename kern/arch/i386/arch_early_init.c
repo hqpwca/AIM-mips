@@ -28,6 +28,7 @@
 #include <arch-mmu.h>
 #include <libc/string.h>
 
+__noreturn
 void abs_jump(void *addr)
 {
 	asm volatile("jmp *%0" : : "r"(addr));

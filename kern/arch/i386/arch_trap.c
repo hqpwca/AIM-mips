@@ -17,6 +17,7 @@
 
 struct gatedesc idt[IDT_ENTRY_NUM];
 extern uint32_t vectors[];
+__noreturn extern void trapret(void *old_esp);
 
 /* TODO: add something about Local APIC and IOAPIC. */
 void trap_init()
@@ -57,5 +58,5 @@ Interrupts ID:
 __noreturn
 void trap_return(struct trapframe *tf)
 {
-	trapret(tf);
+	trapret((void *)tf);
 }
