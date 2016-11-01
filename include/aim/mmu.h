@@ -159,6 +159,9 @@ struct segdesc {
 #define PTE_ADDR(pte)   ((uint32_t)(pte) & ~0xFFF)
 #define PTE_FLAGS(pte)  ((uint32_t)(pte) &  0xFFF)
 
+#define DPL_KERNEL 0x0
+#define DPL_USER 0x3
+
 extern pgindex_t *pgindex;
 
 extern void *kern_end;

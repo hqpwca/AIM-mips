@@ -29,5 +29,10 @@ libentry_la_SOURCES = \
 libarch_la_SOURCES = \
 	arch_early_init.c \
 	arch_mmu.c \
-	arch_trap.c
+	arch_trap.c \
+	pgoperation.c \
+	trap_asm.S \
+	vectors.S
+
+
 

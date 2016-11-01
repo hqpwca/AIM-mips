@@ -28,6 +28,7 @@
 #include <aim/mmu.h>
 #include <aim/pmm.h>
 #include <aim/vmm.h>
+#include <aim/trap.h>
 #include <aim/panic.h>
 #include <drivers/io/io-mem.h>
 #include <drivers/io/io-port.h>
@@ -145,6 +146,8 @@ void test_allocator()
 __noreturn
 void master_init(void)
 {
+	trap_init();
+
 	extern uint32_t simple1_start;
 	simple_allocator_bootstrap(&simple1_start, 0x8000);	
 	kputs("Simple allocator 1 opened.\n");	

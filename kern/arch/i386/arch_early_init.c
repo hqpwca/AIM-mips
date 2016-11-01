@@ -39,6 +39,8 @@ void load_segment(void)
 {
 	gdt[SEG_KCODE] = SEG(STA_X|STA_R, 0x0, 0xffffffff, 0);
 	gdt[SEG_KDATA] = SEG(STA_W, 0x0, 0xffffffff,0);
+	gdt[SEG_UCODE] = SEG(STA_X|STA_R, 0x0, 0xffffffff, DPL_USER);
+	gdt[SEG_UDATA] = SEG(STA_W, 0x0, 0xffffffff,DPL_USER);
 	
 	lgdt(gdt, sizeof(gdt));
 }
