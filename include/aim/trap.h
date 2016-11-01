@@ -21,6 +21,18 @@
 
 struct trapframe;
 
+static inline void
+lidt(struct segdesc *p, int size)
+{
+  volatile unsigned short pd[3];
+
+  pd[0] = size - 1;
+  pd[1] = (unsigned)p;
+  pd[2] = (unsigned)p >> 16;
+
+  asm volatile("lidt (%0)" : : "r" (pd));
+}
+
 void trap_init(void);
 
 __noreturn

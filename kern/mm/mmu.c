@@ -23,7 +23,10 @@
 #include <sys/types.h>
 #include <aim/early_kmmap.h>
 #include <aim/mmu.h>
+#include <aim/pmm.h>
+#include <aim/vmm.h>
 #include <aim/panic.h>
+#include <libc/string.h>
 
 /*
  * This source file provides upper-level utilities to handle memory mappings.
@@ -67,55 +70,16 @@ int page_index_init(pgindex_t *boot_page_index)
 	return 0;
 }
 
-/*
-struct run{
-	struct run *next;
-};
-
-static struct run *runlist;
-
-void kfree(char *v)
-{
-	struct run *r;
-	
-	if((uint32_t)v % PGSIZE || (uint32_t)v < KERN_END || premap_addr(v) >= MEM_STOP)
-		panic("kfree");
-	
-	mymemset(v, 1, PGSIZE);
-	r = (struct run*)v;
-	r -> next = runlist;
-	runlist = r;
-}
-
-void freerange(void *vstart, void *vend)
-{
-	char *p = (char *)PGROUNDDOWN((uint32_t)vstart);
-	
-	for(; p + PGSIZE <= (char *)vend; p += PGSIZE) {
-		kfree(p);
-	}
-}
-
-char *kalloc(void)
-{
-	struct run *r = runlist;
-	
-	if(r)
-		runlist = r -> next;
-	
-	return (char *)r;
-}
-
 pgindex_t *init_pgindex(void)
 {
-	pgindex_t *pgindex = (pgindex_t *)kalloc();
+	pgindex_t *pgindex = (pgindex_t *)(uint32_t)pgalloc();
 	
 	return pgindex;
 }
 
 void destroy_pgindex(pgindex_t *pgindex)
 {	
-	kfree((char *)pgindex);
+	pgfree((addr_t)(uint32_t)pgindex);
 }
 
 static pte_t *walkpgdir(pgindex_t *pgindex, const void *vaddr, int alloc)
@@ -127,7 +91,7 @@ static pte_t *walkpgdir(pgindex_t *pgindex, const void *vaddr, int alloc)
 	if(*pde & PTE_P) {
 		pgtab = (pte_t*)(postmap_addr(PTE_ADDR(*pde)));
 	} else {
-		if(!alloc || (pgtab = (pte_t*)kalloc()) == 0)
+		if(!alloc || (pgtab = (pte_t*)(uint32_t)pgalloc()) == 0)
 			return 0;
 		mymemset(pgtab, 0, PGSIZE);
 		*pde = premap_addr(pgtab) | PTE_P | PTE_W | PTE_U;
@@ -257,7 +221,6 @@ void *uva2kva(pgindex_t *pgindex, void *uaddr)
 		return 0;
 	return (void *)postmap_addr(PTE_ADDR(*pte));
 }
-*/
 
 /* handlers after mmu start and after jump */
 #define MMU_HANDLER_QUEUE_LENGTH	10
