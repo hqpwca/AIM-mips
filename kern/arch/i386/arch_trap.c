@@ -18,6 +18,7 @@
 struct gatedesc idt[IDT_ENTRY_NUM];
 extern uint32_t vectors[];
 
+/* TODO: add something about Local APIC and IOAPIC. */
 void trap_init()
 {
 	for(int i=0; i<IDT_ENTRY_NUM; i++)
