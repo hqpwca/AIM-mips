@@ -146,8 +146,6 @@ void test_allocator()
 __noreturn
 void master_init(void)
 {
-	trap_init();
-
 	extern uint32_t simple1_start;
 	simple_allocator_bootstrap(&simple1_start, 0x8000);	
 	kputs("Simple allocator 1 opened.\n");	
@@ -165,8 +163,12 @@ void master_init(void)
 	
 	page_allocator_move(&old);
 	kputs("Page allocator moved.\n");
-	
-	test_allocator();
+	//test_allocator();
+
+	trap_init();
+	kputs("Trap initialized.\n");
+
+	trap_check();
 
 	goto panic;
 panic:

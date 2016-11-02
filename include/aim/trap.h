@@ -22,6 +22,7 @@
 struct trapframe;
 
 void trap_init(void);
+void trap_check(void);
 
 __noreturn
 void trap_return(struct trapframe *tf);

@@ -60,3 +60,8 @@ void trap_return(struct trapframe *tf)
 {
 	trapret((void *)tf);
 }
+
+void trap_check()
+{
+	asm volatile("int $32;");
+}
