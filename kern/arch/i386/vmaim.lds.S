@@ -23,6 +23,7 @@
 #define __LDSCRIPT__
 
 #include <aim/mmu.h>
+#include <asm-generic/vmaim.lds.h>
 
 /*
  * Using the C preprocessor, we allow includes and macro expansion in this
@@ -84,6 +85,9 @@ SECTIONS
 	{
 		_rodata_start = .;
 		*(.rodata*)
+		EARLY_INIT(STRUCT_ALIGNMENT)
+		NORM_INIT(STRUCT_ALIGNMENT)
+		LATE_INIT(STRUCT_ALIGNMENT)
 		_rodata_end = .;
 	} >VIRT AT>PHDR : rodata
 	
