@@ -16,12 +16,12 @@
 #include <drivers/io/io-port.h>
 #include <platform.h>
 
-void do_initcalls()
+int do_initcalls()
 {
 	extern initcall_t norm_init_start[];
 	extern initcall_t norm_init_end[];
 	initcall_t *entry;
-	uint32_t result;
+	int result = 0;
 
 	kpdebug("Normal initcalls initialized from 0x%08x to 0x%08x\n", norm_init_start, norm_init_end);
 	for(entry = norm_init_start; entry < norm_init_end; entry ++) {

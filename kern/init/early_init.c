@@ -50,12 +50,12 @@ int early_devices_init(void)
 	return 0;
 }
 
-void do_early_initcalls()
+int do_early_initcalls()
 {
 	extern initcall_t early_init_start[];
 	extern initcall_t early_init_end[];
 	initcall_t *entry;
-	uint32_t result;
+	int result;
 
 	kpdebug("Early initcalls initialized from 0x%08x to 0x%08x\n", early_init_start, early_init_end);
 	for(entry = early_init_start; entry < early_init_end; entry ++) {
