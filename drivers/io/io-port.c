@@ -23,6 +23,7 @@
 #include <sys/types.h>
 #include <sys/param.h>
 #include <aim/device.h>
+#include <aim/console.h>
 #include <aim/gfp.h>
 #include <aim/io.h>
 #include <aim/mmu.h>
@@ -276,6 +277,7 @@ static struct bus_driver drv = {
 
 static int __driver_init(void)
 {
+	kpdebug("initializing I/O bus\n");
 	struct bus_device *portio_bus;
 	register_driver(NOMAJOR, &drv);
 #ifdef IO_PORT_ROOT

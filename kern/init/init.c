@@ -133,15 +133,6 @@ void master_init(void)
 	do_early_initcalls();
 	do_initcalls();
 
-	struct device *port_io = dev_from_name("portio");
-
-	if (early_console_init(
-		port_io,
-		EARLY_CONSOLE_BASE,
-		MAP_LINEAR
-	) < 0)
-		panic("Normal console init failed.\n");
-
 	goto panic;
 panic:
 	asm volatile("cli");
