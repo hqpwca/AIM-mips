@@ -50,22 +50,6 @@ int early_devices_init(void)
 	return 0;
 }
 
-int do_early_initcalls()
-{
-	extern initcall_t early_init_start[];
-	extern initcall_t early_init_end[];
-	initcall_t *entry;
-	int result;
-
-	kpdebug("Early initcalls initialized from 0x%08x to 0x%08x\n", early_init_start, early_init_end);
-	for(entry = early_init_start; entry < early_init_end; entry ++) {
-		int ret = (*entry)();
-		result |= ret;
-	}
-
-	return (result < 0) ? -1 : 0;
-}
-
 void early_mm_init()
 {	
 	page_index_init((pgindex_t *)premap_addr((void *)&pgindex));
@@ -95,7 +79,7 @@ void master_early_init(void)
 	arch_early_init();
 	early_mm_init();
 
-	do_early_initcalls();
+	jump_handlers_apply();
 	
 	extern uint32_t high_address_entry;
 	abs_jump((void *)postmap_addr(&high_address_entry));

@@ -43,7 +43,8 @@ KERN_LIBS = \
 	trap/libtrap.la \
 	arch/$(ARCH)/libarch.la \
 	../drivers/libdrivers.la \
-	../lib/libc/libc.la
+	../lib/libc/libc.la \
+	dev/index/libindex.la
 
 libkernel_la_SOURCES =
 libkernel_la_LIBADD = $(KERN_LIBS)

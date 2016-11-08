@@ -4,17 +4,33 @@
 
 #include <sys/types.h>
 #include <aim/console.h>
-#include <aim/device.h>
 #include <aim/init.h>
 #include <aim/mmu.h>
 #include <aim/pmm.h>
 #include <aim/vmm.h>
 #include <aim/trap.h>	
 #include <aim/panic.h>
+#include <aim/device.h>
 #include <aim/initcalls.h>
 #include <drivers/io/io-mem.h>
 #include <drivers/io/io-port.h>
 #include <platform.h>
+
+int do_early_initcalls()
+{
+	extern initcall_t early_init_start[];
+	extern initcall_t early_init_end[];
+	initcall_t *entry;
+	int result = 0;
+
+	kpdebug("Early initcalls initialized from 0x%08x to 0x%08x\n", early_init_start, early_init_end);
+	for(entry = early_init_start; entry < early_init_end; entry ++) {
+		int ret = (*entry)();
+		result |= ret;
+	}
+
+	return (result < 0) ? -1 : 0;
+}
 
 int do_initcalls()
 {
@@ -114,7 +130,17 @@ void master_init(void)
 
 	//trap_check();
 
+	do_early_initcalls();
 	do_initcalls();
+
+	struct device *port_io = dev_from_name("portio");
+
+	if (early_console_init(
+		port_io,
+		EARLY_CONSOLE_BASE,
+		MAP_LINEAR
+	) < 0)
+		panic("Normal console init failed.\n");
 
 	goto panic;
 panic:
