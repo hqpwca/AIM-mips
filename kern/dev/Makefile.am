@@ -22,4 +22,5 @@ SUBDIRS = index
 noinst_LTLIBRARIES = libdev.la
 
 libdev_la_SOURCES = console.c
+libdev_la_LIBADD = index/libindex.la
 
