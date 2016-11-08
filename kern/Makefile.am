@@ -49,7 +49,7 @@ libkernel_la_SOURCES =
 libkernel_la_LIBADD = $(KERN_LIBS)
 
 vmaim_elf_SOURCES =
-vmaim_elf_LDADD = libkernel.la $(MODULES)
+vmaim_elf_LDADD = $(MODULES) libkernel.la
 EXTRA_vmaim_elf_DEPENDENCIES = vmaim.lds
 vmaim_elf_LDFLAGS = $(AM_LDFLAGS) -T vmaim.lds
 
