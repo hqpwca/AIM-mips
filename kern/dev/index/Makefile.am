@@ -20,11 +20,12 @@ include $(top_srcdir)/env.am
 noinst_LTLIBRARIES = libindex.la
 noinst_PROGRAMS =
 
-if ALGO_DEVLIST
-noinst_PROGRAMS += devlist.ko
-devlist_ko_SOURCES = devlist.c
-devlist_ko_LDFLAGS = $(AM_LDFLAGS) -Wl,-r
-endif
+# if ALGO_DEVLIST
+# noinst_PROGRAMS += devlist.ko
+# devlist_ko_SOURCES = devlist.c
+# devlist_ko_LDFLAGS = $(AM_LDFLAGS) -Wl,-r
+# endif
 
-libindex_la_SOURCES = index.c
+libindex_la_SOURCES = index.c \
+					devlist.c
 

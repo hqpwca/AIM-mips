@@ -28,10 +28,32 @@ void initdev(struct device *dev, int class, const char *devname, dev_t devno, st
 	int i;
 
 	dev->class = class;
-	for(i = 0; i < (int)sizeof(devname); ++i)
+	for(i = 0; devname[i] != '\0' ; ++i)
 		dev->name[i] = devname[i];
 	dev->devno = devno;
-	dev->driver = *drv;
+
+	switch(class)
+	{
+	case DEVCLASS_NON:
+		dev->driver = *drv;
+		break;
+	case DEVCLASS_CHR:
+		dev->chr_driver = *(struct chr_driver *)drv;
+		break;
+	case DEVCLASS_BLK:
+		dev->blk_driver = *(struct blk_driver *)drv;
+		break;
+	case DEVCLASS_NET:
+		dev->net_driver = *(struct net_driver *)drv;
+		break;
+	case DEVCLASS_BUS:
+		dev->bus_driver = *(struct bus_driver *)drv;
+		break;
+	default:
+		dev->driver = *drv;
+	}
+
+	kprintf("Initdev: %s\n", dev->name);
 }
 
 /*

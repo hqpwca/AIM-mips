@@ -25,6 +25,8 @@
 #include <aim/console.h>
 #include <aim/device.h>
 #include <aim/mmu.h>
+#include <aim/initcalls.h>
+#include <platform.h>
 
 #include <uart-ns16550-hw.h>
 
@@ -35,6 +37,10 @@
 /* internal routines */
 
 static struct chr_device __early_uart_ns16550 = {
+	.class = DEVCLASS_CHR,
+};
+
+static struct chr_device __uart_ns16550 = {
 	.class = DEVCLASS_CHR,
 };
 
@@ -192,6 +198,43 @@ int __early_console_init(struct bus_device *bus, addr_t base, addr_t mapped_base
 #ifdef RAW /* baremetal driver */
 
 #else /* not RAW, or kernel driver */
+
+static void norm_console_set_bus(struct bus_device *bus, addr_t base)
+{
+	__uart_ns16550.bus = bus;
+	__uart_ns16550.base = base;
+}
+
+static int norm_console_putchar(int c)
+{
+	__uart_ns16550_putchar(&__uart_ns16550, c);
+	return 0;
+}
+
+static int __init(void)
+{
+	kpdebug("Console Initializing.\n");
+
+	struct bus_device *port_io = (struct bus_device *)dev_from_name("portio");
+	kprintf("port io addr: 0x%x\n", port_io);
+	//kprintf("port io high addr: 0x%x\n", postmap_addr(port_io));
+	addr_t base = UART_BASE;
+
+	norm_console_set_bus(port_io, base);
+	//kprintf("set bus finished\n");
+
+	__uart_ns16550_init(&__uart_ns16550);
+	//kprintf("init finished\n");
+	__uart_ns16550_enable(&__uart_ns16550);
+	//kprintf("enable finished\n");
+
+	set_console(norm_console_putchar, DEFAULT_KPUTS);
+	//kprintf("set console finished\n");
+
+	return 0;
+}
+
+INITCALL_DEV(__init);
 
 #endif /* RAW */
 

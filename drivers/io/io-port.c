@@ -281,7 +281,7 @@ static int __driver_init(void)
 	struct bus_device *portio_bus;
 	register_driver(NOMAJOR, &drv);
 #ifdef IO_PORT_ROOT
-	portio_bus = kmalloc(sizeof(*portio_bus), GFP_ZERO);
+	portio_bus = postmap_addr(kmalloc(sizeof(*portio_bus), GFP_ZERO));
 	initdev(portio_bus, DEVCLASS_BUS, "portio", NODEV, &drv);
 	dev_add(portio_bus);
 #endif

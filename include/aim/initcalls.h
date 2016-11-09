@@ -21,6 +21,8 @@
 
 typedef int (*initcall_t)(void);
 
+extern int to_link;
+
 #ifndef __ASSEMBLER__
 
 #define __initcall(fn, sec) \

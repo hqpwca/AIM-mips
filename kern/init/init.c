@@ -130,8 +130,12 @@ void master_init(void)
 
 	//trap_check();
 
+	to_link = -1;
+
 	do_early_initcalls();
 	do_initcalls();
+
+	kputs("Test new console\n");
 
 	goto panic;
 panic:

@@ -40,7 +40,7 @@ void trap_exec(struct trapframe *tf)
 			 irqno == IRQ_IDE ||  irqno == IRQ_ERROR ||  irqno == IRQ_SPURIOUS)
 			handle_interrupt(irqno);
 		else
-			panic("Unknown or undefined trap.\n");
+			panic("Unknown or undefined trap No.%d\n", tf->trapno);
 	}
 	trap_return(tf);
 }

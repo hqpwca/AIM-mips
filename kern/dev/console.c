@@ -149,23 +149,3 @@ int early_console_init(struct bus_device *bus, addr_t base, int type)
 	/* really init console */
 	return __early_console_init(bus, base, mapped_base);
 }
-
-static inline void __init(void)
-{
-	addr_t mapped_base;
-	kpdebug("Console Initializing.\n");
-
-	struct bus_device *port_io = dev_from_name("portio");
-	kprintf("port io addr: 0x%x\n", port_io);
-	addr_t base = UART_BASE;
-	int type = MAP_LINEAR;
-
-	/* prepare mapped base address */
-	int ret = get_mapped_base(base, type, &mapped_base);
-	if (ret < 0) return ret; // caused by kmmap, may have various reasons
-
-	/* really init console */
-	return __early_console_init(port_io, base, mapped_base);
-}
-
-INITCALL_DEV(__init);

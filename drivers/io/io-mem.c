@@ -153,7 +153,7 @@ static int __driver_init(void)
 	struct bus_device *memory_bus;
 	register_driver(NOMAJOR, &drv);
 #ifdef IO_MEM_ROOT
-	memory_bus = kmalloc(sizeof(*memory_bus), GFP_ZERO);
+	memory_bus = postmap_addr(kmalloc(sizeof(*memory_bus), GFP_ZERO));
 	initdev(memory_bus, DEVCLASS_BUS, "memory", NODEV, &drv);
 	dev_add(memory_bus);
 #endif

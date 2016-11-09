@@ -35,6 +35,8 @@ struct device_entry {
 	struct list_head node;
 };
 
+int to_link;
+
 static struct list_head __head = EMPTY_LIST(__head);
 //static lock_t __lock;
 
@@ -183,6 +185,4 @@ static int __init(void)
 	return 0;
 }
 
-
 INITCALL_CORE(__init);
-
