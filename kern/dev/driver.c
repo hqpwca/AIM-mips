@@ -53,7 +53,7 @@ void initdev(struct device *dev, int class, const char *devname, dev_t devno, st
 		dev->driver = *drv;
 	}
 
-	kprintf("Initdev: %s\n", dev->name);
+	//kprintf("Initdev: %s\n", dev->name);
 }
 
 /*
