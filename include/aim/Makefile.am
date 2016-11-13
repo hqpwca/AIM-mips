@@ -30,6 +30,8 @@ noinst_HEADERS = \
 	mmu.h \
 	panic.h \
 	pmm.h \
+	smp.h \
+	sync.h \
 	trap.h \
 	vmm.h
 
