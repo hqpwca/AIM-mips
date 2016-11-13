@@ -26,3 +26,7 @@ if UART_NS16550
 MODULES += $(top_builddir)/drivers/serial/uart-ns16550.o
 endif
 
+if ALGO_DEVLIST
+MODULES += $(top_builddir)/kern/dev/index/devlist.o
+endif
+
