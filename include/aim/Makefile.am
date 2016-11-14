@@ -27,6 +27,7 @@ noinst_HEADERS = \
 	init.h \
 	initcalls.h \
 	io.h \
+	irq.h \
 	mmu.h \
 	panic.h \
 	pmm.h \
