@@ -46,6 +46,10 @@ bool spin_is_locked(lock_t *lock)
 }
 
 /* Semaphore */
+typedef struct {
+	int val;
+	int limit;
+} semaphore_t;
 
 static inline
 void semaphore_init(semaphore_t *sem, int val)
