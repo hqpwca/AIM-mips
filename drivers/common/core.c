@@ -23,13 +23,13 @@
 
 #include <sys/param.h>
 #include <sys/types.h>
+#include <libc/string.h>
 
 #include <aim/console.h>
 #include <aim/debug.h>
 #include <aim/device.h>
 //#include <aim/sync.h>
 #include <aim/vmm.h>
-#include <libc/string.h>
 #include <errno.h>
 
 /* drivers with associated major number */
