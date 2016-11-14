@@ -27,8 +27,17 @@
 struct devtree_entry devtree[] = {
 	/* memory bus */
 	{
-		"memory",
-		"memory",
+		"io-mem",
+		"io-mem",
+		"",
+		0,
+		{0},
+		0,
+	},
+	/* port bus */
+	{
+		"io-port",
+		"io-port",
 		"",
 		0,
 		{0},
