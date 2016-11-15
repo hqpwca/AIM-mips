@@ -246,7 +246,6 @@ AC_CONFIG_FILES([
 	drivers/common/Makefile
 	drivers/io/Makefile
 	drivers/serial/Makefile
-	drivers/common/Makefile
 	include/Makefile
 	include/aim/Makefile
 	include/arch/Makefile
