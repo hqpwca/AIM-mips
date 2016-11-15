@@ -243,6 +243,7 @@ AC_CONFIG_FILES([
 	boot/arch/i386/Makefile
 	boot/arch/mips/Makefile
 	drivers/Makefile
+	drivers/common/Makefile
 	drivers/io/Makefile
 	drivers/serial/Makefile
 	drivers/common/Makefile
@@ -258,6 +259,7 @@ AC_CONFIG_FILES([
 	kern/arch/Makefile
 	kern/arch/armv7a/Makefile
 	kern/arch/i386/Makefile
+	kern/arch/i386/mach-pc/Makefile
 	kern/arch/mips/Makefile
 	kern/dev/Makefile
 	kern/dev/index/Makefile

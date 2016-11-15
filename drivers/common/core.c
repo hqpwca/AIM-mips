@@ -21,14 +21,16 @@
 #include <config.h>
 #endif /* HAVE_CONFIG_H */
 
-#include <aim/device.h>
-#include <aim/sync.h>
 #include <sys/param.h>
 #include <sys/types.h>
 #include <libc/string.h>
-#include <trap.h>
+
+#include <aim/console.h>
+#include <aim/debug.h>
+#include <aim/device.h>
+//#include <aim/sync.h>
+#include <aim/vmm.h>
 #include <errno.h>
-#include <vmm.h>
 
 /* drivers with associated major number */
 struct driver *devsw[MAJOR_MAX];
@@ -43,7 +45,7 @@ struct devtree_entry_node {
 };
 
 static struct list_head __undriven_devs = EMPTY_LIST(__undriven_devs);
-static lock_t __undriven_devlock = EMPTY_LOCK(__undriven_devlock);
+//static lock_t __undriven_devlock = EMPTY_LOCK(__undriven_devlock);
 
 void register_driver(unsigned int major, struct driver *drv)
 {
@@ -58,7 +60,7 @@ void initdev(struct device *dev, int class, const char *name, dev_t devno,
 	dev->devno = devno;
 	dev->class = class;
 	strlcpy(dev->name, name, DEV_NAME_MAX);
-	spinlock_init(&dev->lock);
+	//spinlock_init(&dev->lock);
 
 	assert(dev->class == drv->class);
 
@@ -112,7 +114,7 @@ void discover_device(struct devtree_entry *entry)
 {
 	struct devtree_entry_node *entry_node;
 	struct device *dev;
-	unsigned long flags;
+	//unsigned long flags;
 
 	/*
 	 * Skip cases where
@@ -123,11 +125,11 @@ void discover_device(struct devtree_entry *entry)
 	if ((dev = __check_dup_device(entry)) != NULL)
 		return;
 
-	spin_lock_irq_save(&__undriven_devlock, flags);
+	//spin_lock_irq_save(&__undriven_devlock, flags);
 
 	for_each_entry (entry_node, &__undriven_devs, node) {
 		if (__entry_match(&entry_node->entry, entry)) {
-			spin_unlock_irq_restore(&__undriven_devlock, flags);
+			//spin_unlock_irq_restore(&__undriven_devlock, flags);
 			return;
 		}
 	}
@@ -137,7 +139,7 @@ void discover_device(struct devtree_entry *entry)
 	entry_node->entry = *entry;
 	list_add_tail(&entry_node->node, &__undriven_devs);
 
-	spin_unlock_irq_restore(&__undriven_devlock, flags);
+	//spin_unlock_irq_restore(&__undriven_devlock, flags);
 }
 
 static bool __probe_devices(void)
@@ -147,7 +149,7 @@ static bool __probe_devices(void)
 	struct bus_device *bus;
 	struct device *dev;
 	void *savep;
-	unsigned long flags;
+	//unsigned long flags;
 	bool found = false;
 	int i;
 
@@ -202,7 +204,7 @@ static bool __probe_devices(void)
 
 	/* For each undriven device entry, ask all drivers to pick it up,
 	 * create a struct device, and dev_add() it to the device list. */
-	spin_lock_irq_save(&__undriven_devlock, flags);
+	//spin_lock_irq_save(&__undriven_devlock, flags);
 	for_each_entry_safe (entry_node, next, &__undriven_devs, node) {
 		for (i = 0; i < ndrivers; ++i) {
 			if (drivers[i]->new != NULL &&
@@ -214,7 +216,7 @@ static bool __probe_devices(void)
 			}
 		}
 	}
-	spin_unlock_irq_restore(&__undriven_devlock, flags);
+	//spin_unlock_irq_restore(&__undriven_devlock, flags);
 
 	/* If we created any device, we need to do the whole scanning again,
 	 * since the newly created device could be a bus (and may hold
