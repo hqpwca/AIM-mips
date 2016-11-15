@@ -23,9 +23,9 @@
 #define LOCKED		1
 
 #include <aim/irq.h>	/* local_irq_XXX */
+#include <aim/panic.h>
 
 #include <arch-sync.h>	/* lock_t */
-#include <panic.h>
 
 #ifndef __ASSEMBLER__
 
@@ -99,10 +99,6 @@ static inline void recursive_unlock(rlock_t *lock)
 	} while (0)
 
 /* Semaphore, implemented by architectures. */
-typedef struct {
-	int val;
-	int limit;
-} semaphore_t;
 
 static inline
 void semaphore_init(semaphore_t *sem, int val);
