@@ -48,14 +48,16 @@ void load_segment(void)
 
 void arch_mm_init(void)
 {
-	if(early_mapping_add_memory(0x0, KERN_START) == 0)
-		panic("error early mapping memory\n");
-	if(early_mapping_add_memory(KERN_START, MEM_SIZE - KERN_START - 0x1000000) == 0)
-		panic("error early mapping memory\n");
-	if(early_mapping_add_kmmap(MEM_SIZE - 0x1000000, 0x1000000) == 0)
-		panic("error early mapping kmmap\n");
 	if(early_mapping_add_umem(0x0, USERTOP) == 0)
 		panic("error early mapping memory\n");
+	if(early_mapping_add_memory(0x0, KERN_START) == 0)
+		panic("error early mapping memory\n");
+	if(early_mapping_add_memory(KERN_START, MEM_SIZE - KERN_START - 0x10000000) == 0)
+		panic("error early mapping memory\n");
+	if(early_mapping_add_kmmap(MEM_SIZE - 0x10000000, 0x8000000) == 0)
+		panic("error early mapping kmmap\n");
+	if(early_mapping_add_devspace(0xfe000000,0x1000000) == 0)
+		panic("error early mapping devspace\n");
 }
 
 void arch_early_init(void)

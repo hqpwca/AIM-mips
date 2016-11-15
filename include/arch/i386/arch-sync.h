@@ -21,28 +21,36 @@
 
 #ifndef __ASSEMBLER__
 
+#include <asm.h>
+
 typedef unsigned int lock_t;
 #define EMPTY_LOCK(lock)	(UNLOCKED)
 
 static inline
 void spinlock_init(lock_t *lock)
 {
+	*lock = UNLOCKED;
 }
 
 static inline
 void spin_lock(lock_t *lock)
 {
+	while (xchg(lock, LOCKED) != 0)
 }
 
 static inline
 void spin_unlock(lock_t *lock)
 {
+	xchg(lock, UNLOCKED);
 }
 
 static inline
 bool spin_is_locked(lock_t *lock)
 {
-	return true;
+	if(*lock == LOCKED)
+		return true;
+	else
+		return false;
 }
 
 /* Semaphore */

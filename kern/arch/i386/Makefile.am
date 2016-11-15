@@ -35,6 +35,9 @@ libarch_la_SOURCES = \
 	arch_early_init.c \
 	arch_mmu.c \
 	arch_trap.c \
+	arch_lapic.c \
+	arch_mp.c \
+	arch_smp.c \
 	pgoperation.c \
 	trap_asm.S \
 	vectors.S

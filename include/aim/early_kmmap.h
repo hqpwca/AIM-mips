@@ -40,6 +40,7 @@ void early_mapping_clear(void);
 size_t early_mapping_add_memory(addr_t base, size_t size);
 void *early_mapping_add_kmmap(addr_t base, size_t size);
 size_t early_mapping_add_umem(addr_t base, size_t size);
+size_t early_mapping_add_devspace(addr_t base, size_t size);
 int early_mapping_add(struct early_mapping *entry);
 struct early_mapping *early_mapping_next(struct early_mapping *base);
 

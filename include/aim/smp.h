@@ -20,13 +20,26 @@
 #ifndef _MP_H
 #define _MP_H
 
+#define CPUNUM 4
+
 #ifndef __ASSEMBLER__
+
+struct cpu_status
+{
+	volatile uint32_t started;
+	uint32_t stack;
+	uint32_t apicid;
+};
+
+extern struct cpu_status cpus[CPUNUM];
 
 int nr_cpus(void);
 int cpuid(void);
 void smp_startup(void);
 /* Returns 0 when succeed */
 int handle_ipi_interrupt(unsigned int msg);
+
+void arch_slave_init(void);
 
 #endif /* !__ASSEMBLER__ */
 

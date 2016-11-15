@@ -44,6 +44,8 @@ MEMORY
 
 PHDRS
 {
+	sentry PT_LOAD;
+	sdata PT_LOAD;
 	entry PT_LOAD;
 	edata PT_LOAD;
 	text PT_LOAD;
@@ -54,6 +56,20 @@ PHDRS
 
 SECTIONS
 {
+	.text.sentry 0x7000 :
+	{
+		_sentry_start = .;
+		*(.text.sentry*);
+		_sentry_end = .;
+	} : sentry
+
+	.data.sentry 0x7100 :
+	{
+		_sdata_start = .;
+		*(.data.sentry*);
+		_sdata_end = .;
+	} : sdata
+
 	.text.entry KERN_START : 
 	{
 		_entry_start = .;

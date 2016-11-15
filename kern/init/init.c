@@ -8,10 +8,12 @@
 #include <aim/mmu.h>
 #include <aim/pmm.h>
 #include <aim/vmm.h>
+#include <aim/smp.h>
 #include <aim/trap.h>	
 #include <aim/panic.h>
 #include <aim/device.h>
 #include <aim/initcalls.h>
+#include <asm.h>
 #include <drivers/io/io-mem.h>
 #include <drivers/io/io-port.h>
 #include <platform.h>
@@ -52,16 +54,16 @@ void init_free_pages()
 {
 	size_t kend = kva2pa(&kern_end);
 	kend = ALIGN_ABOVE(kend, PAGE_SIZE);
-	kprintf("Start Freeing: 0x%x ~ 0x%x...\n", kend, MEM_SIZE - 0x1000000);
+	kprintf("Start Freeing: 0x%x ~ 0x%x...\n", kend, MEM_SIZE - 0x10000000);
 	
 	struct pages *p = kmalloc(sizeof(*p), 0);
 	p->paddr = kend;
-	p->size = MEM_SIZE - kend - 0x1000000;
+	p->size = MEM_SIZE - kend - 0x10000000;
 	p->flags = GFP_UNSAFE;
 	
 	free_pages(p);
 	
-	kprintf("Finish Freed: 0x%x ~ 0x%x...\n", kend, MEM_SIZE - 0x1000000);
+	kprintf("Finish Freed: 0x%x ~ 0x%x...\n", kend, MEM_SIZE - 0x10000000);
 }
 
 void test_allocator()
@@ -137,7 +139,30 @@ void master_init(void)
 
 	kputs("Test new console\n");
 
+	smp_startup();
+
 	goto panic;
+panic:
+	asm volatile("cli");
+	while(1)
+		asm volatile("hlt");
+}
+
+__noreturn
+void slave_init(void)
+{
+	extern uint32_t _sentry_start[];
+	uint32_t slave_entry = (uint32_t)_sentry_start;
+
+	kpdebug("slave cpu NO.%d starting...\n", cpuid());
+
+	load_segment();
+	arch_slave_init();
+	trap_init();
+
+	kpdebug("slave cpu NO.%d started.\n", cpuid());
+
+	xchg(&cpus[cpuid()].started, 1);
 panic:
 	asm volatile("cli");
 	while(1)

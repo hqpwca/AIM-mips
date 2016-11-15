@@ -138,6 +138,19 @@ size_t early_mapping_add_umem(addr_t base, size_t size)
 	return size;
 }
 
+size_t early_mapping_add_devspace(addr_t base, size_t size)
+{
+	struct early_mapping entry = {
+		.paddr	= base,
+		.vaddr	= base,
+		.size	= (size_t)size,
+		.type	= EARLY_MAPPING_KMMAP
+	};
+	if (early_mapping_add(&entry) < 0)
+		return 0;
+	return size;
+}
+
 /*
  * basic iterator. Caller should not work with internal data structure.
  * If given a pointer to some early mapping entry, return the next one.

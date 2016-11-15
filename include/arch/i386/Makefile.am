@@ -24,6 +24,8 @@ noinst_HEADERS = \
 	arch-mmu.h \
 	arch-sync.h \
 	arch-trap.h \
+	arch-mp.h \
+	arch-lapic.h \
 	asm.h \
 	platform.h
 
