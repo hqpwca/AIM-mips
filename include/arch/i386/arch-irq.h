@@ -23,20 +23,32 @@
 
 static inline void local_irq_enable()
 {
+	asm volatile("sti");
 }
 
 static inline void local_irq_disable()
 {
-
+	asm volatile("cli");
 }
 
+static inline uint32_t __local_irq_save(void)
+{
+	uint32_t res;
+	asm volatile("pushf ; pop %0"
+				: "=rm" (res)
+				: /* no input */
+				: "memory");
+	local_irq_disable();
+	return res;
+}
 #define local_irq_save(flags) \
-	do { \
-	} while (0)
+	flags = __local_irq_save()
 
 #define local_irq_restore(flags) \
-	do { \
-	} while (0)
+	asm volatile("push %0 ; popf" \
+				: /* no output */ \
+				: "g" (flags) \
+				: "memory", "cc");
 
 #endif /* !__ASSEMBLER__ */
 

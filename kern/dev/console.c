@@ -100,7 +100,7 @@ puts_fp get_default_kputs(void)
 int kputs(const char *s)
 {
 	int result;
-	//unsigned long flags;
+	unsigned long flags;
 
 	if (__puts == NULL)
 		return EOF;
