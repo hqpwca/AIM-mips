@@ -161,8 +161,8 @@ panic:
 __noreturn
 void slave_init(void)
 {
-	extern uint32_t _sentry_start[];
-	uint32_t slave_entry = (uint32_t)_sentry_start;
+	if(cpuid() == 0)
+		goto panic;
 
 	kpdebug("slave cpu NO.%d starting...\n", cpuid());
 
@@ -184,6 +184,8 @@ void slave_init(void)
 			kprintf("slave cpu NO.%d running...\n", cpuid());
 			i = 0;
 		}
+
+	goto panic;
 panic:
 	asm volatile("cli");
 	while(1)
