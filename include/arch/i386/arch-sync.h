@@ -35,7 +35,7 @@ void spinlock_init(lock_t *lock)
 static inline
 void spin_lock(lock_t *lock)
 {
-	while (xchg(lock, LOCKED) != 0)
+	while (xchg(lock, LOCKED) != 0);
 }
 
 static inline
@@ -57,21 +57,50 @@ bool spin_is_locked(lock_t *lock)
 typedef struct {
 	int val;
 	int limit;
+	lock_t spinlock;
+
 } semaphore_t;
 
 static inline
 void semaphore_init(semaphore_t *sem, int val)
 {
+	spinlock_init(&sem->spinlock);
+	sem->val = val;
+	sem->limit = val;
 }
 
 static inline
 void semaphore_dec(semaphore_t *sem)
 {
+	while(1)
+	{
+		while(sem->val <= 0);
+		spin_lock(&sem->spinlock);
+		if(sem->val > 0)
+		{
+			sem->val --;
+			spin_unlock(&sem->spinlock);
+			return;
+		}
+		spin_unlock(&sem->spinlock);
+	}
 }
 
 static inline
 void semaphore_inc(semaphore_t *sem)
 {
+	while(1)
+	{
+		while(sem->val >= sem->limit);
+		spin_lock(&sem->spinlock);
+		if(sem->val < sem->limit)
+		{
+			sem->val ++;
+			spin_unlock(&sem->spinlock);
+			return;
+		}
+		spin_unlock(&sem->spinlock);
+	}
 }
 
 #endif /* __ASSEMBLER__ */

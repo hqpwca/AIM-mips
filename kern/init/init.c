@@ -141,6 +141,16 @@ void master_init(void)
 
 	smp_startup();
 
+	//panic("Test all CPU panic\n");
+
+	int i;
+	for(i=0; i==i; ++i)
+		if(i == 400000000)
+		{
+			kprintf("master cpu running...\n");
+			i = 0;
+		}
+
 	goto panic;
 panic:
 	asm volatile("cli");
@@ -163,6 +173,17 @@ void slave_init(void)
 	kpdebug("slave cpu NO.%d started.\n", cpuid());
 
 	xchg(&cpus[cpuid()].started, 1);
+
+	if(cpuid() == 1)
+		panic("panic by CPU 1.\n");
+
+	int i;
+	for(i=0; i==i; ++i)
+		if(i == 400000000)
+		{
+			kprintf("slave cpu NO.%d running...\n", cpuid());
+			i = 0;
+		}
 panic:
 	asm volatile("cli");
 	while(1)

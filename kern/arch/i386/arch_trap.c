@@ -10,6 +10,7 @@
 #include <aim/mmu.h>
 #include <aim/panic.h>
 #include <aim/trap.h>
+#include <aim/smp.h>
 #include <aim/console.h>
 #include <arch-mmu.h>
 #include <arch-trap.h>
@@ -31,6 +32,9 @@ void trap_init()
 
 void trap_exec(struct trapframe *tf)
 {
+	if(tf->trapno == T_PANIC) {
+		kprintf("PANIC: CPU %d panicked.\n", cpuid());
+	}
 	if(tf->trapno == T_SYSCALL)
 		handle_syscall(tf->eax, tf->ebx, tf->ecx, tf->edx, tf->esi, tf->edi, tf->ebp);
 	else

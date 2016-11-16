@@ -88,6 +88,20 @@ int handle_ipi_interrupt(unsigned int msg)
 	return 0;
 }
 
+void panic_other_cpus()
+{
+	int now_id = cpuid();
+	for(int id = 0; id < nr_cpus(); id ++)
+	{
+		if(id == now_id) continue;
+		lapicw(ICRHI, cpus[id].apicid<<24);
+		lapicw(ICRLO, INIT);
+		while(lapic[ICRLO] & DELIVS);
+
+		kpdebug("CPU %d panicked.\n", id);
+	}
+}
+
 void arch_slave_init()
 {
 	lapic_init();

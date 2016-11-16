@@ -23,6 +23,7 @@
 #include <sys/types.h>
 #include <aim/console.h>
 #include <aim/panic.h>
+#include <aim/smp.h>
 #include <libc/stdarg.h>
 #include <libc/stddef.h>
 #include <libc/stdio.h>
@@ -66,7 +67,7 @@ void panic(const char *fmt, ...)
 
 	//local_irq_disable();
 
-	//panic_other_cpus();
+	panic_other_cpus();
 
 	va_start(args, fmt);
 	result = vsnprintf(__buf, BUFSIZ, fmt, args);

@@ -27,14 +27,14 @@
 #include <aim/initcalls.h>
 #include <aim/early_kmmap.h>
 #include <aim/mmu.h>
-//#include <aim/sync.h>
+#include <aim/sync.h>
 #include <libc/stdio.h>
 #include <errno.h>
 #include <platform.h>
 
 static putchar_fp __putchar = NULL;
 static puts_fp __puts = NULL;
-//static lock_t __lock;
+static lock_t __lock;
 
 /*
  * In most cases,
@@ -56,7 +56,7 @@ void set_console(putchar_fp putchar, puts_fp puts)
 {
 	__putchar = putchar;
 	__puts = puts;
-	//spinlock_init(&__lock);
+	spinlock_init(&__lock);
 }
 
 int kprintf(const char *fmt, ...)
@@ -106,9 +106,9 @@ int kputs(const char *s)
 		return EOF;
 	/* We probably don't want kputs() to be interrupted externally or by another
 	 * core. */
-	//spin_lock_irq_save(&__lock, flags);
+	spin_lock_irq_save(&__lock, flags);
 	result = __puts(s);
-	//spin_unlock_irq_restore(&__lock, flags);
+	spin_unlock_irq_restore(&__lock, flags);
 
 	return result;
 }
