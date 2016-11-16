@@ -174,7 +174,7 @@ void slave_init(void)
 
 	xchg(&cpus[cpuid()].started, 1);
 
-	if(cpuid() == 1)
+	if(cpuid() == 3)
 		panic("panic by CPU 1.\n");
 
 	int i;
