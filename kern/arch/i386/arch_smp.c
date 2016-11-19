@@ -59,10 +59,6 @@ static void alloc_stacks(void)
 
 void smp_startup(void)
 {
-	mpinit();
-	kputs("SMP: MP Table Initalized.\n");
-	lapic_init();
-	kputs("SMP: Local APIC Initalized.\n");
 	alloc_stacks();
 
 	int i;
@@ -95,10 +91,10 @@ void panic_other_cpus()
 	{
 		if(id == now_id) continue;
 		lapicw(ICRHI, cpus[id].apicid<<24);
-		lapicw(ICRLO, INIT);
+		lapicw(ICRLO, 0x50);
 		while(lapic[ICRLO] & DELIVS);
 
-		kpdebug("CPU %d panicked.\n", id);
+		//kpdebug("CPU %d panicked.\n", id);
 	}
 }
 

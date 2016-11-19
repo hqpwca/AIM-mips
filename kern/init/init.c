@@ -127,6 +127,7 @@ void master_init(void)
 	kputs("Page allocator moved.\n");
 	//test_allocator();
 
+	bsp_trap_init();
 	trap_init();
 	kputs("Trap initialized.\n");
 
@@ -140,6 +141,7 @@ void master_init(void)
 	kputs("Test new console\n");
 
 	smp_startup();
+	asm volatile("sti");
 
 	//panic("Test all CPU panic\n");
 
@@ -172,7 +174,10 @@ void slave_init(void)
 
 	kpdebug("slave cpu NO.%d started.\n", cpuid());
 
+	asm volatile("sti");
+
 	xchg(&cpus[cpuid()].started, 1);
+
 
 	if(cpuid() == 3)
 		panic("panic by CPU 3.\n");

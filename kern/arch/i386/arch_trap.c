@@ -14,6 +14,8 @@
 #include <aim/console.h>
 #include <arch-mmu.h>
 #include <arch-trap.h>
+#include <arch-mp.h>
+#include <arch-lapic.h>
 #include <libc/string.h>
 
 struct gatedesc idt[IDT_ENTRY_NUM];
@@ -21,6 +23,14 @@ extern uint32_t vectors[];
 __noreturn extern void trapret(void *old_esp);
 
 /* TODO: add something about Local APIC and IOAPIC. */
+void bsp_trap_init()
+{
+	mpinit();
+	kputs("MP Table Initalized.\n");
+	lapic_init();
+	kputs("Local APIC Initalized.\n");
+}
+
 void trap_init()
 {
 	for(int i=0; i<IDT_ENTRY_NUM; i++)
@@ -34,6 +44,9 @@ void trap_exec(struct trapframe *tf)
 {
 	if(tf->trapno == T_PANIC) {
 		kprintf("PANIC: CPU %d panicked.\n", cpuid());
+		asm volatile("cli");
+		while(1)
+			asm volatile("hlt");
 	}
 	if(tf->trapno == T_SYSCALL)
 		handle_syscall(tf->eax, tf->ebx, tf->ecx, tf->edx, tf->esi, tf->edi, tf->ebp);

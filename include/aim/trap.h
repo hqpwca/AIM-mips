@@ -21,6 +21,7 @@
 
 struct trapframe;
 
+void bsp_trap_init(void);
 void trap_init(void);
 void trap_check(void);
 

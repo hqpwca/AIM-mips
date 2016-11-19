@@ -10,6 +10,7 @@
 #include <aim/pmm.h>
 #include <aim/panic.h>
 #include <aim/trap.h>
+#include <aim/smp.h>
 #include <aim/console.h>
 #include <arch-mmu.h>
 #include <arch-trap.h>
