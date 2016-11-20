@@ -17,18 +17,11 @@
 
 include $(top_srcdir)/env.am
 
-dist_noinst_DATA = vmaim.lds.S
+noinst_LTLIBRARIES = libproc.la
 
-noinst_LTLIBRARIES = \
-	libentry.la \
-	libarch.la
-
-libentry_la_SOURCES = \
-	entry.S
-
-libarch_la_SOURCES = \
-	arch_early_init.c \
-	arch_mmu.c \
+libproc_la_SOURCES = \
+	initproc.c \
 	proc.c \
-	switch.S
+	proctree.c \
+	namespace.c
 

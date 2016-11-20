@@ -22,8 +22,10 @@ SUBDIRS = \
 	arch \
 	dev \
 	init \
+	lib \
 	mm \
 	panic \
+	proc \
 	trap
 
 BUILT_SOURCES = vmaim.lds
@@ -38,8 +40,10 @@ KERN_LIBS = \
 	arch/$(ARCH)/libentry.la \
 	dev/libdev.la \
 	init/libearlyinit.la \
+	lib/lib.la \
 	mm/libmm.la \
 	panic/libpanic.la \
+	proc/libproc.la \
 	trap/libtrap.la \
 	arch/$(ARCH)/libarch.la \
 	../drivers/libdrivers.la \

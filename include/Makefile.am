@@ -27,6 +27,8 @@ nobase_noinst_HEADERS = \
 	sys/types.h
 
 noinst_HEADERS = \
+	bitmap.h \
+	bitops.h \
 	elf.h \
 	errno.h \
 	list.h \

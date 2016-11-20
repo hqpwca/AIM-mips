@@ -1,0 +1,9 @@
+Kernel internal library
+
+You can safely ignore this directory altogether when learning operating system
+concepts since this internal library have nothing to do with concepts itself,
+as they are only providing utility routines which typically don't count as
+parts of libc.
+
+The code is completely borrowed and reorganized from Linux.
+
