@@ -41,7 +41,8 @@ libarch_la_SOURCES = \
 	pgoperation.c \
 	trap_asm.S \
 	vectors.S
-
+	proc.c \
+	switch.S
 libarch_la_LIBADD = \
 	mach-$(MACH)/libmach.la
 

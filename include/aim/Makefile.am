@@ -29,10 +29,14 @@ noinst_HEADERS = \
 	io.h \
 	irq.h \
 	mmu.h \
+	namespace.h \
 	panic.h \
+	percpu.h \
 	pmm.h \
+	proc.h \
 	smp.h \
 	sync.h \
 	trap.h \
+	uvm.h \
 	vmm.h
 

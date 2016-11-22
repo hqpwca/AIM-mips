@@ -1,13 +1,13 @@
-# Copyright (C) 2016 David Gao <davidgao1001@gmail.com>
+# Copyright (C) 2016 Gan Quan <coin2028@hotmail.com>
 #
-# This file is part of AIM.
+# This file is part of AIMv6.
 #
-# AIM is free software: you can redistribute it and/or modify
+# AIMv6 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# AIM is distributed in the hope that it will be useful,
+# AIMv6 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
@@ -17,18 +17,11 @@
 
 include $(top_srcdir)/env.am
 
-dist_noinst_DATA = vmaim.lds.S
+SUBDIRS = \
+	  libbitmap
 
-noinst_LTLIBRARIES = \
-	libentry.la \
-	libarch.la
+noinst_LTLIBRARIES = lib.la
 
-libentry_la_SOURCES = \
-	entry.S
-
-libarch_la_SOURCES = \
-	arch_early_init.c \
-	arch_mmu.c \
-	proc.c \
-	switch.S
+lib_la_SOURCES = generic.c
+lib_la_LIBADD = libbitmap/libbitmap.la
 

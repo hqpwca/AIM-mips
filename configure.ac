@@ -263,11 +263,14 @@ AC_CONFIG_FILES([
 	kern/dev/Makefile
 	kern/dev/index/Makefile
 	kern/init/Makefile
+	kern/lib/Makefile
+	kern/lib/libbitmap/Makefile
 	kern/mm/Makefile
 	kern/mm/kmmap/Makefile
 	kern/mm/pmm/Makefile
 	kern/mm/vmm/Makefile
 	kern/panic/Makefile
+	kern/proc/Makefile
 	kern/trap/Makefile
 	lib/Makefile
 	lib/libc/Makefile

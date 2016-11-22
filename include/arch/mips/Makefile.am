@@ -21,6 +21,7 @@ SUBDIRS = \
 	mach-loongson3a
 
 noinst_HEADERS = \
+	arch-bitops.h \
 	arch-boot.h \
 	arch-io.h \
 	arch-irq.h \
@@ -28,6 +29,8 @@ noinst_HEADERS = \
 	arch-sync.h \
 	arch-trap.h \
 	asm.h \
+	atomic.h \
+	context.h \
 	cp0regdef.h \
 	platform.h \
 	regdef.h
