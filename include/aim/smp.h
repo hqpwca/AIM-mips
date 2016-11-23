@@ -31,8 +31,6 @@ struct cpu_status
 	uint32_t apicid;
 };
 
-extern struct cpu_status cpus[CPUNUM];
-
 int nr_cpus(void);
 int cpuid(void);
 void smp_startup(void);

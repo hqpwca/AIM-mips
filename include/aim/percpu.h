@@ -32,6 +32,7 @@ struct percpu {
 	struct proc *proc;
 
 	/* other stuff go here */
+	struct cpu_status;
 };
 
 extern struct percpu cpus[];

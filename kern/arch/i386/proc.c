@@ -25,11 +25,18 @@
 #include <aim/percpu.h>
 #include <aim/smp.h>
 #include <aim/trap.h>
-#include <arch-trap.h>
+#include <aim/console.h>
 #include <context.h>
 
-extern void forkret(void);
+//extern void forkret(void);
 extern void switch_regs(struct context *old, struct context *new);
+
+void forkret(void)
+{
+	kpdebug("fork return here.\n");
+
+	proc_trap_return();
+}
 
 static struct trapframe *__proc_trapframe(struct proc *proc)
 {
@@ -44,14 +51,21 @@ static void __bootstrap_trapframe(struct trapframe *tf,
 				   void *stacktop,
 				   void *args)
 {
+	tf->eip = entry;
+	tf->esp = stacktop;
+	tf->eax = args;
 }
 
 static void __bootstrap_context(struct context *context, struct trapframe *tf)
 {
+	context->eip = (uint32_t)forkret();
+	context->ebp = tf;
+	context->ebx = context->esi = context->edi = 0;
 }
 
 static void __bootstrap_user(struct trapframe *tf)
 {
+
 }
 
 void __proc_ksetup(struct proc *proc, void *entry, void *args)
@@ -100,6 +114,6 @@ void switch_context(struct proc *proc)
 	/* Switch page directory */
 	switch_pgindex(proc->mm->pgindex);
 	/* Switch general registers */
-	switch_regs(&(current->context), &(proc->context));
+	switch_regs(&&(current->context), &(proc->context));
 }
 

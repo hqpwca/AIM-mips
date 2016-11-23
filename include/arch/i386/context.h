@@ -20,6 +20,11 @@
 #define _ARCH_CONTEXT_H
 
 struct context {
+	uint32_t edi;
+	uint32_t esi;
+	uint32_t ebx;
+	uint32_t ebp;
+	uint32_t eip;
 };
 
 #endif /* !_ARCH_CONTEXT_H */

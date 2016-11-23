@@ -12,13 +12,14 @@
 #include <aim/panic.h>
 #include <aim/trap.h>
 #include <aim/console.h>
+#include <aim/percpu.h>
 #include <arch-mmu.h>
 #include <arch-trap.h>
 #include <arch-lapic.h>
 #include <arch-mp.h>
 #include <libc/string.h>
 
-struct cpu_status cpus[CPUNUM];
+struct percpu cpus[CPUNUM];
 
 int nr_cpus(void)
 {

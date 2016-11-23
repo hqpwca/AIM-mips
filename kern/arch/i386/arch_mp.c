@@ -8,6 +8,7 @@
 #include <aim/console.h>
 #include <aim/panic.h>
 #include <aim/trap.h>
+#include <aim/percpu.h>
 #include <arch-mp.h>
 #include <arch-lapic.h>
 #include <asm.h>

@@ -12,6 +12,7 @@
 #include <aim/trap.h>
 #include <aim/smp.h>
 #include <aim/console.h>
+#include <aim/percpu.h>
 #include <arch-mmu.h>
 #include <arch-trap.h>
 #include <arch-lapic.h>

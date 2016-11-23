@@ -13,6 +13,7 @@
 #include <aim/panic.h>
 #include <aim/device.h>
 #include <aim/initcalls.h>
+#include <aim/percpu.h>
 #include <asm.h>
 #include <drivers/io/io-mem.h>
 #include <drivers/io/io-port.h>

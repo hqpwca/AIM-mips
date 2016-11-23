@@ -22,33 +22,55 @@
 /* counter += val */
 static inline void atomic_add(atomic_t *counter, uint32_t val)
 {
+	asm volatile(
+		"lock addl %1,%0"
+		: "+m" (counter)
+		: "ir" (val));
 }
 
 /* counter -= val */
 static inline void atomic_sub(atomic_t *counter, uint32_t val)
 {
+	asm volatile(
+		"lock subl %1,%0"
+		: "+m" (counter)
+		: "ir" (val));
 }
 
 /* counter++ */
 static inline void atomic_inc(atomic_t *counter)
 {
+	asm volatile(
+		"lock incl %0"
+		: "+m" (counter));
 }
 
 /* counter-- */
 static inline void atomic_dec(atomic_t *counter)
 {
+	asm volatile(
+		"lock decl %0"
+		: "+m" (counter));
 }
 
 static inline void atomic_set_bit(
 	unsigned long nr,
 	volatile unsigned long *addr)
 {
+	asm volatile( 
+		"btsl %1,%0" 
+		: "=m" (addr) 
+		: "ir" (nr));
 }
 
 static inline void atomic_clear_bit(
 	unsigned long nr,
 	volatile unsigned long *addr)
 {
+	asm volatile( 
+		"btcl %1,%0" 
+		: "=m" (addr) 
+		: "ir" (nr));
 }
 
 #endif
