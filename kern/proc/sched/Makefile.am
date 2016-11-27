@@ -17,14 +17,15 @@
 
 include $(top_srcdir)/env.am
 
-SUBDIRS = \
-	sched
+noinst_LTLIBRARIES = libsched.la
+noinst_PROGRAMS =
 
-noinst_LTLIBRARIES = libproc.la
+#noinst_PROGRAMS += <rename_me>.ko
+#uart_ns16550_ko_SOURCES = <rename_me>.c
+#uart_ns16550_ko_LDFLAGS = $(AM_LDFLAGS) -Wl,-r
+# Remember to add your module to modules.am
+# You don't have to apply configure options to your module.
 
-libproc_la_SOURCES = \
-	initproc.c \
-	proc.c \
-	proctree.c \
-	namespace.c
+libsched_la_SOURCES = \
+	sched.c
 
