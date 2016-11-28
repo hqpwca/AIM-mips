@@ -99,8 +99,8 @@ struct proc {
 	struct proc	*next_sibling;
 	struct proc	*prev_sibling;
 
-	//struct scheduler *scheduler;	/* Scheduler for this process */
-	//struct list_head sched_node;	/* List node in scheduler */
+	struct scheduler *scheduler;	/* Scheduler for this process */
+	struct list_head sched_node;	/* List node in scheduler */
 };
 
 static inline void *kstacktop(struct proc *proc)

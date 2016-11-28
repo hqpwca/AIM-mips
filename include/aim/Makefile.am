@@ -34,6 +34,7 @@ noinst_HEADERS = \
 	percpu.h \
 	pmm.h \
 	proc.h \
+	sched.h \
 	smp.h \
 	sync.h \
 	trap.h \
