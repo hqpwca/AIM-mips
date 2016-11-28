@@ -29,17 +29,17 @@
 #include <aim/sched.h>
 #include <aim/smp.h>
 
-static lock_t sched_lock;
-static unsigned long __sched_intrflags;
+//static lock_t sched_lock;
+//static unsigned long __sched_intrflags;
 
 void sched_enter_critical(void)
 {
-	spin_lock_irq_save(&sched_lock, __sched_intrflags);
+	//spin_lock_irq_save(&sched_lock, __sched_intrflags);
 }
 
 void sched_exit_critical(void)
 {
-	spin_unlock_irq_restore(&sched_lock, __sched_intrflags);
+	//spin_unlock_irq_restore(&sched_lock, __sched_intrflags);
 }
 
 static void __update_proc(struct proc *proc)
@@ -76,14 +76,14 @@ void schedule(void)
  */
 void sleep_with_lock(void *bed, lock_t *lock)
 {
-	unsigned long flags;
+	//unsigned long flags;
 	/* Basically, sleep is also a kind of scheduling, so we need to enter
 	 * critical section of scheduler as well. */
-	assert(lock != &sched_lock);
+	//assert(lock != &sched_lock);
 	kpdebug("sleeping on %p with lock %p\n", bed, lock);
-	spin_lock_irq_save(&sched_lock, flags);
+	//spin_lock_irq_save(&sched_lock, flags);
 	if (lock != NULL)
-		spin_unlock(lock);
+		//spin_unlock(lock);
 
 	current_proc->bed = bed;
 	current_proc->state = PS_SLEEPING;
@@ -93,9 +93,9 @@ void sleep_with_lock(void *bed, lock_t *lock)
 
 	current_proc->bed = NULL;
 
-	spin_unlock_irq_restore(&sched_lock, flags);
+	//spin_unlock_irq_restore(&sched_lock, flags);
 	if (lock != NULL)
-		spin_lock(lock);
+		//spin_lock(lock);
 	kpdebug("slept on %p with lock %p\n", bed, lock);
 }
 
@@ -110,11 +110,11 @@ void sleep(void *bed)
 void wakeup(void *bed)
 {
 	struct proc *proc;
-	unsigned long flags;
+	//unsigned long flags;
 
 	/* We are changing process states.  It is better to enter critical
 	 * section. */
-	spin_lock_irq_save(&sched_lock, flags);
+	//spin_lock_irq_save(&sched_lock, flags);
 
 	for (proc = proc_next(NULL); proc; proc = proc_next(proc)) {
 		if (proc->bed == bed && proc->state == PS_SLEEPING)
@@ -122,7 +122,7 @@ void wakeup(void *bed)
 	}
 	kpdebug("woke up %p\n", bed);
 
-	spin_unlock_irq_restore(&sched_lock, flags);
+	//spin_unlock_irq_restore(&sched_lock, flags);
 }
 
 void proc_add(struct proc *proc)
@@ -142,6 +142,6 @@ struct proc *proc_next(struct proc *proc)
 
 void sched_init(void)
 {
-	spinlock_init(&sched_lock);
+	//spinlock_init(&sched_lock);
 }
 
