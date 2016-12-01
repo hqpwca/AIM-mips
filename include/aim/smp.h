@@ -38,6 +38,7 @@ void smp_startup(void);
 int handle_ipi_interrupt(unsigned int msg);
 
 void arch_slave_init(void);
+void claim_started();
 
 #endif /* !__ASSEMBLER__ */
 

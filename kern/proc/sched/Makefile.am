@@ -20,9 +20,9 @@ include $(top_srcdir)/env.am
 noinst_LTLIBRARIES = libsched.la
 noinst_PROGRAMS =
 
-#noinst_PROGRAMS += <rename_me>.ko
-#uart_ns16550_ko_SOURCES = <rename_me>.c
-#uart_ns16550_ko_LDFLAGS = $(AM_LDFLAGS) -Wl,-r
+noinst_PROGRAMS += scheduler.ko
+scheduler_ko_SOURCES = scheduler.c
+scheduler_ko_LDFLAGS = $(AM_LDFLAGS) -Wl,-r
 # Remember to add your module to modules.am
 # You don't have to apply configure options to your module.
 

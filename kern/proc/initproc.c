@@ -23,7 +23,8 @@
 #include <sys/types.h>
 #include <aim/console.h>
 #include <aim/proc.h>
-//#include <aim/sched.h>
+#include <aim/smp.h>
+#include <aim/sched.h>
 //#include <fs/vfs.h>	/* fsinit() */
 //#include <fs/namei.h>
 //#include <fs/vnode.h>
@@ -53,6 +54,7 @@ void initproc_entry(void)
 	 * requires a working scheduler and interrupts enabled.
 	 */
 	kpdebug("initproc running.\n");
+	kpdebug("running on cpu %d.\n", cpuid());
 	//fsinit();
 	//kpdebug("FS initialized.\n");
 	//ttyinit();
@@ -77,6 +79,6 @@ void spawn_initproc(void)
 	initproc->groupleader = initproc;
 	initproc->sessionleader = initproc;
 	initproc->mainthread = initproc;
-	//proc_add(initproc);
+	proc_add(initproc);
 }
 

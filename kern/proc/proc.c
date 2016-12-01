@@ -29,14 +29,14 @@
 #include <aim/percpu.h>
 #include <aim/vmm.h>
 #include <aim/proc.h>
-//#include <aim/sched.h>
+#include <aim/sched.h>
 #include <aim/smp.h>
-//#include <aim/sync.h>
+#include <aim/sync.h>
 #include <aim/uvm.h>
 #include <bitmap.h>
 
 static struct {
-	//lock_t lock;
+	lock_t lock;
 	DECLARE_BITMAP(bitmap, MAX_PROCESSES);
 } freekpid;
 
@@ -73,13 +73,13 @@ void *alloc_kstack_size(size_t *size)
 /* Find and remove the first available KPID from the free KPID set. */
 static pid_t kpid_new(void)
 {
-	//unsigned long flags;
+	unsigned long flags;
 	pid_t kpid;
 
-	//spin_lock_irq_save(&freekpid.lock, flags);
+	spin_lock_irq_save(&freekpid.lock, flags);
 	kpid = bitmap_find_first_zero_bit(freekpid.bitmap, MAX_PROCESSES);
 	atomic_set_bit(kpid, freekpid.bitmap);
-	//spin_unlock_irq_restore(&freekpid.lock, flags);
+	spin_unlock_irq_restore(&freekpid.lock, flags);
 
 	return kpid;
 }
@@ -132,8 +132,8 @@ struct proc *proc_new(struct namespace *ns)
 	proc->first_child = NULL;
 	proc->next_sibling = NULL;
 	proc->prev_sibling = NULL;
-	//proc->scheduler = scheduler;
-	//list_init(&(proc->sched_node));
+	proc->scheduler = scheduler;
+	list_init(&(proc->sched_node));
 
 	return proc;
 rollback_proc:
@@ -167,7 +167,7 @@ void proc_usetup(struct proc *proc, void *entry, void *stacktop, void *args)
 
 void proc_init(void)
 {
-	//spinlock_init(&freekpid.lock);
+	spinlock_init(&freekpid.lock);
 }
 
 void idle_init(void)

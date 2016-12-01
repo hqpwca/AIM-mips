@@ -21,7 +21,9 @@
 #endif /* HAVE_CONFIG_H */
 
 #include <sys/types.h>
+#include <aim/panic.h>
 #include <aim/proc.h>
+#include <aim/vmm.h>
 
 void proctree_add_child(struct proc *child, struct proc *parent)
 {
@@ -30,5 +32,21 @@ void proctree_add_child(struct proc *child, struct proc *parent)
 	if (parent->first_child != NULL)
 		parent->first_child->prev_sibling = child;
 	parent->first_child = child;
+}
+
+void proctree_remove(struct proc *pos)
+{
+	if(pos->first_child != NULL)
+		panic("non-empty proc_tree node.\n");
+	if(pos->parent == NULL)
+		panic("attempt to remove root node.\n");
+
+	struct proc *father = pos->parent;
+	if(pos == father->first_child)
+		father->first_child = pos->next_sibling;
+	if(pos->prev_sibling != NULL)
+		pos->prev_sibling->next_sibling = pos->next_sibling;
+	if(pos->next_sibling != NULL)
+		pos->next_sibling->prev_sibling = pos->prev_sibling;
 }
 

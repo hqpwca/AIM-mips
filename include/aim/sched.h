@@ -60,6 +60,8 @@ extern struct scheduler *scheduler;
 void sched_enter_critical(void);
 void sched_exit_critical(void);
 
+void set_scheduler(struct scheduler *sch);
+
 void sched_init(void);
 void schedule(void);
 

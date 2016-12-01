@@ -23,7 +23,7 @@
 #include <aim/namespace.h>
 #include <aim/uvm.h>
 #include <context.h>
-//#include <list.h>
+#include <list.h>
 //#include <file.h>
 
 struct proc {
@@ -151,6 +151,7 @@ void proc_trap_return(struct proc *proc);
  * Process tree maintenance
  */
 void proctree_add_child(struct proc *child, struct proc *parent);
+void proctree_remove(struct proc *pos);
 
 #endif /* _PROC_H */
 

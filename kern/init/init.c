@@ -14,7 +14,8 @@
 #include <aim/device.h>
 #include <aim/initcalls.h>
 #include <aim/percpu.h>
-#include <asm.h>
+#include <aim/proc.h>
+#include <aim/sched.h>
 #include <drivers/io/io-mem.h>
 #include <drivers/io/io-port.h>
 #include <platform.h>
@@ -106,53 +107,59 @@ void test_allocator()
 	kputs("\n");
 }
 
-__noreturn
-void master_init(void)
+void output_running_message()
+{
+	int cid = cpuid();
+	int i;
+	for(i=0; i==i; ++i)
+		if(i == 400000000)
+		{
+			kprintf("CPU NO.%d running...\n", cid);
+			i = 0;
+		}
+}
+
+void allocator_init()
 {
 	extern uint32_t simple1_start;
 	simple_allocator_bootstrap(&simple1_start, 0x8000);	
 	kputs("Simple allocator 1 opened.\n");	
-	
 	page_allocator_init();
 	kputs("Page allocator opened.\n");	
-	
 	init_free_pages();
-	
 	struct simple_allocator old;
 	get_simple_allocator(&old);
-	
 	simple_allocator_init();
 	kputs("Simple allocator 2 opened.\n");
-	
 	page_allocator_move(&old);
 	kputs("Page allocator moved.\n");
+}
+
+__noreturn
+void master_init(void)
+{
+	allocator_init();
 	//test_allocator();
 
 	bsp_trap_init();
 	trap_init();
 	kputs("Trap initialized.\n");
-
 	//trap_check();
 
-	to_link = -1;
+	sched_init();
+	proc_init();
+	idle_init();
 
 	do_early_initcalls();
 	do_initcalls();
 
-	kputs("Test new console\n");
-
 	smp_startup();
 	asm volatile("sti");
+	spawn_initproc();
+	while(1)
+		schedule();
 
 	//panic("Test all CPU panic\n");
-
-	int i;
-	for(i=0; i==i; ++i)
-		if(i == 400000000)
-		{
-			kprintf("master cpu running...\n");
-			i = 0;
-		}
 
 	goto panic;
 panic:
@@ -176,20 +183,15 @@ void slave_init(void)
 	kpdebug("slave cpu NO.%d started.\n", cpuid());
 
 	asm volatile("sti");
-
-	xchg(&cpus[cpuid()].started, 1);
-
-
+	claim_started();
+	/*
 	if(cpuid() == 3)
 		panic("panic by CPU 3.\n");
+	*/
 
-	int i;
-	for(i=0; i==i; ++i)
-		if(i == 400000000)
-		{
-			kprintf("slave cpu NO.%d running...\n", cpuid());
-			i = 0;
-		}
+	idle_init();
+	while(1)
+		schedule();
 
 	goto panic;
 panic:

@@ -19,6 +19,12 @@
 MODULES =
 
 ##############
+# Schedulers #
+##############
+
+MODULES += $(top_builddir)/kern/proc/sched/scheduler.ko
+
+##############
 # Algorithms #
 ##############
 

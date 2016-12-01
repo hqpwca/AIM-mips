@@ -58,8 +58,8 @@ static void __bootstrap_trapframe(struct trapframe *tf,
 
 static void __bootstrap_context(struct context *context, struct trapframe *tf)
 {
-	context->eip = (uint32_t)forkret();
-	context->ebp = tf;
+	context->esp = tf - sizeof(void *);
+	*(uint32_t *)context->esp = (uint32_t)forkret;
 	context->ebx = context->esi = context->edi = 0;
 }
 
@@ -114,6 +114,6 @@ void switch_context(struct proc *proc)
 	/* Switch page directory */
 	switch_pgindex(proc->mm->pgindex);
 	/* Switch general registers */
-	switch_regs(&&(current->context), &(proc->context));
+	switch_regs(&(current->context), &(proc->context));
 }
 

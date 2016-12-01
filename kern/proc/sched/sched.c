@@ -32,6 +32,8 @@
 static lock_t sched_lock;
 static unsigned long __sched_intrflags;
 
+struct scheduler *scheduler;
+
 void sched_enter_critical(void)
 {
 	spin_lock_irq_save(&sched_lock, __sched_intrflags);
@@ -127,17 +129,30 @@ void wakeup(void *bed)
 
 void proc_add(struct proc *proc)
 {
+	sched_enter_critical();
 	scheduler->add(proc);
+	sched_exit_critical();
 }
 
 void proc_remove(struct proc *proc)
 {
+	sched_enter_critical();
 	scheduler->remove(proc);
+	sched_exit_critical();
 }
 
 struct proc *proc_next(struct proc *proc)
 {
+	sched_enter_critical();
 	return scheduler->next(proc);
+	sched_exit_critical();
+}
+
+void set_scheduler(struct scheduler *sch)
+{
+	sched_enter_critical();
+	scheduler = sch;
+	sched_exit_critical();
 }
 
 void sched_init(void)

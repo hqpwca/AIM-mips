@@ -19,22 +19,23 @@
 /* switch_regs(struct context *old, struct context *new) */
 
 .globl switch_regs
+.globl forkret
 
 .text
 switch_regs:
 	movl	4(%esp), %eax
 	movl	8(%esp), %edx
 
-	pushl	%ebp
-	pushl	%ebx
-	pushl	%esi
-	pushl	%edi
-
+	movl	%ebp, 4(%eax)
+	movl	%edi, 8(%eax)
+	movl	%esi, 12(%eax)
+	movl	%ebx, 16(%eax)
 	movl	%esp, (%eax)
-	movl	%edx, %esp
 
-	popl	%edi
-	popl	%esi
-	popl	%ebx
-	popl	%ebp
+	movl	(%edx), %esp
+	movl	4(%edx), %ebp
+	movl	8(%edx), %edi
+	movl	12(%edx), %esi
+	movl	16(%edx), %ebx
+	
 	ret
