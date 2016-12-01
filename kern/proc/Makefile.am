@@ -22,6 +22,9 @@ SUBDIRS = \
 
 noinst_LTLIBRARIES = libproc.la
 
+libproc_la_LIBADD = \
+	sched/libsched.la
+
 libproc_la_SOURCES = \
 	initproc.c \
 	proc.c \
