@@ -29,3 +29,7 @@ scheduler_ko_LDFLAGS = $(AM_LDFLAGS) -Wl,-r
 libsched_la_SOURCES = \
 	sched.c
 
+libsched_la_CPPFLAGS = $(AM_CPPFLAGS_NOPIC)
+libsched_la_CFLAGS = $(AM_CFLAGS_NOPIC)
+libsched_la_CCASFLAGS = $(AM_CCASFLAGS_NOPIC)
+libsched_la_LDFLAGS = $(AM_LDFLAGS_NOPIC)

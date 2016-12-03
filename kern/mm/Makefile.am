@@ -29,6 +29,7 @@ libmm_la_SOURCES = \
 	mmu.c \
 	jump.c \
 	uvm.c
+
 libmm_la_LIBADD = \
 	kmmap/libkmmap.la \
 	pmm/libpmm.la \

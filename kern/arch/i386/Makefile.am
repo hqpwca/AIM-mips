@@ -40,7 +40,7 @@ libarch_la_SOURCES = \
 	arch_smp.c \
 	pgoperation.c \
 	trap_asm.S \
-	vectors.S
+	vectors.S \
 	proc.c \
 	switch.S
 libarch_la_LIBADD = \

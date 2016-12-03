@@ -8,12 +8,24 @@
 #include <aim/vmm.h>
 #include <aim/pmm.h>
 #include <aim/panic.h>
+#include <aim/console.h>
 #include <arch-mmu.h>
 #include <libc/string.h>
 
 pgindex_t *init_pgindex(void)
 {
 	pgindex_t *pgindex = (pgindex_t *)(uint32_t)pgalloc();
+	int ret;
+
+	struct early_mapping *mapping = early_mapping_next(NULL);
+
+	for (; mapping != NULL; mapping = early_mapping_next(mapping)) {
+		kpdebug("Early mapping : paddr: 0x%x, vaddr: 0x%x, size: 0x%x\n",
+			(uint32_t)mapping->paddr, (uint32_t)mapping->vaddr, (uint32_t)mapping->size);
+		ret = map_pages(pgindex, mapping->vaddr,
+			mapping->paddr, mapping->size, 0);
+		if (ret == EOF) return EOF;
+	}
 	
 	return pgindex;
 }

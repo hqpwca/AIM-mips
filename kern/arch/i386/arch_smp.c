@@ -19,6 +19,8 @@
 #include <arch-mp.h>
 #include <libc/string.h>
 
+#include <asm.h>
+
 struct percpu cpus[CPUNUM];
 
 int nr_cpus(void)
@@ -102,4 +104,9 @@ void panic_other_cpus()
 void arch_slave_init()
 {
 	lapic_init();
+}
+
+void claim_started()
+{
+	xchg(&cpus[cpuid()].started, 1);
 }

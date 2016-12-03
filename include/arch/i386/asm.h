@@ -16,6 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef ASM_H
+#define ASM_H
+
 static inline
 uint8_t inb(uint16_t port)
 {
@@ -73,3 +76,4 @@ xchg(volatile uint32_t *addr, uint32_t newval)
     return result;
 }
 
+#endif

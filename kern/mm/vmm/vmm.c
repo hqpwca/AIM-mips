@@ -51,7 +51,7 @@ void *kmalloc(size_t size, gfp_t flags)
 	//recursive_unlock_irq_restore(&memlock, intr_flags);
 	if (flags & GFP_ZERO)
 		memset(result, 0, size);
-	return result;
+	return postmap_addr(result);
 }
 
 void kfree(void *obj)
@@ -60,7 +60,7 @@ void kfree(void *obj)
 	if (obj != NULL) {
 		//recursive_lock_irq_save(&memlock, flags);
 		/* Junk filling is in flff.c since we need the gfp flags */
-		__simple_allocator.free(obj);
+		__simple_allocator.free(premap_addr(obj));
 		//recursive_unlock_irq_restore(&memlock, flags);
 	}
 }
@@ -68,7 +68,7 @@ void kfree(void *obj)
 size_t ksize(void *obj)
 {
 	if (obj != NULL)
-		return __simple_allocator.size(obj);
+		return __simple_allocator.size(premap_addr(obj));
 	else
 		return 0;
 }

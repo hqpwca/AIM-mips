@@ -146,6 +146,7 @@ void master_init(void)
 	kputs("Trap initialized.\n");
 	//trap_check();
 
+	mm_init();
 	sched_init();
 	proc_init();
 	idle_init();
@@ -155,11 +156,13 @@ void master_init(void)
 
 	smp_startup();
 	asm volatile("sti");
+	//trap_check();
+
 	spawn_initproc();
 	while(1)
 		schedule();
 
-	//panic("Test all CPU panic\n");
+	output_running_message();
 
 	goto panic;
 panic:
@@ -183,13 +186,15 @@ void slave_init(void)
 	kpdebug("slave cpu NO.%d started.\n", cpuid());
 
 	asm volatile("sti");
+	idle_init();
+	spawn_initproc();
+	//trap_check();
 	claim_started();
 	/*
 	if(cpuid() == 3)
 		panic("panic by CPU 3.\n");
 	*/
-
-	idle_init();
+	//output_running_message();
 	while(1)
 		schedule();
 

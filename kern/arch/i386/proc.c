@@ -26,6 +26,7 @@
 #include <aim/smp.h>
 #include <aim/trap.h>
 #include <aim/console.h>
+#include <arch-trap.h>
 #include <context.h>
 
 //extern void forkret(void);
@@ -35,14 +36,15 @@ void forkret(void)
 {
 	kpdebug("fork return here.\n");
 
-	proc_trap_return();
+	sched_exit_critical();
+	proc_trap_return(current_proc);
 }
 
 static struct trapframe *__proc_trapframe(struct proc *proc)
 {
 	struct trapframe *tf;
 
-	tf = (struct trapframe *)(kstacktop(proc) - sizeof(*tf));
+	tf = (struct trapframe *)(kstacktop(proc) - sizeof(struct trapframe));
 	return tf;
 }
 
@@ -51,8 +53,8 @@ static void __bootstrap_trapframe(struct trapframe *tf,
 				   void *stacktop,
 				   void *args)
 {
+	asm volatile("movw %%cs, %0" : "=r" (tf->cs));
 	tf->eip = entry;
-	tf->esp = stacktop;
 	tf->eax = args;
 }
 

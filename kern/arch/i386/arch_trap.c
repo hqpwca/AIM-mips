@@ -55,7 +55,7 @@ void trap_exec(struct trapframe *tf)
 		int irqno = tf->trapno - T_IRQ0;
 		if(irqno == IRQ_TIMER || irqno == IRQ_KBD || irqno == IRQ_COM1 ||
 			 irqno == IRQ_IDE ||  irqno == IRQ_ERROR ||  irqno == IRQ_SPURIOUS)
-			handle_interrupt(irqno);
+			handle_interrupt(tf->trapno);
 		else
 			panic("Unknown or undefined trap No.%d\n", tf->trapno);
 	}
@@ -80,5 +80,6 @@ void trap_return(struct trapframe *tf)
 
 void trap_check()
 {
-	asm volatile("int $32;");
+	asm volatile("int $32");
+	asm volatile("int $64");
 }

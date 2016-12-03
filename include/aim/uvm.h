@@ -22,7 +22,7 @@
 
 #include <aim/mmu.h>
 #include <aim/pmm.h>
-//#include <aim/sync.h>
+#include <aim/sync.h>
 #include <atomic.h>
 #include <list.h>
 
@@ -33,7 +33,7 @@ struct mm {
 	size_t		vma_count;	/* number of virtual memory areas */
 	size_t		ref_count;	/* reference count (may be unused) */
 	pgindex_t	*pgindex;	/* pointer to page index */
-	//lock_t		lock;
+	lock_t		lock;
 };
 
 /*

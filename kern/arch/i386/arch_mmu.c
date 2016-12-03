@@ -64,7 +64,6 @@ int page_index_early_map(pgindex_t *pgindex, addr_t paddr, void *vaddr, size_t s
 void mmu_init(pgindex_t *boot_page_index)
 {
 	uint32_t cr0,cr4;
-	kernel_mm->pgindex = boot_page_index;
 	
 	asm volatile("movl %%cr4,%0" : "=r" (cr4));
 	cr4 |= CR4_PSE;
