@@ -24,6 +24,8 @@
 #include <aim/early_kmmap.h>
 #include <aim/mmu.h>
 #include <aim/panic.h>
+#include <aim/vmm.h>
+#include <aim/pmm.h>
 #include <aim/uvm.h>
 #include <arch-mmu.h>
 #include <libc/string.h>
@@ -41,6 +43,22 @@ void page_index_clear(pgindex_t *addr)
 		*a = 0;
 */
 	memset(addr, 0, PGSIZE);
+}
+
+void init_free_pages()
+{
+	size_t kend = kva2pa(&kern_end);
+	kend = ALIGN_ABOVE(kend, PAGE_SIZE);
+	kprintf("Start Freeing: 0x%x ~ 0x%x...\n", kend, MEM_SIZE - 0x10000000);
+	
+	struct pages *p = kmalloc(sizeof(*p), 0);
+	p->paddr = kend;
+	p->size = MEM_SIZE - kend - 0x10000000;
+	p->flags = GFP_UNSAFE;
+	
+	free_pages(p);
+	
+	kprintf("Finish Freed: 0x%x ~ 0x%x...\n", kend, MEM_SIZE - 0x10000000);
 }
 
 int page_index_early_map(pgindex_t *pgindex, addr_t paddr, void *vaddr, size_t size)

@@ -23,6 +23,14 @@
 #include <sys/types.h>
 #include <aim/early_kmmap.h>
 #include <aim/mmu.h>
+#include <aim/panic.h>
+#include <aim/vmm.h>
+#include <aim/pmm.h>
+#include <aim/uvm.h>
+#include <arch-mmu.h>
+#include <tlb.h>
+#include <mipsregs.h>
+#include <libc/string.h>
 
 bool early_mapping_valid(struct early_mapping *entry)
 {
@@ -36,10 +44,54 @@ void page_index_clear(pgindex_t *index)
 int page_index_early_map(pgindex_t *index, addr_t paddr,
 	void *vaddr, size_t length)
 {
-	return -1;
+	return 0;
+}
+
+void tlb_flush(void)
+{
+	int nr_entries = get_tlb_entries();
+	for (int i = 0; i < nr_entries; ++i) {
+		write_c0_index(i);
+		write_c0_entryhi(ENTRYHI_DUMMY(i));
+		write_c0_entrylo0(0);
+		write_c0_entrylo1(0);
+		write_c0_pagemask(PAGEMASK_VALUE);
+		tlbwi();
+	}
+	/* Clear ASID */
+	write_c0_entryhi(0);
 }
 
 void mmu_init(pgindex_t *boot_page_index)
 {
+	tlb_flush();
 }
 
+void init_free_pages()
+{
+	size_t kend = kva2pa(&kern_end);
+	kend = ALIGN_ABOVE(kend, PAGE_SIZE);
+	kprintf("Start Freeing: 0x%x ~ 0x%x...\n", kend, LOWRAM_TOP);
+	
+	struct pages *p = kmalloc(sizeof(*p), 0);
+	p->paddr = kend;
+	p->size = LOWRAM_TOP - kend;
+	p->flags = GFP_UNSAFE;
+	
+	free_pages(p);
+
+	kprintf("Finish Freed: 0x%x ~ 0x%x...\n", kend, LOWRAM_TOP);
+
+#if HIGHRAM_SIZE != 0
+	kprintf("Start Freeing: 0x%x ~ 0x%x...\n", HIGHRAM_BASE, HIGHRAM_BASE + HIGHRAM_SIZE);
+
+	p = kmalloc(sizeof(*p), 0);
+	p->paddr = HIGHRAM_BASE;
+	p->size = HIGHRAM_SIZE;
+	p->flags = GFP_UNSAFE;
+
+	free_pages(p);
+
+	kprintf("Finish Freed: 0x%x ~ 0x%x...\n", HIGHRAM_BASE, HIGHRAM_BASE + HIGHRAM_SIZE);
+#endif
+}

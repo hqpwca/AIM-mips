@@ -103,6 +103,7 @@ void panic_other_cpus()
 
 void arch_slave_init()
 {
+	load_segment();
 	lapic_init();
 }
 

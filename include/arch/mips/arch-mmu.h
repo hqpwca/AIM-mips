@@ -19,9 +19,17 @@
 #ifndef _ARCH_MMU_H
 #define _ARCH_MMU_H
 
+#include <addrspace.h>
+#include <util.h>
+
 /* addresses before and after early MMU mapping */
 #define __premap_addr(kva)	(ULCAST(kva) - KERN_BASE)
 #define __postmap_addr(pa)	(ULCAST(pa) + KERN_BASE)
+
+#define PAGE_SHIFT 12
+#define PAGE_SIZE   (1 << PAGE_SHIFT)
+#define PAGE_MASK   (PAGE_SIZE - 1)
+#define PAGE_OFFSET(a)  (ULCAST(a) & PAGE_MASK)
 
 /* kernel virtual address and physical address conversion */
 #define kva2pa(kva)		(ULCAST(kva) - KERN_BASE)

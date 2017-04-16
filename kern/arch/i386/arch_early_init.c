@@ -58,10 +58,14 @@ void arch_mm_init(void)
 		panic("error early mapping kmmap\n");
 	if(early_mapping_add_devspace(0xfe000000,0x1000000) == 0)
 		panic("error early mapping devspace\n");
+
+	page_index_init((pgindex_t *)premap_addr((void *)&pgindex));
+	mmu_init((pgindex_t *)premap_addr((void *)&pgindex));
+	load_segment();
 }
 
 void arch_early_init(void)
 {
-	arch_mm_init();
+	
 }
 

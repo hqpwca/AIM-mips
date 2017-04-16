@@ -52,22 +52,6 @@ int do_initcalls()
 	return (result < 0) ? -1 : 0;
 }
 
-void init_free_pages()
-{
-	size_t kend = kva2pa(&kern_end);
-	kend = ALIGN_ABOVE(kend, PAGE_SIZE);
-	kprintf("Start Freeing: 0x%x ~ 0x%x...\n", kend, MEM_SIZE - 0x10000000);
-	
-	struct pages *p = kmalloc(sizeof(*p), 0);
-	p->paddr = kend;
-	p->size = MEM_SIZE - kend - 0x10000000;
-	p->flags = GFP_UNSAFE;
-	
-	free_pages(p);
-	
-	kprintf("Finish Freed: 0x%x ~ 0x%x...\n", kend, MEM_SIZE - 0x10000000);
-}
-
 void test_allocator()
 {
 	kputs("\n");
@@ -179,7 +163,6 @@ void slave_init(void)
 
 	kpdebug("slave cpu NO.%d starting...\n", cpuid());
 
-	load_segment();
 	arch_slave_init();
 	trap_init();
 

@@ -23,6 +23,21 @@
 #include <sys/types.h>
 #include <aim/init.h>
 
+void abs_jump(void *addr)
+{
+	asm volatile (
+		"move	$25, %0;"
+		"jr	%0"
+		: /* no output */
+		: "r"(addr)
+	);
+}
+
+void arch_mm_init()
+{
+	mmu_init();
+}
+
 void arch_early_init(void)
 {
 

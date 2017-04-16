@@ -18,7 +18,8 @@
 include $(top_srcdir)/env.am
 
 SUBDIRS = \
-	mach-loongson3a
+	mach-loongson
+	mach-qemu
 
 noinst_HEADERS = \
 	arch-bitops.h \
@@ -28,7 +29,12 @@ noinst_HEADERS = \
 	arch-mmu.h \
 	arch-sync.h \
 	arch-trap.h \
+	arch-smp.h \
 	asm.h \
+	addrspace.h \
+	pgtable.h \
+	stack.h \
+	tlb.h \
 	atomic.h \
 	context.h \
 	cp0regdef.h \

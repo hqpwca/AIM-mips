@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 David Gao <davidgao1001@gmail.com>
+vi/* Copyright (C) 2016 David Gao <davidgao1001@gmail.com>
  *
  * This file is part of AIM.
  *

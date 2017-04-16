@@ -51,10 +51,8 @@ int early_devices_init(void)
 }
 
 void early_mm_init()
-{	
-	page_index_init((pgindex_t *)premap_addr((void *)&pgindex));
-	mmu_init((pgindex_t *)premap_addr((void *)&pgindex));
-	load_segment();
+{
+	arch_mm_init();
 }
 
 __noreturn
@@ -63,6 +61,7 @@ void master_early_init(void)
 	/* clear address-space-related callback handlers */
 	early_mapping_clear();
 	mmu_handlers_clear();
+	arch_early_init();
 	/* prepare early devices like memory bus and port bus */
 	if (early_devices_init() < 0)
 		goto panic;
@@ -76,7 +75,6 @@ void master_early_init(void)
 		panic("Early console init failed.\n");
 	kputs("Hello, world!\n");
 	
-	arch_early_init();
 	early_mm_init();
 
 	jump_handlers_apply();
