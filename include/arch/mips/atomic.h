@@ -19,37 +19,91 @@
 #ifndef _ATOMIC_H
 #define _ATOMIC_H
 
+#include <sys/types.h>
+#include <asm.h>
+#include <arch-sync.h>
+
 /* counter += val */
-static inline void atomic_add(atomic_t *counter, uint32_t val)
+static inline void atomic_add(__unused atomic_t *counter, __unused uint32_t val)
 {
 }
 
 /* counter -= val */
-static inline void atomic_sub(atomic_t *counter, uint32_t val)
+static inline void atomic_sub(__unused atomic_t *counter, __unused uint32_t val)
 {
 }
 
-/* counter++ */
 static inline void atomic_inc(atomic_t *counter)
 {
+	uint32_t reg;
+	smp_mb();
+	asm volatile (
+		"	.set	push;"
+		"	.set	reorder;"
+		"1:	ll	%[reg], %[mem];"
+		"	addu	%[reg], 1;"
+		"	sc	%[reg], %[mem];"
+		"	beqz	%[reg], 1b;"
+		"	.set	pop;"
+		: [reg] "=&r"(reg), [mem] "+m"(*counter)
+	);
+	smp_mb();
 }
 
 /* counter-- */
 static inline void atomic_dec(atomic_t *counter)
 {
+	uint32_t reg;
+	smp_mb();
+	asm volatile (
+		"	.set	push;"
+		"	.set	reorder;"
+		"1:	ll	%[reg], %[mem];"
+		"	addu	%[reg], -1;"
+		"	sc	%[reg], %[mem];"
+		"	beqz	%[reg], 1b;"
+		"	.set	pop;"
+		: [reg] "=&r"(reg), [mem] "+m"(*counter)
+	);
+	smp_mb();
 }
 
-static inline void atomic_set_bit(
-	unsigned long nr,
-	volatile unsigned long *addr)
+static inline void atomic_set_bit(unsigned long nr,
+				  volatile unsigned long *addr)
 {
+	unsigned long *m = ((unsigned long *)addr) + ((--nr) >> BITS_PER_LONG_LOG);
+	int bit = nr & BITS_PER_LONG_MASK;
+	unsigned long temp;
+
+	smp_mb();
+	asm volatile (
+		"1:	"__LL " %0, %1;"
+		"	or	%0, %2;"
+		"	"__SC " %0, %1;"
+		"	beqzl	%0, 1b;"
+		: "=&r"(temp), "+m"(*m)
+		: "ir"(1UL << bit)
+	);
+	smp_mb();
 }
 
-static inline void atomic_clear_bit(
-	unsigned long nr,
-	volatile unsigned long *addr)
+static inline void atomic_clear_bit(unsigned long nr,
+				    volatile unsigned long *addr)
 {
+	unsigned long *m = ((unsigned long *)addr) + ((--nr) >> BITS_PER_LONG_LOG);
+	int bit = nr & BITS_PER_LONG_MASK;
+	unsigned long temp;
+
+	smp_mb();
+	asm volatile (
+		"1:	"__LL " %0, %1;"
+		"	and	%0, %2;"
+		"	"__SC " %0, %1;"
+		"	beqzl	%0, 1b;"
+		: "=&r"(temp), "+m"(*m)
+		: "ir"(~(1UL << bit))
+	);
+	smp_mb();
 }
 
 #endif
-

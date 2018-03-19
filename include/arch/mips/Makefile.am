@@ -18,7 +18,8 @@
 include $(top_srcdir)/env.am
 
 SUBDIRS = \
-	mach-loongson
+	mach-loongson1
+	mach-loongson3a
 	mach-qemu
 
 noinst_HEADERS = \
@@ -39,5 +40,7 @@ noinst_HEADERS = \
 	context.h \
 	cp0regdef.h \
 	platform.h \
-	regdef.h
-
+	mipsregs.h \
+	regdef.h \
+	regs.h \
+	decode.h

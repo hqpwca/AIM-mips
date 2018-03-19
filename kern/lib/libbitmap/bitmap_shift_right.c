@@ -70,6 +70,6 @@ __weak void __bitmap_shift_right(unsigned long *dst,
 			dst[k] &= mask;
 	}
 	if (off)
-		memset(&dst[lim - off], 0, off*sizeof(unsigned long));
+		memset(&dst[lim - off], 0, (ulong)off * sizeof(unsigned long));
 }
 

@@ -1,4 +1,5 @@
 /* Copyright (C) 2016 Gan Quan <coin2028@hotmail.com>
+ * Copyright (C) 2016 David Gao <davidgao1001@gmail.com>
  *
  * This file is part of AIM.
  *
@@ -18,18 +19,31 @@
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif /* HAVE_CONFIG_H */
+#endif
 
 #include <sys/types.h>
-#include <aim/namespace.h>
-#include <aim/proc.h>
+#include <aim/device.h>
 
-pid_t pid_new(pid_t kpid, __unused struct namespace *ns)
-{
-	return kpid;
-}
+struct devtree_entry devtree[] = {
+	/* memory bus */
+	{
+		"io-mem",
+		"io-mem",
+		"",
+		0,
+		{0},
+		0,
+	},
+	/* port bus */
+	{
+		"io-port",
+		"io-port",
+		"",
+		0,
+		{0},
+		0,
+	},
+};
 
-void pid_recycle(__unused pid_t pid, __unused struct namespace *ns)
-{
-}
+int ndevtree_entries = ARRAY_SIZE(devtree);
 

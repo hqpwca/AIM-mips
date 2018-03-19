@@ -26,7 +26,7 @@ __weak unsigned long bitmap_find_first_bit(const unsigned long *addr,
 	unsigned long result = 0;
 	unsigned long tmp;
 
-	while (size & ~(BITS_PER_LONG-1)) {
+	while (size & ~((size_t)BITS_PER_LONG-1)) {
 		if ((tmp = *(p++)))
 			goto found;
 		result += BITS_PER_LONG;
@@ -39,6 +39,6 @@ __weak unsigned long bitmap_find_first_bit(const unsigned long *addr,
 	if (tmp == 0UL)		/* Are any bits set? */
 		return 0;	/* Nope. */
 found:
-	return result + ffs(tmp);
+	return result + (ulong)ffs(tmp);
 }
 

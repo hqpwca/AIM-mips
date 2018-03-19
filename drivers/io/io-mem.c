@@ -35,54 +35,55 @@
 #include <aim/io.h>
 #include <aim/mmu.h>
 #include <aim/panic.h>
+#include <aim/vmm.h>
 #include <errno.h>
 
 #include <io-mem.h>
 #include <aim/initcalls.h>
 
-static int __read8(struct bus_device *inst, addr_t base, addr_t offset,
+static int __read8(__unused struct bus_device *inst, addr_t base, addr_t offset,
     uint64_t *ptr)
 {
-	*ptr = (uint64_t)read8(base + offset);
+	*ptr = (uint64_t)read8((ulong)(base + offset));
 	return 0;
 }
 
-static int __read16(struct bus_device *inst, addr_t base, addr_t offset,
+static int __read16(__unused struct bus_device *inst, addr_t base, addr_t offset,
     uint64_t *ptr)
 {
-	*ptr = (uint64_t)read16(base + offset);
+	*ptr = (uint64_t)read16((ulong)(base + offset));
 	return 0;
 }
 
-static int __read32(struct bus_device *inst, addr_t base, addr_t offset,
+static int __read32(__unused struct bus_device *inst, addr_t base, addr_t offset,
     uint64_t *ptr)
 {
-	*ptr = (uint64_t)read32(base + offset);
+	*ptr = (uint64_t)read32((ulong)(base + offset));
 	return 0;
 }
 
-static int __write8(struct bus_device *inst, addr_t base, addr_t offset,
+static int __write8(__unused struct bus_device *inst, addr_t base, addr_t offset,
     uint64_t val)
 {
-	write8(base + offset, (uint8_t)val);
+	write8((ulong)(base + offset), (uint8_t)val);
 	return 0;
 }
 
-static int __write16(struct bus_device *inst, addr_t base, addr_t offset,
+static int __write16(__unused struct bus_device *inst, addr_t base, addr_t offset,
     uint64_t val)
 {
-	write16(base + offset, (uint16_t)val);
+	write16((ulong)(base + offset), (uint16_t)val);
 	return 0;
 }
 
-static int __write32(struct bus_device *inst, addr_t base, addr_t offset,
+static int __write32(__unused struct bus_device *inst, addr_t base, addr_t offset,
     uint64_t val)
 {
-	write32(base + offset, (uint32_t)val);
+	write32((ulong)(base + offset), (uint32_t)val);
 	return 0;
 }
 
-static bus_read_fp __get_read_fp(struct bus_device *inst, int data_width)
+static bus_read_fp __get_read_fp(__unused struct bus_device *inst, int data_width)
 {
 	switch (data_width) {
 		case 8: return __read8;
@@ -92,7 +93,7 @@ static bus_read_fp __get_read_fp(struct bus_device *inst, int data_width)
 	return NULL;
 }
 
-static bus_write_fp __get_write_fp(struct bus_device *inst, int data_width)
+static bus_write_fp __get_write_fp(__unused struct bus_device *inst, int data_width)
 {
 	switch (data_width) {
 		case 8: return __write8;
@@ -134,7 +135,7 @@ int io_mem_init(struct bus_device *memory_bus)
 //#if 0
 static struct bus_driver drv;
 
-static int __new(struct devtree_entry *entry)
+static int __new(__unused struct devtree_entry *entry)
 {
 	/* default implementation... */
 	return -EEXIST;
@@ -152,11 +153,11 @@ static int __driver_init(void)
 	kpdebug("initializing memory bus\n");
 	struct bus_device *memory_bus;
 	register_driver(NOMAJOR, &drv);
-#ifdef IO_MEM_ROOT
-	memory_bus = postmap_addr(kmalloc(sizeof(*memory_bus), GFP_ZERO));
+//#ifdef IO_MEM_ROOT
+	memory_bus = (struct bus_device *)postmap_addr(kmalloc(sizeof(*memory_bus), GFP_ZERO));
 	initdev(memory_bus, DEVCLASS_BUS, "memory", NODEV, &drv);
 	dev_add(memory_bus);
-#endif
+//#endif
 	return 0;
 }
 INITCALL_DRIVER(__driver_init);

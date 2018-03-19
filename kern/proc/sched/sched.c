@@ -130,6 +130,7 @@ void wakeup(void *bed)
 void proc_add(struct proc *proc)
 {
 	sched_enter_critical();
+	kpdebug("scheduler: 0x%x\n", scheduler);
 	scheduler->add(proc);
 	sched_exit_critical();
 }
@@ -159,4 +160,3 @@ void sched_init(void)
 {
 	spinlock_init(&sched_lock);
 }
-

@@ -22,7 +22,7 @@
 
 #define __LDSCRIPT__
 
-#include <mmu.h>
+#include <aim/mmu.h>
 #include <asm-generic/vmaim.lds.h>
 
 /*
@@ -30,21 +30,24 @@
  * linker script.
  */
 
-ENTRY(_start)
+ENTRY(__start)
 
 SECTIONS {
 	. = KERN_START;
-	.text : {
-		*(.text*);
+	.text :
+  {
+		*(.text*)
 	}
 
-	STRUCT_ALIGN();
-	.rodata : {
-		*(.rodata*);
+  STRUCT_ALIGN();
+	.rodata :
+  {
+		*(.rodata*)
 		EARLY_INIT(STRUCT_ALIGNMENT)
 		NORM_INIT(STRUCT_ALIGNMENT)
 		LATE_INIT(STRUCT_ALIGNMENT)
 	}
+
 	/* Global Offset Table (GOT) for position independent code.
 	 * Since we are using our own linker script, we must provide
 	 * the base address of GOT, denoted by symbol _gp, to our linker.
@@ -59,31 +62,40 @@ SECTIONS {
 	 * us.  We have to setup GP and t9 by our own.
 	 */
 	PROVIDE(_gp = ALIGN (16) + 0x7ff0);
-	.got : {
-		*(.got*);
+
+	.got :
+  {
+		*(.got*)
 	}
-	.data : {
-		*(.data*);
+  .data :
+  {
+		*(.data*)
 	}
 
 	/* Uninitialized sections comes after */
-	PROVIDE(__bss_begin__ = .);
+
+  PROVIDE(__bss_begin__ = .);
 	PROVIDE(_bss_begin = .);
-	.bss : {
-		*(.bss*);
+	.bss :
+  {
+		*(.bss*)
 	}
 	/*
 	 * MIPS ISA doesn't require alignment, paging or anything else
 	 * to run a kernel.  This alignment is only for cache-friendliness.
 	 */
 	. = ALIGN(KSTACKSIZE);
-	.boot : {
-		PROVIDE(boot_page_index = .);
-		. += KSTACKSIZE;
+  .boot : ALIGN(0x1000)
+	{
+		. = ALIGN(PAGE_SIZE);
+		PROVIDE(pgindex = .);
+		. += 32K;
 		PROVIDE(boot_stack = .);
-	}
+		PROVIDE(simple1_start = .);
+		. += 32K;
+  }
 	PROVIDE(__bss_end__ = .);
 	PROVIDE(_bss_end = .);
 	PROVIDE(_kern_end = ALIGN(PAGE_SIZE));
+  PROVIDE(kern_end = .);
 }
-

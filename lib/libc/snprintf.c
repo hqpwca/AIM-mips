@@ -53,9 +53,9 @@ int vsnprintf(char *str, size_t size, const char *fmt, va_list ap)
 #define set_ch(ch) \
 	do { \
 		str[pos++] = ch; \
-		if (pos == size) { \
+		if ((size_t)pos == size) { \
 			str[size - 1] = '\0'; \
-			return size; \
+			return (int)size; \
 		} \
 	} while (0)
 #define getint(ap) \
@@ -87,9 +87,9 @@ fmt_loop:		switch (*fmt) {
 				longflag = 0;
 				if (val < 0) {
 					flag |= FLAG_NEG;
-					uval = -val;
+					uval = (uint64_t)-val;
 				} else
-					uval = val;
+					uval = (uint64_t)val;
 				goto print_uint;
 			case 'o':
 				base = 8;
@@ -115,8 +115,8 @@ get_uint:			uval = getuint(ap);
 				longflag = 0;
 print_uint:			buf_pos = 0;
 				while (uval > 0) {
-					buf[buf_pos++] = digits(uval % base);
-					uval /= base;
+					buf[buf_pos++] = (char)digits(uval % (uint64_t)base);
+					uval /= (uint64_t)base;
 				}
 				if (buf_pos == 0)
 					buf[buf_pos++] = '0';

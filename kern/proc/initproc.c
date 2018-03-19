@@ -80,5 +80,6 @@ void spawn_initproc(void)
 	initproc->sessionleader = initproc;
 	initproc->mainthread = initproc;
 	proc_add(initproc);
+	kputs("here\n");
 }
 

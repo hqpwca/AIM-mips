@@ -43,4 +43,3 @@ libc_nopic_la_CCASFLAGS = $(AM_CCASFLAGS_NOPIC)
 libc_nopic_la_LDFLAGS = $(AM_LDFLAGS_NOPIC)
 
 libc_la_SOURCES = $(SRCS)
-

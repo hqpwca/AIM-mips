@@ -41,7 +41,7 @@ __weak unsigned long bitmap_find_last_bit(const unsigned long *addr,
 		tmp = addr[--words];
 		if (tmp) {
 found:
-			return words * BITS_PER_LONG + fls(tmp);
+			return words * BITS_PER_LONG + (ulong)fls(tmp);
 		}
 	}
 

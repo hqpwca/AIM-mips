@@ -17,10 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _MP_H
-#define _MP_H
-
-#define CPUNUM 4
+#ifndef _SMP_H
+#define _SMP_H
 
 #ifndef __ASSEMBLER__
 

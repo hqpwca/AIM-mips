@@ -39,15 +39,21 @@ AC_C_RESTRICT
 AC_C_VOLATILE
 AC_C_INLINE
 AC_C_TYPEOF
+
+# We know there are AX macros for these. We serve wrappers around them.
 AIM_GCC_FUNC_ATTRIBUTE([noreturn])
 AIM_GCC_FUNC_ATTRIBUTE([weak])
 AIM_GCC_FUNC_ATTRIBUTE([noinline])
 AIM_GCC_FUNC_ATTRIBUTE([visibility])
 AIM_GCC_VAR_ATTRIBUTE([used])
+AIM_GCC_VAR_ATTRIBUTE([unused])
 # TODO: test for compiler functionality instead of flag acceptance
 AIM_REQUIRE_COMPILE_FLAG([-fplan9-extensions])
 AIM_REQUIRE_COMPILE_FLAG([-fno-stack-protector])
 
+# Builtin functions - required
+# TODO add wrapper to check for failure
+AX_GCC_BUILTIN(__builtin_unreachable)
 # Builtin functions - not required
 AX_GCC_BUILTIN(__builtin_popcount)
 AX_GCC_BUILTIN(__builtin_popcountl)
@@ -252,7 +258,8 @@ AC_CONFIG_FILES([
 	include/arch/armv7a/Makefile
 	include/arch/i386/Makefile
 	include/arch/mips/Makefile
-	include/arch/mips/mach-loongson/Makefile
+	include/arch/mips/mach-loongson1/Makefile
+	include/arch/mips/mach-loongson3a/Makefile
 	include/asm-generic/Makefile
 	kern/Makefile
 	kern/arch/Makefile
@@ -260,6 +267,8 @@ AC_CONFIG_FILES([
 	kern/arch/i386/Makefile
 	kern/arch/i386/mach-pc/Makefile
 	kern/arch/mips/Makefile
+	kern/arch/mips/mach-loongson1/Makefile
+	kern/arch/mips/mach-loongson3a/Makefile
 	kern/dev/Makefile
 	kern/dev/index/Makefile
 	kern/init/Makefile
@@ -279,4 +288,3 @@ AC_CONFIG_FILES([
 AC_OUTPUT
 
 AIM_SUMMARY
-

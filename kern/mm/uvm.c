@@ -27,6 +27,7 @@
 #include <aim/percpu.h>	/* current_proc */
 #include <aim/sync.h>
 #include <aim/vmm.h>
+#include <aim/console.h>
 #include <atomic.h>
 #include <errno.h>
 
@@ -65,7 +66,7 @@ __clean_vma(struct mm *mm, struct vma *vma)
 	unmapped = unmap_pages(mm->pgindex, vma->start, vma->size, &pa);
 
 	assert(pa == vma->pages->paddr);
-	assert(unmapped == vma->size);
+	assert(unmapped == (ssize_t)vma->size);
 }
 
 static void
@@ -84,7 +85,7 @@ __unref_and_free_upages(struct upages *p)
 		return __PAGES_FREED;
 	}
 	return 0;
-	
+
 }
 
 void
@@ -181,7 +182,7 @@ __unmap_and_free_vma(struct mm *mm, struct vma *vma_start, size_t size)
 
 		/* temporary in case of typo - assertion will be removed */
 		assert(unmap_pages(mm->pgindex, vma->start, vma->size,
-		    NULL) == vma_size);
+		    NULL) == (ssize_t)vma_size);
 		if (__unref_and_free_upages(vma->pages) == __PAGES_FREED)
 			kfree(vma->pages);
 		kfree(vma);
@@ -388,7 +389,7 @@ mm_clone(struct mm *dst, struct mm *src)
 			goto rollback;
 		}
 
-		p = __upages_new(vma->pages->size, vma->pages->flags);
+		p = __upages_new((size_t)vma->pages->size, vma->pages->flags);
 		if (p == NULL) {
 			retcode = -ENOMEM;
 			goto rollback_vma;
@@ -404,8 +405,10 @@ mm_clone(struct mm *dst, struct mm *src)
 			goto rollback_pgalloc;
 		}
 
+		//kprintf("0x%x, 0x%x, 0x%x\n", (uint32_t)pa2kva(p->paddr), (uint32_t)pa2kva(vma->pages->paddr), (uint32_t)vma_new->size);
+
 		memmove(
-			(void *)(size_t)pa2kva(p->paddr), 
+			(void *)(size_t)pa2kva(p->paddr),
 			(void *)(size_t)pa2kva(vma->pages->paddr),
 			vma_new->size
 		);
@@ -464,7 +467,7 @@ __copy_fill_uvm(struct mm *mm, void *uvaddr, void *vaddr, unsigned char c,
 	//	return -EFAULT;
 
 	//spin_lock(&mm->lock);
-	vma = __find_continuous_vma(mm, start_page, end_page - start_page);
+	vma = __find_continuous_vma(mm, start_page, (size_t)(end_page - start_page));
 	if (vma == NULL) {
 		//spin_unlock(&mm->lock);
 		return -EFAULT;
@@ -486,7 +489,7 @@ __copy_fill_uvm(struct mm *mm, void *uvaddr, void *vaddr, unsigned char c,
 	/* Otherwise, we have to dive into the page table */
 	for (; start < end; start = PTR_ALIGN_NEXT(start, PAGE_SIZE)) {
 		kuvaddr = uva2kva(mm->pgindex, start);
-		l = min2(PTR_ALIGN_NEXT(start, PAGE_SIZE), end) - start;
+		l = (size_t)(min2(PTR_ALIGN_NEXT(start, PAGE_SIZE), end) - start);
 		if (kuvaddr == NULL) {
 			//spin_unlock(&mm->lock);
 			return -EACCES;
@@ -525,4 +528,3 @@ void mm_init(void)
 	kernel_mm = mm_new();
 	switch_pgindex(kernel_mm->pgindex);
 }
-

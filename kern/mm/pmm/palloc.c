@@ -27,12 +27,19 @@ static addr_t free_size;
 static inline int alloc(struct pages *pages)
 {
 	struct mem_block *a;
-
+/*
+	struct mem_block *i;
+	kprintf("==========alloc start==========\n");
+	for(i = head->next; i != tail; i = i->next)
+	{
+		kprintf("palloc: paddr: 0x%x, size: 0x%x, prev: 0x%x, next: 0x%x\n", (uint32_t)i->paddr, (uint32_t)i->size, (uint32_t)i->prev, (uint32_t)i->next);
+	}
+*/
 	if(pages->size % PAGE_SIZE)
 		return -1;
 	if(pages->size > free_size)
 		return -1;
-	
+
 	for(a = head->next; a != tail; a = a->next)
 		if(a->size >= pages->size)
 			break;
@@ -42,7 +49,7 @@ static inline int alloc(struct pages *pages)
 	pages->paddr = a->paddr;
 	a->paddr += pages->size;
 	a->size -= pages->size;
-	
+
 	if(a->size == 0)
 	{
 		a->prev->next = a->next;
@@ -51,25 +58,39 @@ static inline int alloc(struct pages *pages)
 	}
 
 	free_size -= pages->size;
-		
+/*
+	kputs("allocing\n");
+	for(i = head->next; i != tail; i = i->next)
+	{
+		kprintf("palloc: paddr: 0x%x, size: 0x%x, prev: 0x%x, next: 0x%x\n", (uint32_t)i->paddr, (uint32_t)i->size, (uint32_t)i->prev, (uint32_t)i->next);
+	}
+	kprintf("==========alloc  over==========\n");
+*/
 	return 0;
 }
 
 static inline void free(struct pages *pages)
 {
 	struct mem_block *a,*i;
-
+/*
+	kprintf("==========free start==========\n");
+	for(i = head->next; i != tail; i = i->next)
+	{
+		kprintf("palloc: paddr: 0x%x, size: 0x%x, prev: 0x%x, next: 0x%x\n", (uint32_t)i->paddr, (uint32_t)i->size, (uint32_t)i->prev, (uint32_t)i->next);
+	}
+*/
 	if(pages->size % PAGE_SIZE)
 		return;
 	if(pages->size % PAGE_SIZE)
 		return;
 
 	a = kmalloc(sizeof(struct mem_block),0);
+
 	if(a == NULL)
 		panic("simple1 used up.\n");
 	a->paddr = pages->paddr;
 	a->size = pages->size;
-	
+
 	for(i = head->next; i != tail; i = i->next)
 		if(i->paddr >= a->paddr)
 			break;
@@ -97,7 +118,14 @@ static inline void free(struct pages *pages)
 		a->next = a->next->next;
 		kfree(i);
 	}
-
+/*
+	kputs("freeing\n");
+	for(i = head->next; i != tail; i = i->next)
+	{
+		kprintf("palloc: paddr: 0x%x, size: 0x%x, prev: 0x%x, next: 0x%x\n", (uint32_t)i->paddr, (uint32_t)i->size, (uint32_t)i->prev, (uint32_t)i->next);
+	}
+	kprintf("==========free  over==========\n");
+*/
 	free_size += pages->size;
 }
 
@@ -113,7 +141,7 @@ int page_allocator_init(void)
 	head->prev = tail->next = NULL;
 	head->next = tail;
 	tail->prev = head;
-	
+
 	struct page_allocator pa = {
 		.alloc		= alloc,
 		.free		= free,

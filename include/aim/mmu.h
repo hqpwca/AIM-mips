@@ -116,7 +116,7 @@ ssize_t unmap_pages(pgindex_t *pgindex, void *vaddr, size_t size, addr_t *paddr)
  */
 int set_pages_perm(pgindex_t *pgindex, void *vaddr, size_t size, uint32_t flags);
 /*
- * Invalidate pages, but without actually deleting the page index entries, 
+ * Invalidate pages, but without actually deleting the page index entries,
  * if possible.
  */
 ssize_t invalidate_pages(pgindex_t *pgindex, void *vaddr, size_t size,
@@ -131,4 +131,3 @@ void *uva2kva(pgindex_t *pgindex, void *uaddr);
 #endif /* !__ASSEMBLER__ */
 
 #endif /* _AIM_MMU_H */
-

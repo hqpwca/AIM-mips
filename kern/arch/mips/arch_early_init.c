@@ -22,24 +22,28 @@
 
 #include <sys/types.h>
 #include <aim/init.h>
+#include <aim/mmu.h>
+#include <stack.h>
 
+unsigned long kernelsp[MAX_CPUS];
+
+__noreturn
 void abs_jump(void *addr)
 {
-	asm volatile (
-		"move	$25, %0;"
-		"jr	%0"
+	asm (
+		"jr	%[addr]"
 		: /* no output */
-		: "r"(addr)
+		: [addr] "r"(addr)
 	);
+	__builtin_unreachable();
 }
 
 void arch_mm_init()
 {
-	mmu_init();
+	mmu_init(pgindex);
 }
 
 void arch_early_init(void)
 {
-
+	//early_mach_init();
 }
-

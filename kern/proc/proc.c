@@ -53,7 +53,7 @@ void *alloc_kstack(void)
 	addr_t paddr;
 
 	paddr = pgalloc();
-	if (paddr == -1)
+	if (paddr == (addr_t)-1)
 		return NULL;
 	return (void *)pa2kva(paddr);
 }
@@ -64,7 +64,7 @@ void free_kstack(void *kstack)
 	pgfree(kva2pa(kstack));
 }
 
-void *alloc_kstack_size(size_t *size)
+void *alloc_kstack_size(__unused size_t *size)
 {
 	/* calculate the actual size we allocate */
 	panic("custom kstack size not implemented\n");
@@ -77,8 +77,8 @@ static pid_t kpid_new(void)
 	pid_t kpid;
 
 	spin_lock_irq_save(&freekpid.lock, flags);
-	kpid = bitmap_find_first_zero_bit(freekpid.bitmap, MAX_PROCESSES);
-	atomic_set_bit(kpid, freekpid.bitmap);
+	kpid = (pid_t)bitmap_find_first_zero_bit(freekpid.bitmap, MAX_PROCESSES);
+	atomic_set_bit((ulong)kpid, freekpid.bitmap);
 	spin_unlock_irq_restore(&freekpid.lock, flags);
 
 	return kpid;
@@ -86,7 +86,7 @@ static pid_t kpid_new(void)
 
 static void kpid_recycle(pid_t kpid)
 {
-	atomic_clear_bit(kpid, freekpid.bitmap);
+	atomic_clear_bit((ulong)kpid, freekpid.bitmap);
 }
 
 struct proc *proc_new(struct namespace *ns)

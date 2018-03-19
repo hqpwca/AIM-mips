@@ -95,7 +95,7 @@ static bool __entry_match(struct devtree_entry *a, struct devtree_entry *b)
 {
 	return ((a->nregs == b->nregs) &&
 		(strcmp(a->parent, b->parent) == 0) &&
-		(memcmp(a->regs, b->regs, sizeof(addr_t) * a->nregs) == 0));
+		(memcmp(a->regs, b->regs, sizeof(addr_t) * (size_t)a->nregs) == 0));
 }
 
 static struct device *__check_dup_device(struct devtree_entry *entry)

@@ -57,5 +57,5 @@ strlcpy(char *dst, const char *src, size_t dsize)
 			;
 	}
 
-	return(s - src - 1);	/* count does not include NUL */
+	return(size_t)(s - src - 1);	/* count does not include NUL */
 }

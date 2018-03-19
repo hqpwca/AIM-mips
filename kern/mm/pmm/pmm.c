@@ -24,13 +24,14 @@
 #include <sys/param.h>
 //#include <aim/sync.h>
 #include <aim/mmu.h>
+#include <aim/console.h>
 #include <aim/pmm.h>
 #include <libc/string.h>
 #include <util.h>
 
 /* dummy implementations */
-static int __alloc(struct pages *pages) { return EOF; }
-static void __free(struct pages *pages) {}
+static int __alloc(__unused struct pages *pages) { return EOF; }
+static void __free(__unused struct pages *pages) {}
 static addr_t __get_free(void) { return 0; }
 
 static struct page_allocator __allocator = {
@@ -46,8 +47,10 @@ void set_page_allocator(struct page_allocator *allocator)
 
 void pmemset(addr_t paddr, unsigned char b, lsize_t size)
 {
-	for (; size > 0; size -= PAGE_SIZE, paddr += PAGE_SIZE)
+	for (; size > 0; size -= PAGE_SIZE, paddr += PAGE_SIZE){
+		//kpdebug("size: 0x%x, paddr: 0x%x, byte: 0x%x\n", (uint32_t)size, (uint32_t)paddr, (uint32_t)b);
 		memset((void *)pa2kva(paddr), b, PAGE_SIZE);
+	}
 }
 
 int alloc_pages(struct pages *pages)
@@ -58,6 +61,7 @@ int alloc_pages(struct pages *pages)
 		return EOF;
 	//recursive_lock_irq_save(&memlock, flags);
 	result = __allocator.alloc(pages);
+	//kpdebug("0x%x, 0x%x, 0x%x\n", pages->paddr, pages->size, pages->flags);
 	if (pages->flags & GFP_ZERO)
 		pmemset(pages->paddr, 0, pages->size);
 	//recursive_unlock_irq_restore(&memlock, flags);
@@ -105,4 +109,3 @@ addr_t get_free_memory(void)
 {
 	return __allocator.get_free();
 }
-

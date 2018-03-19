@@ -30,7 +30,7 @@
  * SUCH DAMAGE.
  */
 
-#include <string.h>
+#include <libc/string.h>
 
 int memcmp(const void *s1, const void *s2, size_t n)
 {
@@ -38,4 +38,3 @@ int memcmp(const void *s1, const void *s2, size_t n)
 	for (; n && *l == *r; n--, l++, r++);
 	return n ? *l-*r : 0;
 }
-

@@ -119,14 +119,14 @@ extern unsigned long bitmap_find_last_bit(const unsigned long *addr,
 
 static inline void bitmap_zero(unsigned long *dst, int nbits)
 {
-	int len = BITS_TO_LONGS(nbits) * sizeof(unsigned long);
+	size_t len = BITS_TO_LONGS((size_t)nbits) * sizeof(unsigned long);
 	memset(dst, 0, len);
 }
 
 static inline void bitmap_fill(unsigned long *dst, int nbits)
 {
-	size_t nlongs = BITS_TO_LONGS(nbits);
-	int len = (nlongs - 1) * sizeof(unsigned long);
+	size_t nlongs = BITS_TO_LONGS((size_t)nbits);
+	size_t len = (nlongs - 1) * sizeof(unsigned long);
 	memset(dst, 0xff,  len);
 	dst[nlongs - 1] = BITMAP_LAST_WORD_MASK(nbits);
 }

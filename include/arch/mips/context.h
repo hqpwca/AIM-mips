@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Gan Quan <coin2028@hotmail.com>	
+/* Copyright (C) 2016 Gan Quan <coin2028@hotmail.com>
  *
  * This file is part of AIM.
  *
@@ -20,7 +20,16 @@
 #define _ARCH_CONTEXT_H
 
 struct context {
+  unsigned long   gpr[32];
+/* coprocessor registers */
+  unsigned long   lo;
+  unsigned long   hi;
+  unsigned long   status;
+  unsigned long   cause;
+  unsigned long   epc;
+  unsigned long   badvaddr;
 };
 
-#endif /* !_ARCH_CONTEXT_H */
+void switch_regs(struct context *old, struct context *new);
 
+#endif /* !_ARCH_CONTEXT_H */

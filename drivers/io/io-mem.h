@@ -19,12 +19,11 @@
 #ifndef _DRIVERS_IO_MEM_H
 #define _DRIVERS_IO_MEM_H
 
-#ifdef IO_MEM_ROOT
+//#ifdef IO_MEM_ROOT
 __attribute__ ((visibility ("hidden")))
 extern struct bus_device early_memory_bus;
-#endif /* IO_MEM_ROOT */
+//#endif /* IO_MEM_ROOT */
 
 int io_mem_init(struct bus_device *memory_bus);
 
 #endif /* _DRIVERS_IO_MEM_H */
-

@@ -29,20 +29,20 @@
 _start:
 	cli
 	cld
-	
+
 clean_bss:
   	movl	$__premap_addr(_bss_start), %edi
   	movl	$__premap_addr(_bss_end), %ecx
   	subl	%edi, %ecx
   	xorb	%al, %al
   	repz stosb
-  	
+
 load_segment:
 	lgdt    gdtdesc
 	movl    %cr0, %eax
 	orl     $CR0_PE, %eax
 	movl    %eax, %cr0
-	
+
 	movw    $(SEG_KDATA<<3), %ax
 	movw    %ax, %ds
 	movw    %ax, %es
@@ -52,15 +52,15 @@ load_segment:
 	movw    %ax, %gs
 
 	ljmp    $(SEG_KCODE<<3), $prepare_stack
-	
-prepare_stack:  	
+
+prepare_stack:
   	movl	$__premap_addr(boot_stack), %esp
   	movl	%esp, %ebp
-  	
+
 jump_to_main:
   	movl	$__premap_addr(master_early_init), %eax
   	call	*%eax
-  	
+
 spin:
 	jmp		spin
 
@@ -132,6 +132,9 @@ slave_jump_to_main:
 slave_spin:
 	jmp		slave_spin
 
+.globl slave_upper_entry
+slave_upper_entry:
+
 .section .data.sentry
 .p2align 2
 slave_gdt:
@@ -142,4 +145,3 @@ slave_gdt:
 slave_gdtdesc:
 	.word   (slave_gdtdesc - slave_gdt - 1)
 	.long   slave_gdt
-

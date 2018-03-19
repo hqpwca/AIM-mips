@@ -19,6 +19,11 @@
 #ifndef _ARCH_TRAP_H
 #define _ARCH_TRAP_H
 
+#define TLB_REFILL_ENTRY    0xffffffff80000000
+#define XTLB_REFILL_ENTRY   0xffffffff80000080
+#define CACHE_ERROR_ENTRY   0xffffffff80000100
+#define GENERIC_EXCEPT_ENTRY    0xffffffff80000180
+
 #ifndef __ASSEMBLER__
 
 #include <sys/types.h>
@@ -46,4 +51,3 @@ static inline bool from_kernel(struct trapframe *tf)
 #endif	/* !__ASSEMBLER__ */
 
 #endif /* _ARCH_TRAP_H */
-

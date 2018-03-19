@@ -45,4 +45,3 @@ libarch_la_SOURCES = \
 	switch.S
 libarch_la_LIBADD = \
 	mach-$(MACH)/libmach.la
-

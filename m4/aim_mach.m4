@@ -72,6 +72,20 @@ AC_DEFUN([AIM_INIT_MACH], [
 		[pc], [
 			AS_VAR_SET([__with_fwstack_order], [12])
 		],
+		[loongson1], [
+			AS_VAR_SET([__with_cpus], [1])
+			AS_VAR_SET([__with_max_cpus], [1])
+			AS_VAR_SET([__enable_io_mem], [yes])
+			AS_VAR_SET([__enable_io_port], [no])
+			AS_VAR_SET([__enable_uart_ns16550], [yes])
+			#AS_VAR_SET([__enable_loongson3a_ram_detection], [yes])
+			AS_VAR_SET([__enable_pagesize_16k], [yes])
+			AS_VAR_SET([__with_primary_console], [UART_NS16550])
+			AS_VAR_SET([__with_cpu_freq], [750000000])
+			AS_VAR_SET([__with_kstacksize], [8192])
+			AS_VAR_SET([__enable_firmware], [no])
+			AS_VAR_SET([__enable_bootloader], [no])
+		],
 		[loongson3a], [
 			AS_VAR_SET([__with_cpus], [4])
 			AS_VAR_SET([__with_max_cpus], [4])

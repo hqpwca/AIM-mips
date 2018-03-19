@@ -9,7 +9,7 @@
 #include <aim/pmm.h>
 #include <aim/vmm.h>
 #include <aim/smp.h>
-#include <aim/trap.h>	
+#include <aim/trap.h>
 #include <aim/panic.h>
 #include <aim/device.h>
 #include <aim/initcalls.h>
@@ -60,33 +60,33 @@ void test_allocator()
 	void *page2 = (void *)(uint32_t)pgalloc();
 	kpdebug("page1 : 0x%x\n", page1);
 	kpdebug("page2 : 0x%x\n", page2);
-	
+
 	pgfree((uint32_t)page1);
 	void *page3 = (void *)(uint32_t)pgalloc();
 	kpdebug("page3 : 0x%x\n", page3);
-	
+
 	pgfree((uint32_t)page2);
 	pgfree((uint32_t)page3);
-	
+
 	void *a32 = kmalloc(32,0);
 	void *b32 = kmalloc(32,0);
 	kpdebug("a32 : 0x%x\n", a32);
 	kpdebug("b32 : 0x%x\n", b32);
-	kfree((void *)premap_addr(a32));
+	kfree((void *)(a32));
 	void *c32 = kmalloc(32,0);
 	kpdebug("c32 : 0x%x\n", c32);
 	void *a16 = kmalloc(16,0);
 	void *b16 = kmalloc(16,0);
 	kpdebug("a16 : 0x%x\n", a16);
 	kpdebug("b16 : 0x%x\n", b16);
-	kfree((void *)premap_addr(b32));
-	kfree((void *)premap_addr(c32));
-	kfree((void *)premap_addr(a16));
-	kfree((void *)premap_addr(b16));
+	kfree((void *)(b32));
+	kfree((void *)(c32));
+	kfree((void *)(a16));
+	kfree((void *)(b16));
 	void *a64 = kmalloc(64,0);
 	kpdebug("a64 : 0x%x\n", a64);
-	kfree((void *)premap_addr(a64));
-	
+	kfree((void *)(a64));
+
 	kputs("Ended Test allocators.\n");
 	kputs("\n");
 }
@@ -95,7 +95,7 @@ void output_running_message()
 {
 	int cid = cpuid();
 	int i;
-	for(i=0; i==i; ++i)
+	for(i=0; ; ++i)
 		if(i == 400000000)
 		{
 			kprintf("CPU NO.%d running...\n", cid);
@@ -106,10 +106,10 @@ void output_running_message()
 void allocator_init()
 {
 	extern uint32_t simple1_start;
-	simple_allocator_bootstrap(&simple1_start, 0x8000);	
-	kputs("Simple allocator 1 opened.\n");	
+	simple_allocator_bootstrap(&simple1_start, 0x8000);
+	kputs("Simple allocator 1 opened.\n");
 	page_allocator_init();
-	kputs("Page allocator opened.\n");	
+	kputs("Page allocator opened.\n");
 	init_free_pages();
 	struct simple_allocator old;
 	get_simple_allocator(&old);
@@ -123,7 +123,7 @@ __noreturn
 void master_init(void)
 {
 	allocator_init();
-	//test_allocator();
+	test_allocator();
 
 	bsp_trap_init();
 	trap_init();
@@ -131,18 +131,26 @@ void master_init(void)
 	//trap_check();
 
 	mm_init();
+	kputs("uvm initialized.\n");
+
+	extern void mm_test();
+	mm_test();
+
 	sched_init();
+	kputs("scheduler initialized.\n");
 	proc_init();
 	idle_init();
+	kputs("proc initialized.\n");
 
 	do_early_initcalls();
 	do_initcalls();
 
 	smp_startup();
-	asm volatile("sti");
+	//asm volatile("sti");
 	//trap_check();
 
 	spawn_initproc();
+	kputs("initproc spawned.\n");
 	while(1)
 		schedule();
 
@@ -150,9 +158,12 @@ void master_init(void)
 
 	goto panic;
 panic:
+	while(1);
+/*
 	asm volatile("cli");
 	while(1)
 		asm volatile("hlt");
+*/
 }
 
 __noreturn
@@ -168,7 +179,7 @@ void slave_init(void)
 
 	kpdebug("slave cpu NO.%d started.\n", cpuid());
 
-	asm volatile("sti");
+	//asm volatile("sti");
 	idle_init();
 	spawn_initproc();
 	//trap_check();
@@ -183,7 +194,10 @@ void slave_init(void)
 
 	goto panic;
 panic:
+	while(1);
+/*
 	asm volatile("cli");
 	while(1)
 		asm volatile("hlt");
+*/
 }

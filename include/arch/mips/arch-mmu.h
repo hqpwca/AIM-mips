@@ -27,7 +27,7 @@
 #define __postmap_addr(pa)	(ULCAST(pa) + KERN_BASE)
 
 #define PAGE_SHIFT 12
-#define PAGE_SIZE   (1 << PAGE_SHIFT)
+#define PAGE_SIZE   4096
 #define PAGE_MASK   (PAGE_SIZE - 1)
 #define PAGE_OFFSET(a)  (ULCAST(a) & PAGE_MASK)
 
@@ -41,7 +41,10 @@ typedef uint32_t pte_t, pde_t;
 
 typedef uint32_t pgindex_t;
 
+extern pgindex_t *pgindex;
+
+extern void *kern_end;
+
 #endif /* !__ASSEMBLER__ */
 
 #endif /* !_ARCH_MMU_H */
-

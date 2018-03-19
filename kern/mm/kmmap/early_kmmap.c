@@ -142,7 +142,7 @@ size_t early_mapping_add_devspace(addr_t base, size_t size)
 {
 	struct early_mapping entry = {
 		.paddr	= base,
-		.vaddr	= base,
+		.vaddr	= PTRCAST(base),
 		.size	= (size_t)size,
 		.type	= EARLY_MAPPING_KMMAP
 	};

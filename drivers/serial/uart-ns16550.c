@@ -40,7 +40,7 @@ static struct chr_device __early_uart_ns16550 = {
 	.class = DEVCLASS_CHR,
 };
 
-static struct chr_device __uart_ns16550 = {
+__unused static struct chr_device __uart_ns16550 = {
 	.class = DEVCLASS_CHR,
 };
 
@@ -56,13 +56,20 @@ void __uart_ns16550_init(struct chr_device *inst)
 	/* TODO: check if the following configuration works across all
 	 * UARTs */
 	bus_write8(bus, inst->base, UART_FIFO_CONTROL,
-	    UART_FCR_RTB_4 | UART_FCR_RST_TRANSMIT | UART_FCR_RST_RECEIVER |
-	    UART_FCR_ENABLE);
+	    UART_FCR_RTB_4 | UART_FCR_RST_TRANSMIT | UART_FCR_RST_RECEIVER);
+	    // | UART_FCR_ENABLE);
 	bus_write8(bus, inst->base, UART_LINE_CONTROL, UART_LCR_DLAB);
 	bus_write8(bus, inst->base, UART_DIVISOR_LSB,
 	    (UART_FREQ / UART_BAUDRATE) & 0xff);
 	bus_write8(bus, inst->base, UART_DIVISOR_MSB,
 	    ((UART_FREQ / UART_BAUDRATE) >> 8) & 0xff);
+#if 0
+#define TEST_S 35
+	bus_write8(bus, inst->base, UART_DIVISOR_LSB,
+	    (TEST_S) & 0xff);
+	bus_write8(bus, inst->base, UART_DIVISOR_MSB,
+	    ((TEST_S) >> 8) & 0xff);
+#endif
 	bus_write8(bus, inst->base, UART_LINE_CONTROL,
 	    UART_LCR_DATA_8BIT |
 	    UART_LCR_STOP_1BIT |
@@ -158,7 +165,7 @@ int __uart_ns16550_putchar(struct chr_device *inst, unsigned char c)
 static inline
 int early_console_putchar(int c)
 {
-	__uart_ns16550_putchar(&__early_uart_ns16550, c);
+	__uart_ns16550_putchar(&__early_uart_ns16550, (unsigned char)c);
 	return 0;
 }
 
@@ -207,7 +214,7 @@ static void norm_console_set_bus(struct bus_device *bus, addr_t base)
 
 static int norm_console_putchar(int c)
 {
-	__uart_ns16550_putchar(&__uart_ns16550, c);
+	__uart_ns16550_putchar(&__uart_ns16550, (unsigned char)c);
 	return 0;
 }
 
@@ -215,12 +222,21 @@ static int __init(void)
 {
 	kpdebug("Console Initializing.\n");
 
+/*
 	struct bus_device *port_io = (struct bus_device *)dev_from_name("portio");
 	kprintf("port io addr: 0x%x\n", port_io);
 	//kprintf("port io high addr: 0x%x\n", postmap_addr(port_io));
 	addr_t base = UART_BASE;
 
 	norm_console_set_bus(port_io, base);
+	//kprintf("set bus finished\n");
+*/
+	struct bus_device *mem_io = (struct bus_device *)dev_from_name("memory");
+	kprintf("mem io addr: 0x%x\n", mem_io);
+	//kprintf("port io high addr: 0x%x\n", postmap_addr(port_io));
+	addr_t base = UART_BASE;
+
+	norm_console_set_bus(mem_io, base);
 	//kprintf("set bus finished\n");
 
 	__uart_ns16550_init(&__uart_ns16550);

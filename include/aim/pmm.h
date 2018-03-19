@@ -25,7 +25,7 @@
 #ifndef __ASSEMBLER__
 
 struct pages {
-	uint32_t paddr;
+	addr_t paddr;
 	lsize_t size;
 	gfp_t flags;
 };
@@ -43,7 +43,7 @@ int page_allocator_move(struct simple_allocator *old);
 void set_page_allocator(struct page_allocator *allocator);
 /* The registration above COPIES the struct. */
 
-/* 
+/*
  * This interface may look wierd, but it prevents the page allocator from doing
  * any kmalloc-like allocation: it either breaks a block or remove a block upon
  * page allocation.
@@ -54,6 +54,7 @@ int alloc_pages(struct pages *pages);
 int alloc_aligned_pages(struct pages *pages, lsize_t align);
 void free_pages(struct pages *pages);
 addr_t get_free_memory(void);
+void pmemset(addr_t paddr, unsigned char b, lsize_t size);
 
 /* Returns -1 on error */
 static inline addr_t pgalloc(void)
@@ -62,14 +63,14 @@ static inline addr_t pgalloc(void)
 	p.size = PAGE_SIZE;
 	p.flags = 0;
 	if (alloc_pages(&p) != 0)
-		return -1;
-	return p.paddr;
+		return (addr_t)-1;
+	return premap_addr(p.paddr);
 }
 
 static inline void pgfree(addr_t paddr)
 {
 	struct pages p;
-	p.paddr = paddr;
+	p.paddr = premap_addr(paddr);
 	p.size = PAGE_SIZE;
 	p.flags = 0;
 	free_pages(&p);
@@ -81,4 +82,3 @@ void add_memory_pages(void);
 #endif /* !__ASSEMBLER__ */
 
 #endif /* _AIM_PMM_H */
-

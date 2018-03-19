@@ -70,33 +70,33 @@ SECTIONS
 		_sdata_end = .;
 	} : sdata
 
-	.text.entry KERN_START : 
+	.text.entry KERN_START :
 	{
 		_entry_start = .;
 		*(.text.entry*)
 		_entry_end = .;
 	} >PHDR AT>PHDR : entry
-	
+
 	.data.entry :
 	{
 		_edata_start = .;
 		*(.data.entry*)
 		_edata_end = .;
 	} >PHDR AT>PHDR : edata
-	
+
 	.text __postmap_addr(_edata_end) :
 	{
 		_text_start = .;
 		*(.text*)
 		_text_end = .;
 	} >VIRT AT>PHDR : text
-	
+
 	.got : ALIGN(0x1000)
 	{
 		*(.got*)
 		*(.igot*)
 	} >VIRT AT>PHDR :got
-	
+
 	.rodata : ALIGN(0x1000)
 	{
 		_rodata_start = .;
@@ -106,21 +106,21 @@ SECTIONS
 		LATE_INIT(STRUCT_ALIGNMENT)
 		_rodata_end = .;
 	} >VIRT AT>PHDR : rodata
-	
+
 	.data : ALIGN(0x1000)
 	{
 		_data_start = .;
 		*(.data*)
 		_data_end = .;
 	} >VIRT AT>PHDR : data
-	
+
 	.bss ALIGN(0x1000) :
 	{
 		_bss_start = .;
 		*(.bss)
 		_bss_end = .;
 	}>VIRT AT>PHDR :NONE
-	
+
 	.boot ALIGN(0x1000):
 	{
 		. = ALIGN(PAGE_SIZE);
@@ -130,9 +130,9 @@ SECTIONS
 		PROVIDE(simple1_start = .);
 		. += 32K;
 	}>VIRT AT>PHDR :NONE
-	
+
 	PROVIDE(kern_end = .);
-	
+
 	/DISCARD/ :
 	{
 		*(.note.gnu.build-id)

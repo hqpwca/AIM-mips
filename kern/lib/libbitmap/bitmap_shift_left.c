@@ -67,6 +67,6 @@ __weak void __bitmap_shift_left(unsigned long *dst,
 			dst[k + off] &= (1UL << left) - 1;
 	}
 	if (off)
-		memset(dst, 0, off*sizeof(unsigned long));
+		memset(dst, 0, (ulong)off * sizeof(unsigned long));
 }
 

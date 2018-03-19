@@ -29,9 +29,9 @@
 #include <aim/panic.h>
 
 /* dummy implementations */
-static void *__simple_alloc(size_t size, gfp_t flags) { return NULL; }
-static void __simple_free(void *obj) {}
-static size_t __simple_size(void *obj) { return 0; }
+static void *__simple_alloc(__unused size_t size, __unused gfp_t flags) { return NULL; }
+static void __simple_free(__unused void *obj) {}
+static size_t __simple_size(__unused void *obj) { return 0; }
 
 static struct simple_allocator __simple_allocator = {
 	.alloc	= __simple_alloc,
@@ -51,7 +51,7 @@ void *kmalloc(size_t size, gfp_t flags)
 	//recursive_unlock_irq_restore(&memlock, intr_flags);
 	if (flags & GFP_ZERO)
 		memset(result, 0, size);
-	return postmap_addr(result);
+	return result;
 }
 
 void kfree(void *obj)
@@ -60,7 +60,7 @@ void kfree(void *obj)
 	if (obj != NULL) {
 		//recursive_lock_irq_save(&memlock, flags);
 		/* Junk filling is in flff.c since we need the gfp flags */
-		__simple_allocator.free(premap_addr(obj));
+		__simple_allocator.free(obj);
 		//recursive_unlock_irq_restore(&memlock, flags);
 	}
 }
@@ -68,7 +68,7 @@ void kfree(void *obj)
 size_t ksize(void *obj)
 {
 	if (obj != NULL)
-		return __simple_allocator.size(premap_addr(obj));
+		return __simple_allocator.size((void *)premap_addr(obj));
 	else
 		return 0;
 }
@@ -88,12 +88,12 @@ void get_simple_allocator(struct simple_allocator *allocator)
 }
 
 /* dummy implementation again */
-static int __caching_create(struct allocator_cache *cache) { return EOF; }
-static int __caching_destroy(struct allocator_cache *cache) { return EOF; }
-static void *__caching_alloc(struct allocator_cache *cache) { return NULL; }
-static int __caching_free(struct allocator_cache *cache, void *obj)
+static int __caching_create(__unused struct allocator_cache *cache) { return EOF; }
+static int __caching_destroy(__unused struct allocator_cache *cache) { return EOF; }
+static void *__caching_alloc(__unused struct allocator_cache *cache) { return NULL; }
+static int __caching_free(__unused struct allocator_cache *cache, __unused void *obj)
 { return EOF; }
-static void __caching_trim(struct allocator_cache *cache) {}
+static void __caching_trim(__unused struct allocator_cache *cache) {}
 
 struct caching_allocator __caching_allocator = {
 	.create		= __caching_create,

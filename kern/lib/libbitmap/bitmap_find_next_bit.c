@@ -25,7 +25,7 @@ __weak unsigned long bitmap_find_next_bit(const unsigned long *addr,
 	if ((offset--) == 0)
 		return 0;
 	const unsigned long *p = addr + BIT_WORD(offset);
-	unsigned long result = offset & ~(BITS_PER_LONG-1);
+	unsigned long result = offset & ~((ulong)BITS_PER_LONG-1);
 	unsigned long tmp;
 
 	if (offset >= size)
@@ -42,7 +42,7 @@ __weak unsigned long bitmap_find_next_bit(const unsigned long *addr,
 		size -= BITS_PER_LONG;
 		result += BITS_PER_LONG;
 	}
-	while (size & ~(BITS_PER_LONG-1)) {
+	while (size & ~((ulong)BITS_PER_LONG-1)) {
 		if ((tmp = *(p++)))
 			goto found_middle;
 		result += BITS_PER_LONG;
@@ -57,6 +57,6 @@ found_first:
 	if (tmp == 0UL)		/* Are any bits set? */
 		return 0;	/* Nope. */
 found_middle:
-	return result + ffs(tmp);
+	return result + (ulong)ffs(tmp);
 }
 

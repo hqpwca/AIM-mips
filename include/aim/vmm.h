@@ -21,6 +21,9 @@
 
 #include <aim/gfp.h>
 
+// avoid include hell
+void *memset(void *dst, int c, size_t n);
+
 /*
  * Two kinds of memory object allocators (may) exist inside a running kernel.
  * - One or two simple allocators: used in kmalloc()-like routines.

@@ -18,7 +18,7 @@
 static void *top,*bottom;
 static size_t ssize;
 
-static inline void *simple_alloc(size_t size, gfp_t flags)
+static inline void *simple_alloc(size_t size, __unused gfp_t flags)
 {
 	if(top + size > bottom + ssize)
 		return NULL;
@@ -27,9 +27,9 @@ static inline void *simple_alloc(size_t size, gfp_t flags)
 	return res;
 }
 
-static inline void simple_free(void *obj) {return;}
+static inline void simple_free(__unused void *obj) { return; }
 
-static inline size_t simple_size(void *obj) {return 0;}
+static inline size_t simple_size(__unused void *obj) { return 0; }
 
 static size_t fri_size[SIZE_NUM] = {0x1000,0x800,0x400,0x200,0x100,0x80,0x40,0x20,0x10};
 
@@ -52,9 +52,8 @@ static inline void *new_plain_page()
 	addr_t paddr = (addr_t)pgalloc();
 	//kpdebug("new_plain_page: 0x%x\n", (void *)(uint32_t)paddr);
 	offset = 0;
-	if(paddr == -1)return NULL;
-	else return (void *)(uint32_t)paddr;
-	kputs("\n");
+	if (paddr == (addr_t)-1) return NULL;
+	else return (void *)(uint32_t)pa2kva(paddr);
 }
 
 static inline void *get_plain_object(size_t size)
@@ -64,10 +63,10 @@ static inline void *get_plain_object(size_t size)
 		panic("Plain OBJECT too large.\n");
 		return NULL;
 	}
-	if(offset + size <= PAGE_SIZE)
+	if(offset + (int)size <= PAGE_SIZE)
 	{
 		void *obj = now_plain_page + offset;
-		offset += size;
+		offset += (int)size;
 		//kpdebug("new_plain_object: 0x%x, size: %d\n", obj, size);
 		return obj;
 	}
@@ -82,11 +81,11 @@ static inline void *get_plain_object(size_t size)
 }
 
 #define bit(x, a) ((x[a>>3] >> (a & 0x7)) & 1)
-#define setbit(x, a) x[a>>3] ^= (1 << (a & 0x7))
+#define setbit(x, a) x[a>>3] ^= (unsigned char)(1U << (a & 0x7))
 
 static inline size_t get_space(uint8_t *status, size_t sz)
 {
-	int leap = sz / BIT_SIZE;
+	int leap = (int)sz / BIT_SIZE;
 	
 	int i;
 	for(i = 0; i * BIT_SIZE < PAGE_SIZE; i += leap)
@@ -98,7 +97,7 @@ static inline size_t get_space(uint8_t *status, size_t sz)
 			break;
 		}
 	
-	return BIT_SIZE * i;
+	return BIT_SIZE * (size_t)i;
 }
 
 static inline void free_space(uint8_t *status, int pos)
@@ -111,7 +110,7 @@ static inline void free_space(uint8_t *status, int pos)
 	}
 }
 
-static inline void *alloc(size_t size, gfp_t flags)
+static inline void *alloc(size_t size, __unused gfp_t flags)
 {
 	//kpdebug("Alloc: head: 0x%x, tail: 0x%x\n", head, tail);
 
@@ -128,7 +127,7 @@ static inline void *alloc(size_t size, gfp_t flags)
 	size_t off;
 	
 	for(a = head->next; a != tail; a = a->next)
-		if(size == a->size && a->num * a->size < PAGE_SIZE)
+		if(size == a->size && (size_t)a->num * a->size < PAGE_SIZE)
 			break;
 	
 	if(a == tail)
@@ -138,7 +137,7 @@ static inline void *alloc(size_t size, gfp_t flags)
 	
 	if(a->size == PG_EMPTY || a == tail)
 	{
-		void *new_page = (void *)(uint32_t)pgalloc();
+		void *new_page = (void *)(uint32_t)pa2kva(pgalloc());
 		if(new_page == NULL) return NULL;
 	
 		if(a == tail)
@@ -158,6 +157,8 @@ static inline void *alloc(size_t size, gfp_t flags)
 	off = get_space(a->status, size);
 	a->num ++;
 	obj = a->paddr + off;
+
+	//kpdebug("Alloc: head: 0x%x, tail: 0x%x, obj: 0x%x\n", head, tail, obj);
 	
 	return obj;
 }
@@ -172,7 +173,7 @@ static inline void free(void *obj)
 			break;
 	if(a == tail)
 		panic("Free: Can't find object\n");
-	int pos = (size_t)(obj - a->paddr)/BIT_SIZE;
+	int pos = (obj - a->paddr)/BIT_SIZE;
 	
 	free_space(a->status, pos);
 	a->num --;
@@ -180,7 +181,7 @@ static inline void free(void *obj)
 	if(a->num == 0)
 	{
 		a->size = PG_EMPTY;
-		pgfree((uint32_t)a->paddr);
+		pgfree((uint32_t)(kva2pa(a->paddr)));
 	}
 }
 
