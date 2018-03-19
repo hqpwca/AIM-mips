@@ -260,6 +260,8 @@ AC_CONFIG_FILES([
 	include/arch/mips/Makefile
 	include/arch/mips/mach-loongson1/Makefile
 	include/arch/mips/mach-loongson3a/Makefile
+	include/arch/riscv/Makefile
+	include/arch/riscv/mach-riscv-virt/Makefile
 	include/asm-generic/Makefile
 	kern/Makefile
 	kern/arch/Makefile
@@ -269,6 +271,8 @@ AC_CONFIG_FILES([
 	kern/arch/mips/Makefile
 	kern/arch/mips/mach-loongson1/Makefile
 	kern/arch/mips/mach-loongson3a/Makefile
+	kern/arch/riscv/Makefile
+	kern/arch/riscv/mach-riscv-virt/Makefile
 	kern/dev/Makefile
 	kern/dev/index/Makefile
 	kern/init/Makefile

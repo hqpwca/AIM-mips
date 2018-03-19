@@ -99,6 +99,10 @@ AC_DEFUN([AIM_INIT_MACH], [
 			AS_VAR_SET([__enable_firmware], [no])
 			AS_VAR_SET([__enable_bootloader], [no])
 		],
+		[riscv-virt], [
+			AS_VAR_SET([__enable_uart_ns16550], [yes])
+			AS_VAR_SET([__enable_bootloader], [no])
+		],
 		[generic], [],
 		[unknown], [],
 		[msim], [

@@ -1,0 +1,3 @@
+source ~/toolchains/riscv/setpath.sh
+autoreconf --install && ./configure ARCH=riscv MACH=riscv-virt --host=riscv64-unknown-elf --with-kern-base=0xC0000000 --disable-wextra --disable-waddress --disable-wconversion
+
