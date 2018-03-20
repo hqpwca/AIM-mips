@@ -64,8 +64,8 @@ int page_index_init(pgindex_t *boot_page_index)
 	page_index_clear(boot_page_index);
 
 	for (; mapping != NULL; mapping = early_mapping_next(mapping)) {
-		kpdebug("Early mapping : paddr: 0x%x, vaddr: 0x%x, size: 0x%x\n",
-			(uint32_t)mapping->paddr, (uint32_t)mapping->vaddr, (uint32_t)mapping->size);
+		kpdebug("Early mapping : paddr: 0x%llx, vaddr: 0x%llx, size: 0x%llx\n",
+			(uint64_t)mapping->paddr, (uint64_t)mapping->vaddr, (uint64_t)mapping->size);
 		ret = page_index_early_map(boot_page_index, mapping->paddr,
 			mapping->vaddr, mapping->size);
 		if (ret == EOF) return EOF;

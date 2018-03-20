@@ -53,7 +53,7 @@ static inline void *new_plain_page()
 	//kpdebug("new_plain_page: 0x%x\n", (void *)(uint32_t)paddr);
 	offset = 0;
 	if (paddr == (addr_t)-1) return NULL;
-	else return (void *)(uint32_t)pa2kva(paddr);
+	else return (void *)(addr_t)pa2kva(paddr);
 }
 
 static inline void *get_plain_object(size_t size)
@@ -137,7 +137,7 @@ static inline void *alloc(size_t size, __unused gfp_t flags)
 	
 	if(a->size == PG_EMPTY || a == tail)
 	{
-		void *new_page = (void *)(uint32_t)pa2kva(pgalloc());
+		void *new_page = (void *)(addr_t)pa2kva(pgalloc());
 		if(new_page == NULL) return NULL;
 	
 		if(a == tail)
@@ -181,7 +181,7 @@ static inline void free(void *obj)
 	if(a->num == 0)
 	{
 		a->size = PG_EMPTY;
-		pgfree((uint32_t)(kva2pa(a->paddr)));
+		pgfree((addr_t)(kva2pa(a->paddr)));
 	}
 }
 

@@ -24,6 +24,8 @@
 
 #include <aim/irq.h>	/* local_irq_XXX */
 #include <aim/panic.h>
+#include <aim/debug.h>
+#include <aim/smp.h>
 
 #include <arch-sync.h>	/* lock_t */
 

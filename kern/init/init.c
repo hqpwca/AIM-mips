@@ -56,17 +56,17 @@ void test_allocator()
 {
 	kputs("\n");
 	kputs("Start Test allocators.\n");
-	void *page1 = (void *)(uint32_t)pgalloc();
-	void *page2 = (void *)(uint32_t)pgalloc();
+	void *page1 = (void *)(addr_t)pgalloc();
+	void *page2 = (void *)(addr_t)pgalloc();
 	kpdebug("page1 : 0x%x\n", page1);
 	kpdebug("page2 : 0x%x\n", page2);
 
-	pgfree((uint32_t)page1);
-	void *page3 = (void *)(uint32_t)pgalloc();
+	pgfree((addr_t)page1);
+	void *page3 = (void *)(addr_t)pgalloc();
 	kpdebug("page3 : 0x%x\n", page3);
 
-	pgfree((uint32_t)page2);
-	pgfree((uint32_t)page3);
+	pgfree((addr_t)page2);
+	pgfree((addr_t)page3);
 
 	void *a32 = kmalloc(32,0);
 	void *b32 = kmalloc(32,0);

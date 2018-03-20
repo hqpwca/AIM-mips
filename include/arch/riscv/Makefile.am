@@ -5,5 +5,7 @@ include $(top_srcdir)/env.am
 
 SUBDIRS = mach-riscv-virt
 
-noinst_HEADERS =
+noinst_HEADERS = \
+    arch-mmu.h \
+    platform.h
 
