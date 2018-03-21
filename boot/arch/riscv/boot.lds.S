@@ -16,26 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _AIM_DEBUG_H
-#define _AIM_DEBUG_H
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif /* HAVE_CONFIG_H */
 
-#ifndef __ASSEMBLER__
+#define __LDSCRIPT__
 
-/* 
- * We just want several function here, avoid include hell please.
+/*
+ * Using the C preprocessor, we allow includes and macro expansion in this
+ * linker script.
  */
-__noreturn
-void panic(const char *fmt, ...);
 
-#define assert(condition) \
-	do { \
-		if (!(condition)) \
-			panic("Assertion failed in %s (%s:%d): %s\n", \
-			    __func__, __FILE__, __LINE__, #condition); \
-	} while (0)
-
-
-#endif /* !__ASSEMBLER__ */
-
-#endif /* !_AIM_DEBUG_H */
+ENTRY(_start)
+SECTIONS
+{
+    .text : { *(.entry); *(.text); }
+}
 

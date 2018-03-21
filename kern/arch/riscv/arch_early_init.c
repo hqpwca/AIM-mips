@@ -16,26 +16,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _AIM_DEBUG_H
-#define _AIM_DEBUG_H
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif /* HAVE_CONFIG_H */
 
-#ifndef __ASSEMBLER__
+#include <sys/types.h>
+#include <aim/init.h>
+#include <aim/mmu.h>
 
-/* 
- * We just want several function here, avoid include hell please.
- */
+
 __noreturn
-void panic(const char *fmt, ...);
+void abs_jump(void *addr)
+{
+	asm ("jr %0"::"r"(addr));
+	__builtin_unreachable();
+}
 
-#define assert(condition) \
-	do { \
-		if (!(condition)) \
-			panic("Assertion failed in %s (%s:%d): %s\n", \
-			    __func__, __FILE__, __LINE__, #condition); \
-	} while (0)
+void arch_mm_init()
+{
+	//mmu_init(pgindex);
+}
 
-
-#endif /* !__ASSEMBLER__ */
-
-#endif /* !_AIM_DEBUG_H */
-
+void arch_early_init(void)
+{
+	//early_mach_init();
+}

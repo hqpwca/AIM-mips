@@ -29,3 +29,6 @@
 
 ENTRY(_start)
 
+SECTIONS {
+	. = KERN_START;
+};

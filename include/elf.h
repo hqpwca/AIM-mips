@@ -23,6 +23,7 @@
 
 #include <sys/types.h>
 
+#if 0
 // Format of an ELF executable file
 
 #define ELF_MAGIC 0x464C457FU  // "\x7FELF" in little endian
@@ -57,6 +58,8 @@ struct proghdr {
   uint flags;
   uint align;
 };
+
+#endif
 
 // Values for Proghdr type
 #define ELF_PROG_LOAD           1

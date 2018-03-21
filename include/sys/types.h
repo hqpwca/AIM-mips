@@ -34,6 +34,8 @@
 
 #ifndef __ASSEMBLER__
 
+#define static_assert _Static_assert
+
 #include <libc/stddef.h>
 
 /* 
@@ -58,7 +60,8 @@ typedef unsigned int bool;
 #define false	0
 #define true	1
 
-typedef void *uintptr_t;
+typedef long uintptr_t;
+static_assert(sizeof(void *)==sizeof(long), "error");
 
 typedef uint32_t atomic_t;
 typedef int32_t satomic_t;

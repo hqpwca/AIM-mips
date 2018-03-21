@@ -20,18 +20,54 @@
 #ifndef _MACH_PLATFORM_H
 #define _MACH_PLATFORM_H
 
-#define COM1		0x3f8
-#define PORT_BASE 0x1fd00000
-#define KSEG1_BASE 0xa0000000
+// we let qemu load ELF by abusing its 'initrd' feature
+// initrd will be loaded at
+//    bbl_entry + MIN(mem_size / 2, 128 * 1024 * 1024);
+// see riscv-qemu: hw/riscv/virt.c for details
 
-/* for UART */
-//#define UART_BASE	COM1+PORT_BASE+KSEG1_BASE
-#define UART_BASE 0xbfe40000
-#define UART_FREQ	1843200
-//#define UART_FREQ 460800
+// memory size must larger than 256MB
+#define KERN_ELF_ADDR 0x88000000
 
-#define EARLY_CONSOLE_BUS	(&early_memory_bus)
-#define EARLY_CONSOLE_BASE	UART_BASE
-#define EARLY_CONSOLE_MAPPING	MAP_NONE
+
+
+// dummy value
+#define EARLY_CONSOLE_BUS 0
+#define EARLY_CONSOLE_BASE 0
+#define EARLY_CONSOLE_MAPPING 0
+
+
+// ecall
+#define SBI_SET_TIMER 0
+#define SBI_CONSOLE_PUTCHAR 1
+#define SBI_CONSOLE_GETCHAR 2
+#define SBI_CLEAR_IPI 3
+#define SBI_SEND_IPI 4
+#define SBI_REMOTE_FENCE_I 5
+#define SBI_REMOTE_SFENCE_VMA 6
+#define SBI_REMOTE_SFENCE_VMA_ASID 7
+#define SBI_SHUTDOWN 8
+
+#ifndef __ASSEMBLER__
+
+#define SBI_CALL(which, arg0, arg1, arg2) ({                        \
+        register uintptr_t a0 asm ("a0") = (uintptr_t)(arg0);        \
+        register uintptr_t a1 asm ("a1") = (uintptr_t)(arg1);        \
+        register uintptr_t a2 asm ("a2") = (uintptr_t)(arg2);        \
+        register uintptr_t a7 asm ("a7") = (uintptr_t)(which);        \
+        asm volatile ("ecall"                                        \
+                      : "+r" (a0)                                \
+                      : "r" (a1), "r" (a2), "r" (a7)                \
+                      : "memory");                                \
+        a0;                                                        \
+})
+
+// putchar using ecall
+#define sbi_console_putchar(ch) SBI_CALL(SBI_CONSOLE_PUTCHAR, (ch), 0, 0)
+
+
+
+
+
+#endif 
 
 #endif /* _MACH_PLATFORM_H */

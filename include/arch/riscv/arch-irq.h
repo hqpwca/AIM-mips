@@ -13,12 +13,13 @@ while(1);\
 while(1);\
 } while (0)
 
+// FIXME
 #define local_irq_save(flags) do { \
-(void)flags;while(1);\
+(void)flags;/*while(1);*/\
 } while (0)
 
 #define local_irq_restore(flags) do { \
-(void)flags;while(1);\
+(void)flags;/*while(1);*/\
 } while (0)
 
 #endif /* !__ASSEMBLER__ */

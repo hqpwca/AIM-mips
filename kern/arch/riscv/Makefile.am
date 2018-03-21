@@ -13,9 +13,13 @@ noinst_LTLIBRARIES = \
 	libentry.la \
 	libarch.la
 
-libentry_la_SOURCES =
+libentry_la_SOURCES = \
+    entry.S
 
-libarch_la_SOURCES =
+libarch_la_SOURCES = \
+    arch_mmu.c \
+    arch_smp.c \
+    arch_early_init.c
 
 libarch_la_LIBADD = \
 	mach-$(MACH)/libmach.la

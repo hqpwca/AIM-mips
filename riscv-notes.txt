@@ -1,3 +1,16 @@
+# AIM
+
 source ~/toolchains/riscv/setpath.sh
 autoreconf --install && ./configure ARCH=riscv MACH=riscv-virt --host=riscv64-unknown-elf --with-kern-base=0xC0000000 --disable-wextra --disable-waddress --disable-wconversion
+
+
+
+# bbl (should build AIM bootloader first)
+
+cd riscv-pk
+mkdir build
+cd build
+../configure --host=riscv64-unknown-elf --enable-print-device-tree --enable-logo --with-payload=../../AIM/boot/boot.bin
+make
+qemu-system-riscv64 -m 1024 -nographic -machine virt -kernel bbl -initrd ../../AIM/kern/vmaim.elf -d guest_errors
 

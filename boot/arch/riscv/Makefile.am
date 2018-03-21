@@ -17,31 +17,23 @@
 
 include $(top_srcdir)/env.am
 
-SUBDIRS = arch
+dist_noinst_DATA = boot.lds.S
 
-BUILT_SOURCES = boot.lds
+noinst_LTLIBRARIES = \
+	libentry.la \
+	libarch.la
 
-noinst_PROGRAMS = boot.elf
-nodist_noinst_DATA = \
-	boot.bin boot.s
-CLEANFILES = \
-	boot.lds boot.bin boot.s
+libentry_la_SOURCES = \
+	bootasm.S
 
-BOOT_LIBS = \
-	arch/$(ARCH)/libentry.la \
-	arch/$(ARCH)/libarch.la
+libentry_la_CPPFLAGS = $(AM_CPPFLAGS)
+libentry_la_CFLAGS = $(AM_CFLAGS)
+libentry_la_CCASFLAGS = $(AM_CCASFLAGS)
 
-boot_elf_SOURCES = \
-    bootlibc.c
+libarch_la_SOURCES = \
+    bootmain.c
 
-boot_elf_LDADD = $(BOOT_LIBS)
-EXTRA_boot_elf_DEPENDENCIES = boot.lds
-boot_elf_CPPFLAGS = $(AM_CPPFLAGS_NOPIC)
-boot_elf_CFLAGS = $(AM_CFLAGS_NOPIC) -Os
-boot_elf_CCASFLAGS = $(AM_CCASFLAGS_NOPIC)
-boot_elf_LDFLAGS = $(AM_LDFLAGS_NOPIC) -T boot.lds
-
-# This file has double suffix, makefile rule cannot wildcard him
-boot.lds: $(srcdir)/arch/$(ARCH)/boot.lds.S
-	$(AM_V_GEN) $(COMPILE) -E -P $^ -o $@
+libarch_la_CPPFLAGS = $(AM_CPPFLAGS)
+libarch_la_CFLAGS = $(AM_CFLAGS)
+libarch_la_CCASFLAGS = $(AM_CCASFLAGS)
 
