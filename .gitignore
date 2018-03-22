@@ -66,7 +66,7 @@ Makefile
 # Disassembly
 /firmware/arch/*/firmware.s
 /boot/boot.s
-/kern/vmaim.s
+/kern/vmraim.s
 
 # Libtool copies of m4 files
 /m4/libtool.m4

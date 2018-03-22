@@ -6,14 +6,14 @@
  * This source code is licensed under the GNU General Public License,
  * Version 2.  See the file COPYING for more details.
  *
- * This file is part of AIM.
+ * This file is part of RAIM.
  *
- * AIM is free software: you can redistribute it and/or modify
+ * RAIM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * AIM is distributed in the hope that it will be useful,
+ * RAIM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -27,7 +27,7 @@
 #endif
 
 #include <sys/types.h>
-#include <aim/debug.h>
+#include <raim/debug.h>
 #include <bitmap.h>
 #include <bitops.h>
 #include <util.h>

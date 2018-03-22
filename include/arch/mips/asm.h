@@ -230,7 +230,7 @@ sym:		.long	long
 
 #ifndef __ASSEMBLER__
 
-#include <aim/panic.h>
+#include <raim/panic.h>
 
 /* To enable panicking while executing something like a = inb(b)
  * without compilation error */

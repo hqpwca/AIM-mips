@@ -3,16 +3,16 @@
 #endif
 
 #include <sys/types.h>
-#include <aim/console.h>
-#include <aim/debug.h>
-#include <aim/panic.h>
-#include <aim/percpu.h>
-#include <aim/proc.h>
-#include <aim/sched.h>
-#include <aim/smp.h>
-#include <aim/initcalls.h>
-#include <aim/vmm.h>
-#include <aim/pmm.h>
+#include <raim/console.h>
+#include <raim/debug.h>
+#include <raim/panic.h>
+#include <raim/percpu.h>
+#include <raim/proc.h>
+#include <raim/sched.h>
+#include <raim/smp.h>
+#include <raim/initcalls.h>
+#include <raim/vmm.h>
+#include <raim/pmm.h>
 
 static struct list_head __head;
 static struct list_head *head;

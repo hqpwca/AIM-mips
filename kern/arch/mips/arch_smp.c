@@ -1,10 +1,10 @@
 //extern void mach_smp_startup(void);
 
 #include <arch-smp.h>
-#include <aim/console.h>
-#include <aim/init.h>
-#include <aim/percpu.h>
-#include <aim/smp.h>
+#include <raim/console.h>
+#include <raim/init.h>
+#include <raim/percpu.h>
+#include <raim/smp.h>
 
 addr_t slave_stacks[MAX_CPUS];
 struct percpu cpus[NR_CPUS];

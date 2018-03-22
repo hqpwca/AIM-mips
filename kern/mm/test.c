@@ -1,13 +1,13 @@
 /* Copyright (C) 2016 Gan Quan <coin2028@hotmail.com>
  *
- * This file is part of AIMv6.
+ * This file is part of RAIM.
  *
- * AIMv6 is free software: you can redistribute it and/or modify
+ * RAIM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * AIMv6 is distributed in the hope that it will be useful,
+ * RAIM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -20,12 +20,12 @@
 #include <config.h>
 #endif
 
-#include <aim/mmu.h>
-#include <aim/uvm.h>
+#include <raim/mmu.h>
+#include <raim/uvm.h>
 #include <arch-mmu.h>
-#include <aim/panic.h>
-#include <aim/debug.h>
-#include <aim/console.h>
+#include <raim/panic.h>
+#include <raim/debug.h>
+#include <raim/console.h>
 #include <sys/types.h>
 
 /* We can make test routines work like initcalls, if we want */

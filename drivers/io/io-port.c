@@ -1,13 +1,13 @@
 /* Copyright (C) 2016 Gan Quan <coin2028@hotmail.com>
  *
- * This file is part of AIM.
+ * This file is part of RAIM.
  *
- * AIM is free software: you can redistribute it and/or modify
+ * RAIM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * AIM is distributed in the hope that it will be useful,
+ * RAIM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -22,23 +22,23 @@
 
 #include <sys/types.h>
 #include <sys/param.h>
-#include <aim/device.h>
-#include <aim/console.h>
-#include <aim/gfp.h>
-#include <aim/io.h>
-#include <aim/mmu.h>
-#include <aim/panic.h>
-#include <aim/console.h>
+#include <raim/device.h>
+#include <raim/console.h>
+#include <raim/gfp.h>
+#include <raim/io.h>
+#include <raim/mmu.h>
+#include <raim/panic.h>
+#include <raim/console.h>
 #include <errno.h>
 
 #include <io-port.h>
-#include <aim/initcalls.h>
+#include <raim/initcalls.h>
 
 #ifdef IO_PORT_ROOT
 #include <asm.h>
 #endif /* IO_PORT_ROOT */
 /*#include <sys/param.h>
-#include <aim/initcalls.h>
+#include <raim/initcalls.h>
 #include <util.h>
 #include <asm-generic/funcs.h>*/
 

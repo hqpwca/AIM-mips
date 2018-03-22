@@ -1,13 +1,13 @@
 /* Copyright (C) 2016 David Gao <davidgao1001@gmail.com>
  *
- * This file is part of AIM.
+ * This file is part of RAIM.
  *
- * AIM is free software: you can redistribute it and/or modify
+ * RAIM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * AIM is distributed in the hope that it will be useful,
+ * RAIM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -29,17 +29,17 @@
 
 #include <sys/types.h>
 #include <sys/param.h>
-#include <aim/device.h>
-#include <aim/console.h>
-#include <aim/gfp.h>
-#include <aim/io.h>
-#include <aim/mmu.h>
-#include <aim/panic.h>
-#include <aim/vmm.h>
+#include <raim/device.h>
+#include <raim/console.h>
+#include <raim/gfp.h>
+#include <raim/io.h>
+#include <raim/mmu.h>
+#include <raim/panic.h>
+#include <raim/vmm.h>
 #include <errno.h>
 
 #include <io-mem.h>
-#include <aim/initcalls.h>
+#include <raim/initcalls.h>
 
 static int __read8(__unused struct bus_device *inst, addr_t base, addr_t offset,
     uint64_t *ptr)

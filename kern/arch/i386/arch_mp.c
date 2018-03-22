@@ -3,12 +3,12 @@
 #endif /* HAVE_CONFIG_H */
 
 #include <sys/types.h>
-#include <aim/mmu.h>
-#include <aim/smp.h>
-#include <aim/console.h>
-#include <aim/panic.h>
-#include <aim/trap.h>
-#include <aim/percpu.h>
+#include <raim/mmu.h>
+#include <raim/smp.h>
+#include <raim/console.h>
+#include <raim/panic.h>
+#include <raim/trap.h>
+#include <raim/percpu.h>
 #include <arch-mp.h>
 #include <arch-lapic.h>
 #include <asm.h>

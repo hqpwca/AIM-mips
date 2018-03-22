@@ -4,12 +4,12 @@
 
 #include <sys/types.h>
 #include <sys/param.h>
-//#include <aim/sync.h>
-#include <aim/mmu.h>
-#include <aim/pmm.h>
-#include <aim/vmm.h>
-#include <aim/console.h>
-#include <aim/panic.h>
+//#include <raim/sync.h>
+#include <raim/mmu.h>
+#include <raim/pmm.h>
+#include <raim/vmm.h>
+#include <raim/console.h>
+#include <raim/panic.h>
 #include <libc/string.h>
 #include <util.h>
 

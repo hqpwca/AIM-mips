@@ -5,7 +5,7 @@
 #endif /* HAVE_CONFIG_H */
 
 #include <sys/types.h>
-#include <aim/console.h>
+#include <raim/console.h>
 #include <mach-platform.h>
 
 

@@ -15,7 +15,7 @@
 #endif
 
 #include <sys/types.h>
-#include <aim/debug.h>
+#include <raim/debug.h>
 #include <bitmap.h>
 #include <bitops.h>
 #include <util.h>

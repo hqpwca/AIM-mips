@@ -13,7 +13,7 @@
  */
 
 /*
- * Here is the entry of kernel, as stated by vmaim.lds.S.
+ * Here is the entry of kernel, as stated by vmraim.lds.S.
  *
  * Usually on a multiprocessor machine, only one processor (we call it
  * the master processor) is brought in to the kernel entry, while
@@ -77,7 +77,7 @@ init_bss:
 	b	1b
 9:
 init_master_stack:
-	/* boot_stack points to stack top.  Defined in vmaim.lds.S */
+	/* boot_stack points to stack top.  Defined in vmraim.lds.S */
 	LA	sp, boot_stack
 
 main_entry:

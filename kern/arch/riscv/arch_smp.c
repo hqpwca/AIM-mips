@@ -4,7 +4,7 @@
 #endif /* HAVE_CONFIG_H */
 
 #include <sys/types.h>
-#include <aim/smp.h>
+#include <raim/smp.h>
 
 
 // FIXME: no SMP support

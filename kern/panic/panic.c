@@ -1,13 +1,13 @@
 /* Copyright (C) 2016 David Gao <davidgao1001@gmail.com>
  *
- * This file is part of AIM.
+ * This file is part of RAIM.
  *
- * AIM is free software: you can redistribute it and/or modify
+ * RAIM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * AIM is distributed in the hope that it will be useful,
+ * RAIM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -21,9 +21,9 @@
 #endif /* HAVE_CONFIG_H */
 
 #include <sys/types.h>
-#include <aim/console.h>
-#include <aim/panic.h>
-#include <aim/smp.h>
+#include <raim/console.h>
+#include <raim/panic.h>
+#include <raim/smp.h>
 #include <libc/stdarg.h>
 #include <libc/stddef.h>
 #include <libc/stdio.h>

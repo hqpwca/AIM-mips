@@ -5,8 +5,8 @@
 
 
 #include <sys/types.h>
-#include <aim/mmu.h>
-#include <aim/early_kmmap.h>
+#include <raim/mmu.h>
+#include <raim/early_kmmap.h>
 #include <libc/string.h>
 
 bool early_mapping_valid(__unused struct early_mapping *entry)

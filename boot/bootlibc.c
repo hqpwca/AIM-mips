@@ -4,7 +4,7 @@
 
 #include <sys/types.h>
 #include <libc/string.h>
-#include <aim/boot.h>
+#include <raim/boot.h>
 
 
 void bputs(const char *s)

@@ -3,19 +3,19 @@
 #endif /* HAVE_CONFIG_H */
 
 #include <sys/types.h>
-#include <aim/console.h>
-#include <aim/init.h>
-#include <aim/mmu.h>
-#include <aim/pmm.h>
-#include <aim/vmm.h>
-#include <aim/smp.h>
-#include <aim/trap.h>
-#include <aim/panic.h>
-#include <aim/device.h>
-#include <aim/initcalls.h>
-#include <aim/percpu.h>
-#include <aim/proc.h>
-#include <aim/sched.h>
+#include <raim/console.h>
+#include <raim/init.h>
+#include <raim/mmu.h>
+#include <raim/pmm.h>
+#include <raim/vmm.h>
+#include <raim/smp.h>
+#include <raim/trap.h>
+#include <raim/panic.h>
+#include <raim/device.h>
+#include <raim/initcalls.h>
+#include <raim/percpu.h>
+#include <raim/proc.h>
+#include <raim/sched.h>
 #include <drivers/io/io-mem.h>
 #include <drivers/io/io-port.h>
 #include <platform.h>

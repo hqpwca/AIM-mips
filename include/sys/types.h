@@ -1,14 +1,14 @@
 /* Copyright (C) 2016 Gan Quan <coin2028@hotmail.com>
  * Copyright (C) 2016 David Gao <davidgao1001@gmail.com>
  *
- * This file is part of AIM.
+ * This file is part of RAIM.
  *
- * AIM is free software: you can redistribute it and/or modify
+ * RAIM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * AIM is distributed in the hope that it will be useful,
+ * RAIM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -39,8 +39,8 @@
 #include <libc/stddef.h>
 
 /* 
- * Type usage should be unified across AIM.
- * When a foreign module is imported, it MUST either apply AIM type naming, 
+ * Type usage should be unified across RAIM.
+ * When a foreign module is imported, it MUST either apply RAIM type naming, 
  * or provide typedefs by itself. Normally typedefs SHOULD NOT be added to
  * this header.
  */
@@ -105,7 +105,7 @@ typedef ulong	dev_t;
  * manner (for Linux, see /usr/include/sys/sysmacros.h).  The difference
  * of such usage between Linux and BSD's further made things worse.
  *
- * In AIM, we do not consider major and minor numbers exceeding 255, to
+ * In RAIM, we do not consider major and minor numbers exceeding 255, to
  * comply with both Linux and BSD while keeping logics cleaner.  Note that
  * we do NOT enforce range checks over the numbers (yet).
  */

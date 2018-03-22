@@ -4,15 +4,15 @@
 
 #include <sys/types.h>
 #include <sys/param.h>
-#include <aim/init.h>
-#include <aim/mmu.h>
-#include <aim/vmm.h>
-#include <aim/pmm.h>
-#include <aim/panic.h>
-#include <aim/trap.h>
-#include <aim/smp.h>
-#include <aim/console.h>
-#include <aim/percpu.h>
+#include <raim/init.h>
+#include <raim/mmu.h>
+#include <raim/vmm.h>
+#include <raim/pmm.h>
+#include <raim/panic.h>
+#include <raim/trap.h>
+#include <raim/smp.h>
+#include <raim/console.h>
+#include <raim/percpu.h>
 #include <arch-mmu.h>
 #include <arch-trap.h>
 #include <arch-lapic.h>

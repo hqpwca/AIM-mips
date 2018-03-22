@@ -1,24 +1,24 @@
-# AIM
+# RAIM
 
 source ~/toolchains/riscv/setpath.sh
 autoreconf --install && ./configure ARCH=riscv MACH=riscv-virt --host=riscv64-unknown-elf --with-kern-base=0xC0000000 --disable-wextra --disable-waddress --disable-wconversion
 
 
 
-# bbl (should build AIM bootloader first)
+# bbl (should build RAIM bootloader first)
 
 cd riscv-pk
 mkdir build
 cd build
-../configure --host=riscv64-unknown-elf --enable-print-device-tree --enable-logo --with-payload=../../AIM/boot/boot.bin
+../configure --host=riscv64-unknown-elf --enable-print-device-tree --enable-logo --with-payload=../../RAIM/boot/boot.bin
 make
-qemu-system-riscv64 -m 1024 -nographic -machine virt -kernel bbl -initrd ../../AIM/kern/vmaim.elf -d guest_errors
+qemu-system-riscv64 -m 1024 -nographic -machine virt -kernel bbl -initrd ../../RAIM/kern/vmraim.elf -d guest_errors
 
 
 
 
 //// 文档
 
-bbl: 第一阶段启动，负责从machine mode进入supervisor mode；另外提供一些实用功能（如打印字符、关机等）；在编译时要用--with-payload=../../AIM/boot/boot.bin把我们的aim-bootloader加进去
-aim-bootloader：负责加载AIM的ELF文件
+bbl: 第一阶段启动，负责从machine mode进入supervisor mode；另外提供一些实用功能（如打印字符、关机等）；在编译时要用--with-payload=../../RAIM/boot/boot.bin把我们的raim-bootloader加进去
+raim-bootloader：负责加载RAIM的ELF文件
 

@@ -6,12 +6,12 @@
 
 #include <sys/types.h>
 #include <sys/param.h>
-#include <aim/init.h>
-#include <aim/mmu.h>
-#include <aim/panic.h>
-#include <aim/trap.h>
-#include <aim/smp.h>
-#include <aim/console.h>
+#include <raim/init.h>
+#include <raim/mmu.h>
+#include <raim/panic.h>
+#include <raim/trap.h>
+#include <raim/smp.h>
+#include <raim/console.h>
 #include <arch-mmu.h>
 #include <arch-trap.h>
 #include <arch-mp.h>

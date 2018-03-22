@@ -3,13 +3,13 @@
 #endif /* HAVE_CONFIG_H */
 
 #include <sys/types.h>
-#include <aim/mmu.h>
-#include <aim/pmm.h>
-#include <aim/vmm.h>
-#include <aim/device.h>
-#include <aim/console.h>
-#include <aim/trap.h>
-#include <aim/panic.h>
+#include <raim/mmu.h>
+#include <raim/pmm.h>
+#include <raim/vmm.h>
+#include <raim/device.h>
+#include <raim/console.h>
+#include <raim/trap.h>
+#include <raim/panic.h>
 #include <libc/string.h>
 #include <errno.h>
 

@@ -7,7 +7,7 @@ SUBDIRS = \
 DIST_SUBDIRS = \
 	mach-riscv-virt
 
-dist_noinst_DATA = vmaim.lds.S
+dist_noinst_DATA = vmraim.lds.S
 
 noinst_LTLIBRARIES = \
 	libentry.la \

@@ -5,7 +5,7 @@
 #endif /* HAVE_CONFIG_H */
 
 #include <sys/types.h>
-#include <aim/boot.h>
+#include <raim/boot.h>
 #include <util.h>
 #include <elf.h>
 #include <libc/string.h>
@@ -102,7 +102,7 @@ fail:
 void bootmain(void)
 {
     bputs("\n");
-    bputs("================= WELCOME TO AIM BOOT-LOADER FOR RISCV-VIRT =================\n");
+    bputs("================= WELCOME TO RAIM BOOT-LOADER FOR RISCV-VIRT =================\n");
     bputs("LOADING KERNEL ELF ...\n");
     
     uintptr_t entry = load_kernel_elf(PTRCAST(KERN_ELF_ADDR), (size_t)-1);

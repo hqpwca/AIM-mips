@@ -4,11 +4,11 @@
 
 #include <sys/types.h>
 #include <sys/param.h>
-#include <aim/mmu.h>
-#include <aim/vmm.h>
-#include <aim/pmm.h>
-#include <aim/panic.h>
-#include <aim/console.h>
+#include <raim/mmu.h>
+#include <raim/vmm.h>
+#include <raim/pmm.h>
+#include <raim/panic.h>
+#include <raim/console.h>
 #include <libc/string.h>
 
 #define SIZE_NUM 9

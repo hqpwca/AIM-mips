@@ -1,13 +1,13 @@
 /* Copyright (C) 2016 Gan Quan <coin2028@hotmail.com>
  *
- * This file is part of AIMv6.
+ * This file is part of RAIM.
  *
- * AIMv6 is free software: you can redistribute it and/or modify
+ * RAIM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * AIMv6 is distributed in the hope that it will be useful,
+ * RAIM is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -56,7 +56,7 @@
 #define PDX(va)		(((ULCAST(va)) >> PDXSHIFT) & PTXMASK)
 #define PTX(va)		(((ULCAST(va)) >> PTXSHIFT) & PTXMASK)
 
-extern pgindex_t *pgdir_slots[];	/* Defined in vmaim.lds.S */
+extern pgindex_t *pgdir_slots[];	/* Defined in vmraim.lds.S */
 #endif	/* !__ASSEMBLER__ */
 
 #endif
