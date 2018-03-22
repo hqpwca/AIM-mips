@@ -21,6 +21,17 @@
 
 #ifndef __ASSEMBLER__
 
+extern void bputc(int c);
+extern void bputs(const char *s);
+extern void bputh64(uint64_t x);
+
+
+
+
+
+
+
+
 struct DPT
 {
 	uint8_t status;

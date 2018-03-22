@@ -36,10 +36,10 @@ boot_elf_SOURCES = \
 
 boot_elf_LDADD = $(BOOT_LIBS)
 EXTRA_boot_elf_DEPENDENCIES = boot.lds
-boot_elf_CPPFLAGS = $(AM_CPPFLAGS_NOPIC)
-boot_elf_CFLAGS = $(AM_CFLAGS_NOPIC) -Os
-boot_elf_CCASFLAGS = $(AM_CCASFLAGS_NOPIC)
-boot_elf_LDFLAGS = $(AM_LDFLAGS_NOPIC) -T boot.lds
+boot_elf_CPPFLAGS = $(AM_CPPFLAGS)
+boot_elf_CFLAGS = $(AM_CFLAGS) -Os
+boot_elf_CCASFLAGS = $(AM_CCASFLAGS)
+boot_elf_LDFLAGS = $(AM_LDFLAGS) -T boot.lds
 
 # This file has double suffix, makefile rule cannot wildcard him
 boot.lds: $(srcdir)/arch/$(ARCH)/boot.lds.S

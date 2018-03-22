@@ -23,35 +23,12 @@ typedef elf64_phdr_t Elf_Phdr;
 
 
 
-int bputs(const char *s)
+void bputc(int c)
 {
-    while (*s) { sbi_console_putchar(*s); s++; }
-    return 0;
+    sbi_console_putchar(c);
 }
 
-void bputhex(uint64_t x)
-{
-    const char *dict = "0123456789ABCDEF";
-    sbi_console_putchar('0');
-    sbi_console_putchar('x');
 
-    sbi_console_putchar(dict[(x >> 60) & 0xF]);
-    sbi_console_putchar(dict[(x >> 56) & 0xF]);
-    sbi_console_putchar(dict[(x >> 52) & 0xF]);
-    sbi_console_putchar(dict[(x >> 48) & 0xF]);
-    sbi_console_putchar(dict[(x >> 44) & 0xF]);
-    sbi_console_putchar(dict[(x >> 40) & 0xF]);
-    sbi_console_putchar(dict[(x >> 36) & 0xF]);
-    sbi_console_putchar(dict[(x >> 32) & 0xF]);
-    sbi_console_putchar(dict[(x >> 28) & 0xF]);
-    sbi_console_putchar(dict[(x >> 24) & 0xF]);
-    sbi_console_putchar(dict[(x >> 20) & 0xF]);
-    sbi_console_putchar(dict[(x >> 16) & 0xF]);
-    sbi_console_putchar(dict[(x >> 12) & 0xF]);
-    sbi_console_putchar(dict[(x >> 8) & 0xF]);
-    sbi_console_putchar(dict[(x >> 4) & 0xF]);
-    sbi_console_putchar(dict[(x >> 0) & 0xF]);
-}
 
 
 
@@ -101,11 +78,11 @@ uintptr_t load_kernel_elf(void* blob, size_t size)
     if(ph[i].p_type == PT_LOAD && ph[i].p_memsz) {
       uintptr_t paddr = ph[i].p_paddr;
       bputs("  PADDR ");
-      bputhex(paddr);
+      bputh64(paddr);
       bputs(" FILESZ ");
-      bputhex(ph[i].p_filesz);
+      bputh64(ph[i].p_filesz);
       bputs(" MEMSZ ");
-      bputhex(ph[i].p_memsz);
+      bputh64(ph[i].p_memsz);
       bputs("\n");
       
       if (ph[i].p_offset + ph[i].p_filesz > size)
@@ -125,7 +102,7 @@ fail:
 void bootmain(void)
 {
     bputs("\n");
-    bputs("============ WELCOME TO AIM BOOT-LOADER FOR RISCV-VIRT ============\n");
+    bputs("================= WELCOME TO AIM BOOT-LOADER FOR RISCV-VIRT =================\n");
     bputs("LOADING KERNEL ELF ...\n");
     
     uintptr_t entry = load_kernel_elf(PTRCAST(KERN_ELF_ADDR), (size_t)-1);

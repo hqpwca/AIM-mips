@@ -14,3 +14,11 @@ cd build
 make
 qemu-system-riscv64 -m 1024 -nographic -machine virt -kernel bbl -initrd ../../AIM/kern/vmaim.elf -d guest_errors
 
+
+
+
+//// 文档
+
+bbl: 第一阶段启动，负责从machine mode进入supervisor mode；另外提供一些实用功能（如打印字符、关机等）；在编译时要用--with-payload=../../AIM/boot/boot.bin把我们的aim-bootloader加进去
+aim-bootloader：负责加载AIM的ELF文件
+

@@ -4,6 +4,25 @@
 
 #include <sys/types.h>
 #include <libc/string.h>
+#include <aim/boot.h>
+
+
+void bputs(const char *s)
+{
+    while (*s) { bputc(*s); s++; }
+}
+
+void bputh64(uint64_t x)
+{
+    const char *dict = "0123456789ABCDEF";
+    bputc('0');
+    bputc('x');
+    int i;
+    for (i = 60; i >= 0; i -= 4) {
+        bputc(dict[(x >> i) & 0xF]);
+    }
+}
+
 
 // copied from dietlibc
 
