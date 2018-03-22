@@ -94,7 +94,7 @@ fmt_loop:		switch (*fmt) {
 			case 'o':
 				base = 8;
 				goto get_uint;
-			case 'x':
+			case 'x': case 'X':
 				base = 16;
 				goto get_uint;
 			case 'p':

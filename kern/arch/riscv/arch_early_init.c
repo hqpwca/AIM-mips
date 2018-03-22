@@ -31,7 +31,7 @@
 __noreturn
 void abs_jump(void *addr)
 {
-    kprintf("abs jump to %08x%08x\n", (unsigned)((uintptr_t)addr>>32),(unsigned)(uintptr_t)addr);
+    kprintf("abs jump to %016llX\n", (uint64_t)addr);
 	asm ("jr %0"::"r"(addr));
 	__builtin_unreachable();
 }
@@ -56,7 +56,7 @@ void mmu_init(pgindex_t *boot_page_index)
     // WARL. Write-Any Read-Legal 
     uint64_t pgindex_paddr = (uintptr_t) boot_page_index;
     
-    kprintf("boot page table located at %08x%08x\n", (unsigned)(pgindex_paddr>>32),(unsigned)pgindex_paddr);
+    kprintf("boot page table located at %016llX\n", pgindex_paddr);
     
     union {
         struct {

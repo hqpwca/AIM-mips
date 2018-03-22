@@ -23,8 +23,7 @@ int page_index_early_map(pgindex_t *index, addr_t paddr, void *va, size_t length
 {
     uintptr_t vaddr = (uintptr_t)va;
     
-    kprintf("early map vaddr %08x%08x", (unsigned)(vaddr>>32),(unsigned)vaddr);
-    kprintf(" paddr %08x%08x\n", (unsigned)(paddr>>32),(unsigned)paddr);
+    kprintf("early map vaddr %016llX paddr %016llX\n", vaddr, paddr);
     
     
     assert(vaddr>>37 == (1ULL<<(64-37))-1);
