@@ -23,21 +23,71 @@
 #include <sys/types.h>
 #include <raim/init.h>
 #include <raim/mmu.h>
+#include <raim/console.h>
+#include <raim/early_kmmap.h>
+#include <raim/panic.h>
 
 
 __noreturn
 void abs_jump(void *addr)
 {
+    kprintf("abs jump to %08x%08x\n", (unsigned)((uintptr_t)addr>>32),(unsigned)(uintptr_t)addr);
 	asm ("jr %0"::"r"(addr));
 	__builtin_unreachable();
 }
 
+static pgindex_t bpgtbl; // boot page table
+
 void arch_mm_init()
 {
-	//mmu_init(pgindex);
+    page_index_clear(&bpgtbl);
+    page_index_early_map(&bpgtbl, RAM_PHYSBASE, (void*)(KERN_BASE-(KERN_START-RAM_PHYSBASE)), MEM_SIZE);
+	mmu_init(&bpgtbl);
 }
+
+
+
+
+
+void mmu_init(pgindex_t *boot_page_index)
+{
+//    early_mapping_add_memory();
+
+    // WARL. Write-Any Read-Legal 
+    uint64_t pgindex_paddr = (uintptr_t) boot_page_index;
+    
+    kprintf("boot page table located at %08x%08x\n", (unsigned)(pgindex_paddr>>32),(unsigned)pgindex_paddr);
+    
+    union {
+        struct {
+            uint64_t PPN : 44;
+            uint64_t ASID : 16;
+            uint64_t MODE : 4;
+        };
+        uint64_t val;
+    } new_satp = {
+
+        .PPN = pgindex_paddr >> 12,
+        .ASID = 0,
+        .MODE = 8, // Sv39
+
+    };
+    
+    __asm__ __volatile__ ("sfence.vma");
+    __asm__ __volatile__ ("csrw satp, %0"::"r"(new_satp.val):"memory");
+    
+    kprintf("paging enabled!\n");
+}
+
+
+
 
 void arch_early_init(void)
 {
 	//early_mach_init();
+}
+
+void master_init2(void)
+{
+    panic("haha!!!");
 }

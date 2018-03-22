@@ -157,13 +157,9 @@ void master_init(void)
 	output_running_message();
 
 	goto panic;
+	
 panic:
 	while(1);
-/*
-	asm volatile("cli");
-	while(1)
-		asm volatile("hlt");
-*/
 }
 
 __noreturn

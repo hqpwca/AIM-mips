@@ -32,9 +32,14 @@ typedef struct {
     uint64_t RSW : 2;
     uint64_t PPN : 54;
 } pte_t;
+static_assert(sizeof(pte_t)==8,"invalid pte_t size");
 typedef struct {
     pte_t pte[1<<9];
-} pgindex_t;
+} pgindex_t __attribute__ ((aligned (PAGE_SIZE)));;
+static_assert(sizeof(pgindex_t)==PAGE_SIZE, "invalid pgindex_t size");
+
+
+#define GIGAPAGE_SIZE (1024ULL*1024*1024)
 
 #endif /* !__ASSEMBLER__ */
 

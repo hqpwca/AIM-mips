@@ -1,7 +1,7 @@
 # RAIM
 
 source ~/toolchains/riscv/setpath.sh
-autoreconf --install && ./configure ARCH=riscv MACH=riscv-virt --host=riscv64-unknown-elf --with-kern-base=0xC0000000 --disable-wextra --disable-waddress --disable-wconversion
+autoreconf --install && ./configure ARCH=riscv MACH=riscv-virt --host=riscv64-unknown-elf --disable-wextra --disable-waddress --disable-wconversion
 
 
 
@@ -11,8 +11,7 @@ cd riscv-pk
 mkdir build
 cd build
 ../configure --host=riscv64-unknown-elf --enable-print-device-tree --enable-logo --with-payload=../../RAIM/boot/boot.bin
-make
-qemu-system-riscv64 -m 1024 -nographic -machine virt -kernel bbl -initrd ../../RAIM/kern/vmraim.elf -d guest_errors
+make && qemu-system-riscv64 -m 1024 -nographic -machine virt -kernel bbl -initrd ../../RAIM/kern/vmraim.elf -d guest_errors
 
 
 

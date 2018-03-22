@@ -28,7 +28,7 @@ extern void bputh64(uint64_t x);
 
 
 
-
+#if 0
 
 
 
@@ -68,6 +68,9 @@ typedef uint pde_t;
 
 #define V2P_WO(x) ((x) - KERNBASE)    // same as V2P, but without casts
 #define P2V_WO(x) ((x) + KERNBASE)    // same as P2V, but without casts
+
+
+#endif
 
 
 #endif /* !__ASSEMBLER__ */

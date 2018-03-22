@@ -74,6 +74,7 @@ uintptr_t load_kernel_elf(void* blob, size_t size)
   if (eh->e_phoff + phdr_size > size)
     goto fail;
 
+  uintptr_t entry_pa = 0;
   for (int i = eh->e_phnum - 1; i >= 0; i--) {
     if(ph[i].p_type == PT_LOAD && ph[i].p_memsz) {
       uintptr_t paddr = ph[i].p_paddr;
@@ -89,10 +90,17 @@ uintptr_t load_kernel_elf(void* blob, size_t size)
         goto fail;
       memcpy((void*)paddr, blob + ph[i].p_offset, ph[i].p_filesz);
       memset((void*)paddr + ph[i].p_filesz, 0, ph[i].p_memsz - ph[i].p_filesz);
+      
+      if (ph[i].p_vaddr <= eh->e_entry && eh->e_entry < ph[i].p_vaddr + ph[i].p_memsz)
+      {
+        entry_pa = eh->e_entry - ph[i].p_vaddr + ph[i].p_paddr;
+      }
     }
   }
-
-  return eh->e_entry;
+  bputs("  ENTRY ");
+  bputh64(entry_pa);
+  bputs("\n");
+  return entry_pa;
 
 fail:
     die("failed to load payload");
@@ -102,7 +110,7 @@ fail:
 void bootmain(void)
 {
     bputs("\n");
-    bputs("================= WELCOME TO RAIM BOOT-LOADER FOR RISCV-VIRT =================\n");
+    bputs("================ WELCOME TO RAIM BOOT-LOADER FOR RISCV-VIRT =================\n");
     bputs("LOADING KERNEL ELF ...\n");
     
     uintptr_t entry = load_kernel_elf(PTRCAST(KERN_ELF_ADDR), (size_t)-1);

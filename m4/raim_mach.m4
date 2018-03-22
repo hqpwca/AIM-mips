@@ -102,8 +102,10 @@ AC_DEFUN([RAIM_INIT_MACH], [
 		[riscv-virt], [
 			AS_VAR_SET([__enable_bootloader], [yes])
 			AS_VAR_SET([__with_cpus], [1])
-            AS_VAR_SET([__with_ram_physbase], [0x80000000])
-            AS_VAR_SET([__with_kern_start], [0x82000000])
+            AS_VAR_SET([__with_ram_physbase], [0x0000000080000000])
+            AS_VAR_SET([__with_kern_start],   [0x0000000082000000])
+            AS_VAR_SET([__with_kern_base],    [0xffffffe002000000])
+            AS_VAR_SET([__with_mem_size],     [0x0000000010000000])
 		],
 		[generic], [],
 		[unknown], [],

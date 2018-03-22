@@ -45,6 +45,7 @@ void __local_panic(void)
 	 * We currently do a tight loop.
 	 */
 
+    arch_local_panic();
 	for (;;)
 		/* nothing */;
 }

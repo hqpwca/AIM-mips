@@ -33,6 +33,7 @@ void panic(const char *fmt, ...);
 
 /* Arch/mach-dependent code */
 void panic_other_cpus(void);
+void arch_local_panic(void);
 
 #endif /* !__ASSEMBLER__ */
 

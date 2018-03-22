@@ -13,6 +13,8 @@ _start:
 
 .globl high_address_entry
 high_address_entry:
+    li sp, KERN_BASE
+    j master_init2
 
 .globl slave_upper_entry
 slave_upper_entry:

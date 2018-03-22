@@ -30,5 +30,8 @@
 ENTRY(_start)
 
 SECTIONS {
-	. = KERN_START;
+	. = KERN_BASE;
+	.text : AT(KERN_START) { *(*); }
+	
+	KERN_END = .;
 };
