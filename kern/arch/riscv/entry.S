@@ -18,3 +18,10 @@ high_address_entry:
 
 .globl slave_upper_entry
 slave_upper_entry:
+    j slave_upper_entry // FIXME
+
+.globl trap_entry
+.align 4
+trap_entry:
+    j trap_entry//FIXME
+

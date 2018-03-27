@@ -124,12 +124,12 @@ void master_init(void)
 {
 	allocator_init();
 	test_allocator();
-#if 0
+
 	bsp_trap_init();
 	trap_init();
 	kputs("Trap initialized.\n");
 	//trap_check();
-
+#if 0
 	mm_init();
 	kputs("uvm initialized.\n");
 

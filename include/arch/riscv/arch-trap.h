@@ -9,6 +9,8 @@ struct trapframe {
 // FIXME
 };
 
+extern void trap_entry(void);
+
 #endif	/* !__ASSEMBLER__ */
 
 #endif /* _ARCH_TRAP_H */

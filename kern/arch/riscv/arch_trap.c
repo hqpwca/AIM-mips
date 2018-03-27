@@ -8,10 +8,15 @@
 #include <libc/string.h>
 #include <raim/trap.h>
 #include <raim/debug.h>
+#include <raim/trap.h>
+#include <arch-trap.h>
+#include <raim/console.h>
 
 void trap_init(void)
 {
-unimpl();
+    uint64_t e = (uint64_t)&trap_entry;
+    assert(e % 4 == 0);
+    __asm__ __volatile__ ("csrw stvec, %0"::"r"(e));
 }
 
 void trap_handler(struct trapframe *regs)

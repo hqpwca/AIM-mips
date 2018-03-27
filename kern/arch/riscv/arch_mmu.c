@@ -52,6 +52,38 @@ int page_index_early_map(pgindex_t *index, addr_t paddr, void *va, size_t length
 	return 1;
 }
 
+
+void mmu_init(pgindex_t *boot_page_index)
+{
+//    early_mapping_add_memory();
+
+    // WARL. Write-Any Read-Legal 
+    uint64_t pgindex_paddr = (uintptr_t) boot_page_index;
+    
+    kprintf("boot page table located at %016llX\n", pgindex_paddr);
+    
+    union {
+        struct {
+            uint64_t PPN : 44;
+            uint64_t ASID : 16;
+            uint64_t MODE : 4;
+        };
+        uint64_t val;
+    } new_satp = {
+
+        .PPN = pgindex_paddr >> 12,
+        .ASID = 0,
+        .MODE = 8, // Sv39
+
+    };
+    
+    __asm__ __volatile__ ("sfence.vma":::"memory");
+    __asm__ __volatile__ ("csrw satp, %0"::"r"(new_satp.val):"memory");
+    
+    kprintf("paging enabled!\n");
+}
+
+
 void init_free_pages()
 {
 	size_t kend = kva2pa(&kern_end);
