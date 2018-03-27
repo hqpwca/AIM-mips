@@ -3,9 +3,10 @@
 #ifndef _ARCH_MMU_H
 #define _ARCH_MMU_H
 
+#define KOFFSET (KERN_BASE - KERN_START)
 /* addresses before and after early MMU mapping */
-#define __premap_addr(kva)	(ULCAST(kva) - KERN_BASE)
-#define __postmap_addr(pa)	(ULCAST(pa) + KERN_BASE)
+#define __premap_addr(kva)	(ULCAST(kva) - KOFFSET)
+#define __postmap_addr(pa)	(ULCAST(pa) + KOFFSET)
 
 #define PAGE_SHIFT 12
 #define PAGE_SIZE   4096
@@ -13,8 +14,8 @@
 #define PAGE_OFFSET(a)  (ULCAST(a) & PAGE_MASK)
 
 /* kernel virtual address and physical address conversion */
-#define kva2pa(kva)		(ULCAST(kva) - KERN_BASE)
-#define pa2kva(pa)		(PTRCAST(pa) + KERN_BASE)
+#define kva2pa(kva)		(ULCAST(kva) - KOFFSET)
+#define pa2kva(pa)		(PTRCAST(pa) + KOFFSET)
 
 #ifndef __ASSEMBLER__
 
@@ -37,6 +38,8 @@ typedef struct {
     pte_t pte[1<<9];
 } pgindex_t __attribute__ ((aligned (PAGE_SIZE)));;
 static_assert(sizeof(pgindex_t)==PAGE_SIZE, "invalid pgindex_t size");
+
+extern void *kern_end;
 
 
 #define GIGAPAGE_SIZE (1024ULL*1024*1024)

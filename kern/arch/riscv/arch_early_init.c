@@ -87,7 +87,3 @@ void arch_early_init(void)
 	//early_mach_init();
 }
 
-void master_init2(void)
-{
-    panic("haha!!!");
-}

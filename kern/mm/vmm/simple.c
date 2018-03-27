@@ -45,12 +45,12 @@ struct alloced_page
 static struct alloced_page *head,*tail;
 static struct alloced_page h,t;
 static void *now_plain_page;
-static int offset;
+static size_t offset;
 
 static inline void *new_plain_page()
 {
 	addr_t paddr = (addr_t)pgalloc();
-	//kpdebug("new_plain_page: 0x%x\n", (void *)(uint32_t)paddr);
+//	kpdebug("new_plain_page: 0x%llx\n", (uint64_t)paddr);
 	offset = 0;
 	if (paddr == (addr_t)-1) return NULL;
 	else return (void *)(addr_t)pa2kva(paddr);
@@ -63,11 +63,11 @@ static inline void *get_plain_object(size_t size)
 		panic("Plain OBJECT too large.\n");
 		return NULL;
 	}
-	if(offset + (int)size <= PAGE_SIZE)
+	if(offset + size <= PAGE_SIZE)
 	{
 		void *obj = now_plain_page + offset;
-		offset += (int)size;
-		//kpdebug("new_plain_object: 0x%x, size: %d\n", obj, size);
+		offset += size;
+		//kpdebug("new_plain_object: 0x%llx, size: %llx\n", (uint64_t)obj, (uint64_t)size);
 		return obj;
 	}
 	else
@@ -77,7 +77,6 @@ static inline void *get_plain_object(size_t size)
 			panic("Page Allocator Full or An error occurred.\n");
 		return now_plain_page;
 	}
-	kputs("\n");
 }
 
 #define bit(x, a) ((x[a>>3] >> (a & 0x7)) & 1)

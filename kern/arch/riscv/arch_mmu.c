@@ -10,6 +10,8 @@
 #include <libc/string.h>
 #include <raim/debug.h>
 #include <raim/console.h>
+#include <raim/vmm.h>
+#include <raim/pmm.h>
 
 bool early_mapping_valid(__unused struct early_mapping *entry) { return true; } //DUMMY
 
@@ -49,3 +51,81 @@ int page_index_early_map(pgindex_t *index, addr_t paddr, void *va, size_t length
     
 	return 1;
 }
+
+void init_free_pages()
+{
+	size_t kend = kva2pa(&kern_end);
+	kend = ALIGN_ABOVE(kend, PAGE_SIZE);
+	size_t mend = RAM_PHYSBASE + MEM_SIZE; // memory end
+	kprintf("Start Freeing: 0x%x ~ 0x%x...\n", kend, mend);
+
+	struct pages *p = kmalloc(sizeof(*p), 0);
+	p->paddr = kend;
+	p->size = mend - kend;
+	p->flags = GFP_UNSAFE;
+
+	free_pages(p);
+
+	kprintf("Finish Freed: 0x%x ~ 0x%x...\n", kend, mend);
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+
+
+static pgindex_t *current_pgdir;
+
+
+int switch_pgindex(pgindex_t *pgindex)
+{
+	current_pgdir = pgindex;
+unimpl();
+	return 0;
+}
+
+pgindex_t *get_pgindex(void)
+{
+	return current_pgdir;
+}
+
+
+
+pgindex_t *init_pgindex(void)
+{
+unimpl();
+}
+
+
+ssize_t unmap_pages(pgindex_t *pgindex,
+	    void *vaddr,
+	    size_t size,
+	    addr_t *paddr)
+{
+unimpl();
+}
+
+int map_pages(pgindex_t *pgindex,
+	  void *vaddr,
+	  addr_t paddr,
+	  size_t size,
+	  uint32_t flags)
+{
+unimpl();
+}
+
+
+void destroy_pgindex(pgindex_t *pgindex)
+{
+unimpl();
+}
+
+int set_pages_perm(pgindex_t *pgindex, void *addr, size_t len, uint32_t flags)
+{
+unimpl();
+}
+
+void *uva2kva(pgindex_t *pgindex, void *uaddr)
+{
+unimpl();
+}
+

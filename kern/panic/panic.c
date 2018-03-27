@@ -79,6 +79,7 @@ void panic(const char *fmt, ...)
 		kputs("PANIC: message is truncated.");
 	}
 	kputs(__buf);
+	kputs("\n\n");
 	
 	__local_panic();
 }

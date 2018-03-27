@@ -35,6 +35,11 @@ void panic(const char *fmt, ...);
 	} while (0)
 
 
+#define unimpl() \
+    do { \
+        panic("Unimplemented! file: %s, line: %d, func: %s\n", __FILE__, __LINE__, __func__); \
+    } while (0)
+
 #endif /* !__ASSEMBLER__ */
 
 #endif /* !_RAIM_DEBUG_H */

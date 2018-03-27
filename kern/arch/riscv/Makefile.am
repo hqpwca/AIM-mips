@@ -19,7 +19,9 @@ libentry_la_SOURCES = \
 libarch_la_SOURCES = \
     arch_mmu.c \
     arch_smp.c \
-    arch_early_init.c
+    arch_early_init.c \
+    arch_trap.c \
+    proc.c
 
 libarch_la_LIBADD = \
 	mach-$(MACH)/libmach.la

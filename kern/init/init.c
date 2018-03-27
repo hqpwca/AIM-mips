@@ -55,7 +55,7 @@ int do_initcalls()
 void test_allocator()
 {
 	kputs("\n");
-	kputs("Start Test allocators.\n");
+	kputs("Start Test allocators. Please verify output BY YOUR EYES!!!\n");
 	void *page1 = (void *)(addr_t)pgalloc();
 	void *page2 = (void *)(addr_t)pgalloc();
 	kpdebug("page1 : 0x%x\n", page1);
@@ -70,21 +70,21 @@ void test_allocator()
 
 	void *a32 = kmalloc(32,0);
 	void *b32 = kmalloc(32,0);
-	kpdebug("a32 : 0x%x\n", a32);
-	kpdebug("b32 : 0x%x\n", b32);
+	kpdebug("a32 : 0x%llx\n", (uint64_t)a32);
+	kpdebug("b32 : 0x%llx\n", (uint64_t)b32);
 	kfree((void *)(a32));
 	void *c32 = kmalloc(32,0);
-	kpdebug("c32 : 0x%x\n", c32);
+	kpdebug("c32 : 0x%llx\n", (uint64_t)c32);
 	void *a16 = kmalloc(16,0);
 	void *b16 = kmalloc(16,0);
-	kpdebug("a16 : 0x%x\n", a16);
-	kpdebug("b16 : 0x%x\n", b16);
+	kpdebug("a16 : 0x%llx\n", (uint64_t)a16);
+	kpdebug("b16 : 0x%llx\n", (uint64_t)b16);
 	kfree((void *)(b32));
 	kfree((void *)(c32));
 	kfree((void *)(a16));
 	kfree((void *)(b16));
 	void *a64 = kmalloc(64,0);
-	kpdebug("a64 : 0x%x\n", a64);
+	kpdebug("a64 : 0x%llx\n", (uint64_t)a64);
 	kfree((void *)(a64));
 
 	kputs("Ended Test allocators.\n");
@@ -124,7 +124,7 @@ void master_init(void)
 {
 	allocator_init();
 	test_allocator();
-
+#if 0
 	bsp_trap_init();
 	trap_init();
 	kputs("Trap initialized.\n");
@@ -155,11 +155,11 @@ void master_init(void)
 		schedule();
 
 	output_running_message();
-
+#endif
 	goto panic;
 	
 panic:
-	while(1);
+	panic("%s", __func__);
 }
 
 __noreturn
@@ -190,7 +190,7 @@ void slave_init(void)
 
 	goto panic;
 panic:
-	while(1);
+	panic("%s", __func__);
 /*
 	asm volatile("cli");
 	while(1)

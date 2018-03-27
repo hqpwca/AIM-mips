@@ -2,11 +2,12 @@
 
 source ~/toolchains/riscv/setpath.sh
 autoreconf --install && ./configure ARCH=riscv MACH=riscv-virt --host=riscv64-unknown-elf --disable-wextra --disable-waddress --disable-wconversion
-
+make
 
 
 # bbl (should build RAIM bootloader first)
 
+source ~/toolchains/riscv/setpath.sh
 cd riscv-pk
 mkdir build
 cd build
@@ -21,3 +22,7 @@ make && qemu-system-riscv64 -m 1024 -nographic -machine virt -kernel bbl -initrd
 bbl: 第一阶段启动，负责从machine mode进入supervisor mode；另外提供一些实用功能（如打印字符、关机等）；在编译时要用--with-payload=../../RAIM/boot/boot.bin把我们的raim-bootloader加进去
 raim-bootloader：负责加载RAIM的ELF文件
 
+AS_VAR_SET([__with_ram_physbase], [0x0000000080000000])  RAM_PHYSBASE
+AS_VAR_SET([__with_kern_start],   [0x0000000082000000])  KERN_START
+AS_VAR_SET([__with_kern_base],    [0xffffffe002000000])  KERN_BASE
+AS_VAR_SET([__with_mem_size],     [0x0000000010000000])  MEM_SIZE

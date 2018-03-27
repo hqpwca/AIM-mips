@@ -20,7 +20,11 @@
 #include <config.h>
 #endif /* HAVE_CONFIG_H */
 
+
 #define __LDSCRIPT__
+
+#include <asm-generic/vmraim.lds.h>
+#include <arch-mmu.h>
 
 /*
  * Using the C preprocessor, we allow includes and macro expansion in this
@@ -31,7 +35,17 @@ ENTRY(_start)
 
 SECTIONS {
 	. = KERN_BASE;
-	.text : AT(KERN_START) { *(*); }
+	.text : AT(KERN_START) {
+	    *(*);
+	    EARLY_INIT(STRUCT_ALIGNMENT)
+		NORM_INIT(STRUCT_ALIGNMENT)
+		LATE_INIT(STRUCT_ALIGNMENT)
+	}
 	
+    PROVIDE(simple1_start = .);
+		. += 32K;
+
+    . = ALIGN(PAGE_SIZE);
 	KERN_END = .;
+	PROVIDE(kern_end = .);
 };
