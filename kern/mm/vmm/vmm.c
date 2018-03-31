@@ -27,6 +27,7 @@
 #include <raim/vmm.h>
 #include <raim/mmu.h>	/* PAGE_SIZE */
 #include <raim/panic.h>
+#include <raim/console.h>
 
 /* dummy implementations */
 static void *__simple_alloc(__unused size_t size, __unused gfp_t flags) { return NULL; }

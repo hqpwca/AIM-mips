@@ -22,6 +22,7 @@
 
 #include <sys/types.h>
 #include <raim/panic.h>
+#include <raim/mmu.h>
 
 #define JUMP_HANDLER_QUEUE_LENGTH	10
 static int __jump_handler_queue_size;
@@ -50,7 +51,7 @@ int jump_handlers_add(generic_fp entry)
 void jump_handlers_apply(void)
 {
 	for (int i = 0; i < __jump_handler_queue_size; ++i) {
-		//(generic_fp)postmap_addr(__jump_handler_queue[i])();
+		((generic_fp)postmap_addr(__jump_handler_queue[i]))();
 	}
 }
 

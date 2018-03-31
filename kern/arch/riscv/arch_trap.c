@@ -36,3 +36,20 @@ void bsp_trap_init()
 {
 	
 }
+
+void crash()
+{
+    uint64_t r;
+    
+    kprintf("============== CRASH ==============\n");
+    
+    __asm__ __volatile__ ("csrr %0, scause":"=r"(r));
+    kprintf("scause=%016llx\n", r);
+//    __asm__ __volatile__ ("csrr %0, stval":"=r"(r));
+//    kprintf("stval=%016llx\n", r);
+    __asm__ __volatile__ ("csrr %0, sepc":"=r"(r));
+    kprintf("sepc=%016llx\n", r);
+    
+    
+    panic("crash");
+}

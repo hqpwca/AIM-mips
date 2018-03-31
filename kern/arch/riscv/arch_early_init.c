@@ -41,7 +41,7 @@ static pgindex_t bpgtbl; // boot page table
 void arch_mm_init()
 {
     page_index_clear(&bpgtbl);
-    page_index_early_map(&bpgtbl, RAM_PHYSBASE, (void*)(KERN_BASE-(KERN_START-RAM_PHYSBASE)), MEM_SIZE);
+    riscv_map_kernel(&bpgtbl, 1);
 	mmu_init(&bpgtbl);
 }
 

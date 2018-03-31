@@ -21,17 +21,20 @@
 
 #include <sys/types.h>
 
-typedef struct {
-    uint64_t V : 1;
-    uint64_t R : 1;
-    uint64_t W : 1;
-    uint64_t X : 1;
-    uint64_t U : 1;
-    uint64_t G : 1;
-    uint64_t A : 1;
-    uint64_t D : 1;
-    uint64_t RSW : 2;
-    uint64_t PPN : 54;
+typedef union {
+    struct {
+        uint64_t V : 1;
+        uint64_t R : 1;
+        uint64_t W : 1;
+        uint64_t X : 1;
+        uint64_t U : 1;
+        uint64_t G : 1;
+        uint64_t A : 1;
+        uint64_t D : 1;
+        uint64_t RSW : 2;
+        uint64_t PPN : 54;
+    };
+    uint64_t raw;
 } pte_t;
 static_assert(sizeof(pte_t)==8,"invalid pte_t size");
 typedef struct {
@@ -41,6 +44,7 @@ static_assert(sizeof(pgindex_t)==PAGE_SIZE, "invalid pgindex_t size");
 
 extern void *kern_end;
 
+extern void riscv_map_kernel(pgindex_t *pgtable, int map_identity);
 
 #define GIGAPAGE_SIZE (1024ULL*1024*1024)
 

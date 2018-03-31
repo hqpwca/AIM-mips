@@ -23,5 +23,7 @@ slave_upper_entry:
 .globl trap_entry
 .align 4
 trap_entry:
+    li sp, KERN_BASE
+    j crash
     j trap_entry//FIXME
 

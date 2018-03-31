@@ -87,7 +87,7 @@ void master_early_init(void)
 
 	early_mm_init();
 
-	jump_handlers_apply();
+	mmu_handlers_apply();
 
 	extern uint32_t high_address_entry;
 	abs_jump((void *)postmap_addr(&high_address_entry));

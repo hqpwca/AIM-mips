@@ -122,6 +122,8 @@ void allocator_init()
 __noreturn
 void master_init(void)
 {
+    jump_handlers_apply();
+    
 	allocator_init();
 	test_allocator();
 
@@ -129,13 +131,13 @@ void master_init(void)
 	trap_init();
 	kputs("Trap initialized.\n");
 	//trap_check();
-#if 0
+
 	mm_init();
 	kputs("uvm initialized.\n");
 
 	extern void mm_test();
 	mm_test();
-
+#if 0
 	sched_init();
 	kputs("scheduler initialized.\n");
 	proc_init();

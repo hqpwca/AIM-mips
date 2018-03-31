@@ -37,7 +37,9 @@ struct mm *kernel_mm;
 struct mm *
 mm_new(void)
 {
+    //kprintf("mm_new\n");
 	struct mm *mm = (struct mm *)kmalloc(sizeof(*mm), 0);
+    //kprintf("mm=%p\n",mm);
 
 	if (mm != NULL) {
 		list_init(&(mm->vma_head));
