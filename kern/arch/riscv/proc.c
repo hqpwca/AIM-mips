@@ -21,6 +21,7 @@
 #endif /* HAVE_CONFIG_H */
 
 #include <sys/types.h>
+#include <libc/string.h>
 #include <raim/proc.h>
 #include <raim/percpu.h>
 #include <raim/console.h>
@@ -57,12 +58,14 @@ static void __bootstrap_trapframe(struct trapframe *tf,
 				   void *stacktop,
 				   void *args)
 {
-unimpl();
+    memset(tf,0,sizeof(*tf));
+    tf->sepc=(uint64_t)entry;
+    tf->sscratch=(uint64_t)tf;
 }
 
 static void __bootstrap_context(struct context *context, struct trapframe *tf)
 {
-unimpl();
+    memcpy(context,tf,sizeof(*tf));
 }
 
 static void __bootstrap_user(struct trapframe *tf)

@@ -1,6 +1,7 @@
 # RAIM
 
 source ~/toolchains/riscv/setpath.sh
+cd RAIM
 autoreconf --install && ./configure ARCH=riscv MACH=riscv-virt --host=riscv64-unknown-elf --disable-wextra --disable-waddress --disable-wconversion
 make
 
@@ -33,3 +34,8 @@ AS_VAR_SET([__with_ram_physbase], [0x0000000080000000])  RAM_PHYSBASE
 AS_VAR_SET([__with_kern_start],   [0x0000000082000000])  KERN_START
 AS_VAR_SET([__with_kern_base],    [0xffffffe002000000])  KERN_BASE
 AS_VAR_SET([__with_mem_size],     [0x0000000010000000])  MEM_SIZE
+
+
+
+trap: sscratch寄存器是0则表示trap从内核中来，非0则表示从用户态来（其中存的值是内核的sp），与bbl大致相同
+

@@ -35,12 +35,15 @@ ENTRY(_start)
 
 SECTIONS {
 	. = KERN_BASE;
-	.text : AT(KERN_START) {
-	    *(*);
-	    EARLY_INIT(STRUCT_ALIGNMENT)
+	.text : AT(KERN_START) { *(.text) }
+    .rodata : {
+        *(.rodata*)
+        EARLY_INIT(STRUCT_ALIGNMENT)
 		NORM_INIT(STRUCT_ALIGNMENT)
 		LATE_INIT(STRUCT_ALIGNMENT)
-	}
+    }
+    .data : { *(.data*) }
+    .bss : { *(.bss*) }
 	
     PROVIDE(simple1_start = .);
 		. += 32K;

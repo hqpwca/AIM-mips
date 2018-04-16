@@ -131,18 +131,19 @@ void master_init(void)
 	trap_init();
 	kputs("Trap initialized.\n");
 	//trap_check();
+//	    *(volatile int*)0x1ABC;
 
 	mm_init();
 	kputs("uvm initialized.\n");
 
 	extern void mm_test();
 	mm_test();
-#if 0
 	sched_init();
 	kputs("scheduler initialized.\n");
 	proc_init();
 	idle_init();
 	kputs("proc initialized.\n");
+
 
 	do_early_initcalls();
 	do_initcalls();
@@ -153,6 +154,7 @@ void master_init(void)
 
 	spawn_initproc();
 	kputs("initproc spawned.\n");
+#if 0
 	while(1)
 		schedule();
 
