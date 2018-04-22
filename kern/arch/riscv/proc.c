@@ -45,6 +45,23 @@ void forkret(void)
 
 extern void switch_regs(struct context *old, struct context *new);
 
+
+/*
+
+       stack layout:
+     
+     
+     ------------------------------------LOWADDR = proc->kstack
+   ^ 
+   ^  
+   ^ ------------------------------------ trapframe = initial sp
+   ^   x0
+   ^   x1 ...
+   ^
+   ^   csr ...
+     ------------------------------------HIGHADDR = kstacktop(proc) = proc->kstack + proc->kstack_size
+*/
+
 static struct trapframe *__proc_trapframe(struct proc *proc)
 {
 	struct trapframe *tf;
@@ -58,9 +75,21 @@ static void __bootstrap_trapframe(struct trapframe *tf,
 				   void *stacktop,
 				   void *args)
 {
+
     memset(tf,0,sizeof(*tf));
-    tf->sepc=(uint64_t)entry;
-    tf->sscratch=(uint64_t)tf;
+    
+    tf->a0=(uint64_t)args;
+
+    tf->sp=(uint64_t)tf;
+
+//                 ra                               sepc
+//    switch_regs()==>forkret()==>proc_trap_return()==>entry
+    tf->ra=(uint64_t)forkret; // should make switch_regs() return to forkret() first
+    tf->sepc=(uint64_t)entry; 
+
+    //copy current sstatus
+    __asm__ __volatile__ ("csrr %0, sstatus":"=r"(tf->sstatus.raw));
+    tf->sstatus.SPP=1;
 }
 
 static void __bootstrap_context(struct context *context, struct trapframe *tf)
@@ -71,6 +100,7 @@ static void __bootstrap_context(struct context *context, struct trapframe *tf)
 static void __bootstrap_user(struct trapframe *tf)
 {
 unimpl();
+
 }
 
 void __proc_ksetup(struct proc *proc, void *entry, void *args)
@@ -91,6 +121,7 @@ void __proc_usetup(struct proc *proc, void *entry, void *stacktop, void *args)
 void __prepare_trapframe_and_stack(__unused struct trapframe *tf, __unused void *entry,
     __unused void *ustacktop, __unused int argc, __unused char *argv[], __unused char *envp[])
 {
+unimpl();
 }
 
 void proc_trap_return(struct proc *proc)
@@ -114,13 +145,13 @@ unimpl();
 
 void switch_context(struct proc *proc)
 {
+kprintf("switch_context(proc=%016llx)\n",(uint64_t)proc);
 	struct proc *current = current_proc;
 	current_proc = proc;
 
 	/* Switch page directory */
 	switch_pgindex(proc->mm->pgindex);
 
-unimpl();
 	/* Switch general registers */
 	switch_regs(&(current->context), &(proc->context));
 }

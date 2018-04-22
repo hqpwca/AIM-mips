@@ -67,6 +67,11 @@ void initproc_entry(void)
 
 	//execve("/sbin/init", initargv, initenvp);
 
+    while(1) {
+        kprintf("initproc_entry() yield\n");
+        schedule();
+    }
+    
 	for (;;)
 		/* nothing */;
 }
@@ -80,6 +85,6 @@ void spawn_initproc(void)
 	initproc->sessionleader = initproc;
 	initproc->mainthread = initproc;
 	proc_add(initproc);
-	kputs("here\n");
+	kputs("spawn_initproc here\n");
 }
 

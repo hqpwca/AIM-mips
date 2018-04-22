@@ -74,6 +74,8 @@ save_registers:
   STORE t0, 34*REGBYTES(sp)
   csrr t0, 0x143//stval
   STORE t0, 35*REGBYTES(sp)
+  csrr t0, sstatus
+  STORE t0, 36*REGBYTES(sp)
   
   mv a0, sp                        # a0 <- regs
     j trap_handler
@@ -103,6 +105,8 @@ trap_exit:
   csrw scause, t0
   LOAD t0,35*REGBYTES(sp)
   csrw 0x143/*stval*/, t0
+  LOAD t0,36*REGBYTES(sp)
+  csrw sstatus, t0
   
   # Restore all of the registers.
   LOAD ra, 1*REGBYTES(sp)
@@ -136,4 +140,50 @@ trap_exit:
   LOAD t5,30*REGBYTES(sp)
   LOAD t6,31*REGBYTES(sp)
   LOAD sp, 2*REGBYTES(sp)
-  mret
+  sret
+  
+.globl switch_regs
+switch_regs:
+  //save callee-saved registers (sp, s0, s1, s2-s11)
+  //   althrough ra is caller-saved
+  //   but we MUST save it as well
+  //   because we are SWITCHING CONTEXT and pc(ra) is part of it
+  
+  // FIXME: should we save gp, tp and CSR???
+  
+  // a0 is struct context for current thread
+  // a1 is struct context for target thread
+
+  // save current thread
+  STORE ra, 1*REGBYTES(a0)
+  STORE sp, 2*REGBYTES(a0)
+  STORE s0, 8*REGBYTES(a0)
+  STORE s1, 9*REGBYTES(a0)
+  STORE s2,18*REGBYTES(a0)
+  STORE s3,19*REGBYTES(a0)
+  STORE s4,20*REGBYTES(a0)
+  STORE s5,21*REGBYTES(a0)
+  STORE s6,22*REGBYTES(a0)
+  STORE s7,23*REGBYTES(a0)
+  STORE s8,24*REGBYTES(a0)
+  STORE s9,25*REGBYTES(a0)
+  STORE s10,26*REGBYTES(a0)
+  STORE s11,27*REGBYTES(a0)
+  
+  // load target thread
+  LOAD ra, 1*REGBYTES(a1)
+  LOAD sp, 2*REGBYTES(a1)
+  LOAD s0, 8*REGBYTES(a1)
+  LOAD s1, 9*REGBYTES(a1)
+  LOAD s2,18*REGBYTES(a1)
+  LOAD s3,19*REGBYTES(a1)
+  LOAD s4,20*REGBYTES(a1)
+  LOAD s5,21*REGBYTES(a1)
+  LOAD s6,22*REGBYTES(a1)
+  LOAD s7,23*REGBYTES(a1)
+  LOAD s8,24*REGBYTES(a1)
+  LOAD s9,25*REGBYTES(a1)
+  LOAD s10,26*REGBYTES(a1)
+  LOAD s11,27*REGBYTES(a1)
+  ret
+

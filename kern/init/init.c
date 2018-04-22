@@ -154,12 +154,13 @@ void master_init(void)
 
 	spawn_initproc();
 	kputs("initproc spawned.\n");
-#if 0
-	while(1)
+
+	while(1) {
+	    kprintf("master_init() yield\n");
 		schedule();
+    }
 
 	output_running_message();
-#endif
 	goto panic;
 	
 panic:

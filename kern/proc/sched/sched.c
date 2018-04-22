@@ -50,7 +50,7 @@ static void __update_proc(struct proc *proc)
 	proc->oncpu = cpuid();
 }
 
-void schedule(void)
+void schedule(void) // something like yield()
 {
 	struct proc *oldproc = current_proc, *newproc;
 
@@ -67,7 +67,8 @@ void schedule(void)
 	__update_proc(newproc);
 
 	switch_context(newproc);
-
+//pay attention to forkret()
+//the code below should be same as forkret (vice versa)
 	sched_exit_critical();
 }
 
