@@ -16,8 +16,6 @@
 #include <raim/percpu.h>
 #include <raim/proc.h>
 #include <raim/sched.h>
-#include <drivers/io/io-mem.h>
-#include <drivers/io/io-port.h>
 #include <platform.h>
 
 int do_early_initcalls()

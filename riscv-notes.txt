@@ -6,6 +6,8 @@ autoreconf --install && ./configure ARCH=riscv MACH=riscv-virt --host=riscv64-un
 make
 
 
+
+
 # bbl (should build RAIM bootloader first)
 
 source ~/toolchains/riscv/setpath.sh
@@ -13,7 +15,7 @@ cd riscv-pk
 mkdir build
 cd build
 ../configure --host=riscv64-unknown-elf --enable-print-device-tree --enable-logo --with-payload=../../RAIM/boot/boot.bin
-make && qemu-system-riscv64 -m 1024 -nographic -machine virt -kernel bbl -initrd ../../RAIM/kern/vmraim.elf -d guest_errors
+make && qemu-system-riscv64 -m 1024 -drive file=disk.raw,format=raw,id=hd0 -device virtio-blk-device,drive=hd0 -nographic -machine virt -kernel bbl -initrd ../../RAIM/kern/vmraim.elf -d guest_errors
 
 
 
@@ -40,3 +42,4 @@ AS_VAR_SET([__with_mem_size],     [0x0000000010000000])  MEM_SIZE
 
 trap: sscratch寄存器是0则表示trap从内核中来，非0则表示从用户态来（其中存的值是内核的sp），与bbl大致相同
 手册中trap相关描述在M-mode 3.1.7 ; S-mode 4.1.1
+

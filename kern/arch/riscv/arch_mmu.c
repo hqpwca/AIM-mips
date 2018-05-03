@@ -55,6 +55,36 @@ void riscv_map_kernel(pgindex_t *pgtable, int map_identity)
         .PPN = paddr >> 12,
     };
     
+    // map MMIO device FIXME: ugly
+    // 0xffffffff80000000 -> 0x00000000
+    // 0xffffffffC0000000 -> 0x40000000
+    pgtable->pte[(0xffffffff80000000/GIGAPAGE_SIZE)&0x1ff] = (pte_t) {
+        .V = 1,
+        .R = 1,
+        .W = 1,
+        .X = 1,
+        .U = 0,
+        .G = 0,
+        .A = 1,
+        .D = 1,
+        .RSW = 0,
+        .PPN = 0x00000000 >> 12,
+    };
+    pgtable->pte[(0xffffffffC0000000/GIGAPAGE_SIZE)&0x1ff] = (pte_t) {
+        .V = 1,
+        .R = 1,
+        .W = 1,
+        .X = 1,
+        .U = 0,
+        .G = 0,
+        .A = 1,
+        .D = 1,
+        .RSW = 0,
+        .PPN = 0x40000000 >> 12,
+    };
+    
+    
+    
     if (map_identity) {
         pgtable->pte[ppn] = pgtable->pte[vpn];
     }

@@ -24,20 +24,13 @@ MODULES =
 
 MODULES += $(top_builddir)/kern/proc/sched/scheduler.ko
 
-##############
-# Algorithms #
-##############
-
-if ALGO_DEVLIST
-MODULES += $(top_builddir)/kern/dev/index/devlist.ko
-endif
 
 ################
 # UART serials #
 ################
 
 if UART_NS16550
-MODULES += $(top_builddir)/drivers/serial/uart-ns16550.ko
+MODULES += $(top_builddir)/drivers/char/uart-ns16550.ko
 endif
 
 

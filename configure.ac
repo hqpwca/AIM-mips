@@ -250,9 +250,8 @@ AC_CONFIG_FILES([
 	boot/arch/mips/Makefile
 	boot/arch/riscv/Makefile
 	drivers/Makefile
-	drivers/common/Makefile
-	drivers/io/Makefile
-	drivers/serial/Makefile
+	drivers/char/Makefile
+	drivers/block/Makefile
 	include/Makefile
 	include/raim/Makefile
 	include/arch/Makefile
@@ -275,7 +274,6 @@ AC_CONFIG_FILES([
 	kern/arch/riscv/Makefile
 	kern/arch/riscv/mach-riscv-virt/Makefile
 	kern/dev/Makefile
-	kern/dev/index/Makefile
 	kern/init/Makefile
 	kern/lib/Makefile
 	kern/lib/libbitmap/Makefile

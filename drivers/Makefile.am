@@ -19,24 +19,13 @@
 include $(top_srcdir)/env.am
 
 SUBDIRS = \
-	common \
-	io \
-	serial
+	char \
+	block
 
-noinst_LTLIBRARIES = libdrivers-raw.la libdrivers.la
-
-libdrivers_raw_la_SOURCES =
-libdrivers_raw_la_LIBADD = \
-	io/libio-raw.la \
-	serial/libserial-raw.la
-libdrivers_raw_la_CPPFLAGS = $(AM_CPPFLAGS_NOPIC)
-libdrivers_raw_la_CFLAGS = $(AM_CFLAGS_NOPIC)
-libdrivers_raw_la_CCASFLAGS = $(AM_CCASFLAGS_NOPIC)
-libdrivers_raw_la_LDFLAGS = $(AM_LDFLAGS_NOPIC)
+noinst_LTLIBRARIES = libdrivers.la
 
 libdrivers_la_SOURCES =
 libdrivers_la_LIBADD = \
-	common/libcommon.la \
-	io/libio.la \
-	serial/libserial.la
+	char/libchar.la \
+	block/libblock.la
 

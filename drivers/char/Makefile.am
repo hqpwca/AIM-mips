@@ -1,4 +1,5 @@
 # Copyright (C) 2016 David Gao <davidgao1001@gmail.com>
+# Copyright (C) 2016 Gan Quan <coin2028@hotmail.com>
 #
 # This program is part of RAIM.
 #
@@ -17,26 +18,20 @@
 
 include $(top_srcdir)/env.am
 
-noinst_LTLIBRARIES = libio-raw.la libio.la
+noinst_LTLIBRARIES = libchar.la
+noinst_PROGRAMS =
 noinst_HEADERS =
 
-SRCS = 
+SRCS =
+MODULE_SRCS =
 
-if IO_MEM
-SRCS += io-mem.c
-noinst_HEADERS += io-mem.h
+if UART_NS16550
+MODULE_SRCS += uart-ns16550.c
+noinst_PROGRAMS += uart-ns16550.ko
+uart_ns16550_ko_SOURCES = uart-ns16550.c #uart-ns16550-kernel.c
+uart_ns16550_ko_LDFLAGS = $(AM_LDFLAGS) -Wl,-r
+noinst_HEADERS += uart-ns16550-hw.h
 endif
 
-if IO_PORT
-SRCS += io-port.c
-noinst_HEADERS += io-port.h
-endif
-
-libio_raw_la_SOURCES = $(SRCS)
-libio_raw_la_CPPFLAGS = $(AM_CPPFLAGS_NOPIC)
-libio_raw_la_CFLAGS = $(AM_CFLAGS_NOPIC)
-libio_raw_la_CCASFLAGS = $(AM_CCASFLAGS_NOPIC)
-libio_raw_la_LDFLAGS = $(AM_LDFLAGS_NOPIC)
-
-libio_la_SOURCES = $(SRCS)
+libchar_la_SOURCES = $(SRCS)
 

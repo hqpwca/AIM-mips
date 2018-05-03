@@ -31,6 +31,17 @@
 //#include <fs/specdev.h>
 //#include <fs/uio.h>
 
+
+
+//FIXME:test
+#include <raim/bus.h>
+#include <raim/device.h>
+#include <platform.h>
+#include <libc/string.h>
+#include <libc/stdio.h>
+
+
+
 static struct proc *initproc;
 
 char *initargv[] = {
@@ -66,6 +77,30 @@ void initproc_entry(void)
 	//vref(rootvnode);
 
 	//execve("/sbin/init", initargv, initenvp);
+
+
+struct bdev *virtblock_create(struct mmiobus *bus);
+struct bdev *bd = 
+virtblock_create(mmiobus_create((void*)VIRTBLOCK_BASE,0x1000));
+
+for(int i=0;i<1000;i++){
+    kprintf("i=%d\n",i);
+    char buf[512*3];
+    memset(buf,0xcc,512);
+    memset(buf+512,0xcd,512);
+    memset(buf+1024,0xcf,512);
+    snprintf(buf,sizeof(buf),"HelloWorld%d",i);
+    struct bio req = {
+    .blkid=i,
+    .data=buf,
+    .size=3,
+    .write=true,
+    .offset=0,
+    };
+    bd->io(bd, &req);
+}
+
+panic("haha");
 
     while(1) {
         kprintf("initproc_entry() yield\n");

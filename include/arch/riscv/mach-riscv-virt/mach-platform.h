@@ -29,6 +29,10 @@
 #define KERN_ELF_ADDR 0x88000000
 
 
+#define DEVICE_BASE 0xffffffff80000000
+#define VIRTBLOCK_BASE (DEVICE_BASE+0x10008000)
+
+
 
 // dummy value
 #define EARLY_CONSOLE_BUS 0

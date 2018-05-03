@@ -147,6 +147,11 @@ struct vma {
 extern struct mm *kernel_mm;
 //extern rlock_t memlock;
 
+
+
+typedef uintptr_t userptr;
+
+
 #endif /* !__ASSEMBLER__ */
 
 #endif /* _UVM_H */
