@@ -9,10 +9,15 @@
 #include <raim/device.h>
 #include <raim/vmm.h>
 
+#include <linux/rbtree.h>
+
+
 // Unix V6 File System
 
 struct v6fs_superblock {
     struct superblock;
+    
+    struct rb_root inopool; // inode-pool
 
     union {
         char raw[512];
@@ -47,6 +52,8 @@ struct v6fs_inode {
 	    int16_t	i_atime[2];
 	    int16_t	i_mtime[2];
     } ondisk;
+    
+    struct rb_node node;
 };
 #define inodesz(ino) ((ino)->ondisk.i_size1 | ((ino)->ondisk.i_size0<<16))
 
@@ -155,17 +162,68 @@ static struct v6fs_inode *new_inode(struct superblock *sb)
 
 ///// superblock
 
-static void v6fs_ino_decref(struct inode *self)
+static struct v6fs_inode *inopool_find(struct v6fs_superblock *self, uint64_t id)
 {
+    struct rb_node *node = self->inopool.rb_node;
+
+  	while (node) {
+  		struct v6fs_inode *ino = container_of(node, struct v6fs_inode, node);
+		if (id < ino->id)
+  			node = node->rb_left;
+		else if (id > ino->id)
+  			node = node->rb_right;
+		else
+  			return ino;
+	}
+	
+	return NULL;
+}
+
+static void inopool_insert(struct v6fs_superblock *self, struct v6fs_inode *ino)
+{
+  	struct rb_node **new = &(self->inopool.rb_node), *parent = NULL;
+
+  	/* Figure out where to put new node */
+  	while (*new) {
+  		struct v6fs_inode *this = container_of(*new, struct v6fs_inode, node);
+		parent = *new;
+  		if (ino->id < this->id)
+  			new = &((*new)->rb_left);
+  		else if (ino->id > this->id)
+  			new = &((*new)->rb_right);
+  		else
+  			BUG();
+  	}
+
+  	/* Add new node and rebalance tree. */
+  	rb_link_node(&ino->node, parent, new);
+  	rb_insert_color(&ino->node, &self->inopool);
+}
+static void inopool_remove(struct v6fs_superblock *self, struct v6fs_inode *ino)
+{
+    rb_erase(&ino->node, &self->inopool);
+}
+
+static void v6fs_ino_decref(struct inode *bself)
+{
+    DECLSELF(struct v6fs_inode);
+    
     if (inode_decref(self) == 0) {
+        kprintf("delete!\n");
+        inopool_remove((void*)self->sb, self);
         kfree(self);
     }
 }
 
-static struct inode *v6fs_sb_get_inode(struct superblock *self, uint64_t id)
+static struct inode *v6fs_sb_get_inode(struct superblock *bself, uint64_t id)
 {
+    DECLSELF(struct v6fs_superblock);
     struct v6fs_inode *ino;
-    // FIXME: find in pool
+    
+    ino = inopool_find(self, id);
+    if (ino) return inode_addref(ino);
+    kprintf("new inode!\n");
+    
     ino = new_inode(self);
     
     ino->id = id;
@@ -179,12 +237,12 @@ static struct inode *v6fs_sb_get_inode(struct superblock *self, uint64_t id)
     ino->ondisk = buf[(id-1)%16];    
     ino->length = inodesz(ino);
     
-    // FIXME: add to pool
-    
+    inopool_insert(self, ino);
+        
     kprintf("len=%d\n",ino->length);
-    dump(&ino->ondisk, sizeof(ino->ondisk));
+    //dump(&ino->ondisk, sizeof(ino->ondisk));
     
-    return inode_addref(ino);
+    return ino;
 }
 
 
@@ -200,6 +258,7 @@ struct superblock *v6fs_superblock_create(struct bdev *bdev)
     struct v6fs_superblock *self = kmalloc(sizeof(struct v6fs_superblock), 0);
     self->ops = &v6fs_sb_ops;
     self->dev = bdev;
+    self->inopool = RB_ROOT;
     
     // read superblock in
     bdev_oneblkio(bdev, self->ondisk.raw, 1, false);
@@ -211,7 +270,16 @@ struct superblock *v6fs_superblock_create(struct bdev *bdev)
     // read root inode
     self->root = self->ops->get_inode(self, 1);
     
-    struct inode *ino = self->root->ops->lookup(self->root, "rkunix", 0);
+    struct inode *ino;
+    ino = self->root->ops->lookup(self->root, "rkunix", 0);
+    kprintf("%p", ino);
+    ino = self->root->ops->lookup(self->root, "rkunix", 0);
+    kprintf("%p", ino);
+    ino->ops->decref(ino);
+    ino->ops->decref(ino);
+    
+    ino = self->root->ops->lookup(self->root, "rkunix", 0);
+    kprintf("%p", ino);
 
 
     char buf[512];

@@ -116,6 +116,11 @@
 #define PTRCAST(x)		((void *)ULCAST(x))
 
 
+
+#define BUG() panic("bug")
+
+
+
 // check if A + B <= C
 static inline int ADDLEQ(uint64_t a, uint64_t b, uint64_t c)
 {
