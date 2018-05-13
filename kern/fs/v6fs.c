@@ -8,7 +8,7 @@
 #include <raim/fs.h>
 #include <raim/device.h>
 #include <raim/vmm.h>
-
+#include <raim/file.h>
 #include <linux/rbtree.h>
 
 
@@ -160,6 +160,56 @@ static struct v6fs_inode *new_inode(struct superblock *sb)
 
 
 
+///// file ops
+
+int v6fs_at_open(struct file *filp)
+{
+    kprintf("open %p\n", filp);
+    return 0;
+}
+void v6fs_at_close(struct file *filp)
+{
+    kprintf("close %p\n", filp);
+}
+ssize_t v6fs_read(struct file *filp, userptr dest, size_t len, uint64_t pos)
+{
+    char buf[512];
+    
+    struct v6fs_inode *ino = (void *)filp->inode;
+    struct bdev *bdev = (void *)ino->sb->dev;
+
+    // FIXME: check boundary
+    
+    ssize_t ret = 0;
+    size_t curlen;    
+    uint64_t lbid, pbid; // logical / physical block id
+    while (len) {
+        lbid = pos / 512;
+        pbid = inode_bmap(ino, lbid);
+        curlen = 512 - pos % 512;
+        if (len < curlen) curlen = len;
+        
+        bdev_oneblkio(bdev, &buf, pbid, false);
+        copy_to_user(dest, buf + pos % 512, curlen);
+        len -= curlen;
+        dest += curlen;
+        pos += curlen;
+        ret += curlen;
+    }
+    return ret;
+}
+ssize_t v6fs_write(struct file *filp, userptr src, size_t len, uint64_t pos)
+{
+    while(1);
+}
+static struct file_ops v6fs_file_ops = {
+    .at_open = v6fs_at_open,
+    .at_close = v6fs_at_close,
+    .read = v6fs_read,
+    .write = v6fs_write,
+};
+
+
 ///// superblock
 
 static struct v6fs_inode *inopool_find(struct v6fs_superblock *self, uint64_t id)
@@ -209,7 +259,7 @@ static void v6fs_ino_decref(struct inode *bself)
     DECLSELF(struct v6fs_inode);
     
     if (inode_decref(self) == 0) {
-        kprintf("delete!\n");
+        kprintf("inode delete %p\n", bself);
         inopool_remove((void*)self->sb, self);
         kfree(self);
     }
@@ -222,9 +272,9 @@ static struct inode *v6fs_sb_get_inode(struct superblock *bself, uint64_t id)
     
     ino = inopool_find(self, id);
     if (ino) return inode_addref(ino);
-    kprintf("new inode!\n");
     
     ino = new_inode(self);
+    kprintf("new inode %p\n", ino);
     
     ino->id = id;
     DECLBDEV(self->dev);
@@ -239,7 +289,7 @@ static struct inode *v6fs_sb_get_inode(struct superblock *bself, uint64_t id)
     
     inopool_insert(self, ino);
         
-    kprintf("len=%d\n",ino->length);
+    //kprintf("len=%d\n",ino->length);
     //dump(&ino->ondisk, sizeof(ino->ondisk));
     
     return ino;
@@ -259,33 +309,17 @@ struct superblock *v6fs_superblock_create(struct bdev *bdev)
     self->ops = &v6fs_sb_ops;
     self->dev = bdev;
     self->inopool = RB_ROOT;
+    self->fops = &v6fs_file_ops;
     
     // read superblock in
     bdev_oneblkio(bdev, self->ondisk.raw, 1, false);
     
     // dump superblock
-    kprintf("inode=%d total=%d\n", self->ondisk.s_isize, self->ondisk.s_fsize);
-    dump(&self->ondisk, sizeof(self->ondisk));
+    //kprintf("inode=%d total=%d\n", self->ondisk.s_isize, self->ondisk.s_fsize);
+    //dump(&self->ondisk, sizeof(self->ondisk));
     
     // read root inode
     self->root = self->ops->get_inode(self, 1);
-    
-    struct inode *ino;
-    ino = self->root->ops->lookup(self->root, "rkunix", 0);
-    kprintf("%p", ino);
-    ino = self->root->ops->lookup(self->root, "rkunix", 0);
-    kprintf("%p", ino);
-    ino->ops->decref(ino);
-    ino->ops->decref(ino);
-    
-    ino = self->root->ops->lookup(self->root, "rkunix", 0);
-    kprintf("%p", ino);
-
-
-    char buf[512];
-    uint64_t x=inode_bmap((void*)ino, 0x6200/512);
-    bdev_oneblkio(bdev, buf, x, false);
-    dump(buf,sizeof(buf));
 
     return self;
 }

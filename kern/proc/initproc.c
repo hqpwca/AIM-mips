@@ -79,6 +79,8 @@ void initproc_entry(void)
 	//execve("/sbin/init", initargv, initenvp);
 
 
+////////////////////////////////////////////////////////////
+
 struct bdev *virtblock_create(struct mmiobus *bus);
 struct bdev *bd = virtblock_create(mmiobus_create((void*)VIRTBLOCK_BASE,0x1000));
 
@@ -99,8 +101,30 @@ struct bdev *bd = virtblock_create(mmiobus_create((void*)VIRTBLOCK_BASE,0x1000))
 
 struct superblock *v6fs_superblock_create(struct bdev *bdev);
 struct superblock *sb = v6fs_superblock_create(bd);
-(void)sb;
+fsroot=sb->root;
 
+//struct inode *ino = vfs_lookup(fsroot, "/usr/lib/quiz/bard", 0);
+//kprintf("ino=%p\n", ino);
+struct file *f = vfs_open(fsroot, "/usr/games/wump", 0);
+
+kprintf("f = %p\n",f);
+
+char buf[16];
+vfs_read(f, (userptr)buf, sizeof(buf));
+dump(buf,sizeof(buf));
+vfs_read(f, (userptr)buf, sizeof(buf));
+dump(buf,sizeof(buf));
+vfs_read(f, (userptr)buf, sizeof(buf));
+dump(buf,sizeof(buf));
+vfs_read(f, (userptr)buf, sizeof(buf));
+dump(buf,sizeof(buf));
+
+vfs_close(f);
+
+
+
+
+/////////////////////////////////////////////////////////////
 
 panic("haha");
 

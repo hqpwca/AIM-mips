@@ -530,3 +530,14 @@ void mm_init(void)
 	kernel_mm = mm_new();
 	switch_pgindex(kernel_mm->pgindex);
 }
+
+
+void copy_to_user(userptr dest, void *src, size_t len)
+{
+    memcpy((void*)dest,src,len);//FIXME
+}
+void copy_from_user(void *dest, userptr src, size_t len)
+{
+    memcpy(dest,(void*)src,len);//FIXME
+}
+

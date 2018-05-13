@@ -150,6 +150,9 @@ extern struct mm *kernel_mm;
 
 
 typedef uintptr_t userptr;
+void copy_to_user(userptr dest, void *src, size_t len);
+void copy_from_user(void *dest, userptr src, size_t len);
+
 
 
 #endif /* !__ASSEMBLER__ */

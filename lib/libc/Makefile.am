@@ -30,7 +30,9 @@ SRCS = \
 	snprintf.c \
 	strcmp.c \
 	strcpy.c \
-	strncpy.c
+	strncpy.c \
+	strlen.c \
+	strchr.c
 
 noinst_HEADERS = \
 	stdarg.h \

@@ -35,6 +35,9 @@ size_t strnlen(const char *str, size_t maxlen);
 
 char *strcpy (char *s1, const char *s2);
 char *strncpy(char *dest, const char *src, size_t n);
+
+char *strchr(register const char *t, int c);
+
 #endif /* !__ASSEMBLER__ */
 
 #endif

@@ -2,6 +2,10 @@
 #ifndef _FS_H
 #define _FS_H
 
+#include <raim/uvm.h>
+
+#define MAXPATH 300
+
 
 struct inode { // vfs-inode object
     struct inode_ops *ops;
@@ -32,10 +36,9 @@ extern atomic_t inode_decref(struct inode *ino);
 
 struct superblock {
     struct superblock_ops *ops;
-    
     struct device *dev; // underlying device
-    
     struct inode *root;
+    struct file_ops *fops;
 };
 
 struct superblock_ops {
@@ -43,5 +46,13 @@ struct superblock_ops {
 };
 
 
+
+
+extern struct inode *fsroot;
+
+
+extern struct file *vfs_open(struct inode *curdir, const char *path, int flags);
+extern void vfs_close(struct file *filp);
+extern ssize_t vfs_read(struct file *filp, userptr dest, size_t len);
 
 #endif
