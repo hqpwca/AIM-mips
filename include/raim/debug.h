@@ -40,6 +40,64 @@ void panic(const char *fmt, ...);
         panic("Unimplemented! file: %s, line: %d, func: %s\n", __FILE__, __LINE__, __func__); \
     } while (0)
 
+
+#include <raim/console.h>
+#include <util.h>
+#define dump(addr, size) do { \
+    kprintf("memory dump requested at %s (%s:%d)\n", __func__, __FILE__, __LINE__); \
+    __dump_memory(addr, size, 0); \
+} while (0)
+#define dump_aligned(addr, size) do { \
+    kprintf("memory dump requested at %s (%s:%d)\n", __func__, __FILE__, __LINE__); \
+    __dump_memory(addr, size, 1); \
+} while (0)
+
+// copied from ZBY's NEMU, ugly but works!
+static inline void __dump_memory(void *memaddr, size_t memsize, int aligned)
+{
+    kprintf( " %d bytes of memory dump at "  "0x%016llx"  "\n", (unsigned) memsize, ULCAST(memaddr));
+    
+    unsigned long long addr = aligned ? ROUNDDOWN(ULCAST(memaddr), 16) : ULCAST(memaddr);
+    int skip = ULCAST(memaddr) - addr;
+    memaddr -= skip;
+    int n = memsize + skip;
+
+    kprintf("                    +0 +1 +2 +3 +4 +5 +6 +7  +8 +9 +A +B +C +D +E +F"  "\n");
+    //      "  AABBCCDD00112233  aa bb cc dd 00 11 22 33  dd cc bb aa 33 22 11 00  ................"
+
+    char buf[16];
+    char b;
+    int m = n % 16 ? n - n % 16 + 16 : n;
+    char lb[16];
+    int i, j;
+    
+    for (i = 0; i < m; i++) {
+        if (i % 16 == 0) {
+            for (j = 0; j < 16; j++)
+                if (i + j >= skip && i + j < n)
+                    lb[j] = *(unsigned char *)(memaddr + i + j);
+                else
+                    lb[j] = 0xcc;
+            kprintf("  %016llx  " , addr + i);
+        }
+        if (i >= skip && i < n) {
+            b = lb[i % 16];
+            kprintf("%02x ", b & 0xff);
+        } else {
+            b = '.';
+            kprintf(".. ");
+        }
+        buf[i % 16] = (b >= ' ' && b <= '~') ? b : '.';
+        if (i % 16 == 7) kprintf(" ");
+        if (i % 16 == 15) {
+            kprintf(" ");
+            for (j = 0; j < 16; j++) kprintf("%c", buf[j]);
+            kprintf("\n");
+        }
+    }
+    kprintf(" end of memory dump\n");
+}
+
 #endif /* !__ASSEMBLER__ */
 
 #endif /* !_RAIM_DEBUG_H */

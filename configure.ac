@@ -274,6 +274,7 @@ AC_CONFIG_FILES([
 	kern/arch/riscv/Makefile
 	kern/arch/riscv/mach-riscv-virt/Makefile
 	kern/dev/Makefile
+	kern/fs/Makefile
 	kern/init/Makefile
 	kern/lib/Makefile
 	kern/lib/libbitmap/Makefile

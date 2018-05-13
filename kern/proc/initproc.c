@@ -80,25 +80,27 @@ void initproc_entry(void)
 
 
 struct bdev *virtblock_create(struct mmiobus *bus);
-struct bdev *bd = 
-virtblock_create(mmiobus_create((void*)VIRTBLOCK_BASE,0x1000));
+struct bdev *bd = virtblock_create(mmiobus_create((void*)VIRTBLOCK_BASE,0x1000));
 
-for(int i=0;i<1000;i++){
+/*for(int i=0;i<1000;i++){
     kprintf("i=%d\n",i);
-    char buf[512*3];
-    memset(buf,0xcc,512);
-    memset(buf+512,0xcd,512);
-    memset(buf+1024,0xcf,512);
-    snprintf(buf,sizeof(buf),"HelloWorld%d",i);
+    char buf[512];
+    memset(buf,0xdd,512);
     struct bio req = {
     .blkid=i,
     .data=buf,
-    .size=3,
-    .write=true,
+    .size=1,
+    .write=false,
     .offset=0,
     };
     bd->io(bd, &req);
-}
+    dump(buf, sizeof(buf));
+}*/
+
+struct superblock *v6fs_superblock_create(struct bdev *bdev);
+struct superblock *sb = v6fs_superblock_create(bd);
+(void)sb;
+
 
 panic("haha");
 

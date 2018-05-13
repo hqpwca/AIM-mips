@@ -43,3 +43,6 @@ AS_VAR_SET([__with_mem_size],     [0x0000000010000000])  MEM_SIZE
 trap: sscratch寄存器是0则表示trap从内核中来，非0则表示从用户态来（其中存的值是内核的sp），与bbl大致相同
 手册中trap相关描述在M-mode 3.1.7 ; S-mode 4.1.1
 
+
+运行V6FS.exe（https://bitbucket.org/7shi/v6fs/downloads/）
+sudo apt-get install mono-complete

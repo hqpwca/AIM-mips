@@ -7,6 +7,7 @@
 #include <raim/file.h>
 
 enum {
+    DEVTYPE_NONE,
     DEVTYPE_CHAR,
     DEVTYPE_BLOCK,
 };
@@ -35,6 +36,10 @@ struct bdev {
     void (*io)(struct bdev *self, struct bio *request); // make an I/O request
 };
 
+
+void bdev_oneblkio(struct bdev *bdev, void *ptr, uint64_t blkid, bool iswrite); // convenient wrapper 
+
+#define DECLBDEV(ptr) struct bdev *bdev = (void*) ptr
 
 #endif /* _DEVICE_H */
 

@@ -19,3 +19,9 @@ include $(top_srcdir)/env.am
 
 SUBDIRS = libc
 
+
+noinst_LTLIBRARIES = libraimlib.la
+
+libraimlib_la_SOURCES = \
+	rbtree.c
+

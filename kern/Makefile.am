@@ -26,7 +26,8 @@ SUBDIRS = \
 	mm \
 	panic \
 	proc \
-	trap
+	trap \
+	fs
 
 BUILT_SOURCES = vmraim.lds
 
@@ -47,7 +48,9 @@ KERN_LIBS = \
 	trap/libtrap.la \
 	arch/$(ARCH)/libarch.la \
 	../drivers/libdrivers.la \
-	../lib/libc/libc.la
+	../lib/libc/libc.la \
+	fs/libfs.la \
+	../lib/libraimlib.la
 
 libkernel_la_SOURCES =
 libkernel_la_LIBADD = $(KERN_LIBS)
