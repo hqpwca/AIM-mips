@@ -276,8 +276,6 @@ AC_CONFIG_FILES([
 	kern/dev/Makefile
 	kern/fs/Makefile
 	kern/init/Makefile
-	kern/lib/Makefile
-	kern/lib/libbitmap/Makefile
 	kern/mm/Makefile
 	kern/mm/kmmap/Makefile
 	kern/mm/pmm/Makefile
@@ -288,6 +286,7 @@ AC_CONFIG_FILES([
 	kern/trap/Makefile
 	lib/Makefile
 	lib/libc/Makefile
+	lib/libbitmap/Makefile
 ])
 AC_OUTPUT
 

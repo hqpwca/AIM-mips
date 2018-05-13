@@ -17,11 +17,12 @@
 
 include $(top_srcdir)/env.am
 
-SUBDIRS = libc
+SUBDIRS = libc \
+	  libbitmap
 
+noinst_LTLIBRARIES = lib.la
 
-noinst_LTLIBRARIES = libraimlib.la
+lib_la_SOURCES = generic.c \
+    rbtree.c
 
-libraimlib_la_SOURCES = \
-	rbtree.c
-
+lib_la_LIBADD = libbitmap/libbitmap.la

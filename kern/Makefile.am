@@ -22,7 +22,6 @@ SUBDIRS = \
 	arch \
 	dev \
 	init \
-	lib \
 	mm \
 	panic \
 	proc \
@@ -41,7 +40,6 @@ KERN_LIBS = \
 	arch/$(ARCH)/libentry.la \
 	dev/libdev.la \
 	init/libearlyinit.la \
-	lib/lib.la \
 	mm/libmm.la \
 	panic/libpanic.la \
 	proc/libproc.la \
@@ -50,7 +48,7 @@ KERN_LIBS = \
 	../drivers/libdrivers.la \
 	../lib/libc/libc.la \
 	fs/libfs.la \
-	../lib/libraimlib.la
+	../lib/lib.la
 
 libkernel_la_SOURCES =
 libkernel_la_LIBADD = $(KERN_LIBS)
