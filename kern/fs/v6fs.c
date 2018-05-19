@@ -56,7 +56,8 @@ struct v6fs_inode {
     
     struct rb_node node;
 };
-#define inodesz(ino) ((ino)->ondisk.i_size1 | ((ino)->ondisk.i_size0<<16))
+#define get_inodesz(ino) ((ino)->ondisk.i_size1 | ((ino)->ondisk.i_size0<<16))
+#define set_inodesz(ino, size) do { (ino)->ondisk.i_size1 = (size); (ino)->ondisk.i_size0 = (size) >> 16; } while (0)
 
 
 struct v6fs_diritem {
@@ -82,38 +83,93 @@ struct v6fs_diritem {
 
 static struct inode *v6fs_sb_get_inode(struct superblock *self, uint64_t id);
 static void v6fs_ino_decref(struct inode *self);
+static uint64_t datablock_alloc(struct v6fs_superblock *self);
+//static void datablock_free(struct v6fs_superblock *self, uint64_t id);
+
 
 ///// inode
 
 
-// logical block-id to physical block-id
+// logical block-id to physical block-id, if error return 0
 static uint64_t inode_bmap(struct v6fs_inode *self, uint64_t lbid)
 {
+    uint16_t ref[256], *pret; uint64_t pbid = 0;
+    static_assert(sizeof(ref)==512, "error");
+    
+    uint16_t *pi_addr;
+    
+    uint64_t newblk;
+    DECLBDEV(self->sb->dev);
+    
     if ((self->ondisk.i_mode & ILARG) == 0) {
         // direct reference
-        assert(0 <= lbid && lbid < 8);
-        return self->ondisk.i_addr[lbid];
-    } else {
-        uint16_t ref[256];
-        static_assert(sizeof(ref)==512, "error");
-        struct bdev *bdev = (void*)self->sb->dev;
-        
-        if (lbid < 256*7) {
-            // first-level indirect reference
-            bdev_oneblkio(bdev, ref, self->ondisk.i_addr[lbid / 256], false);
-            return ref[lbid % 256];
+        if (0 <= lbid && lbid < 8) {
+            pret = &self->ondisk.i_addr[lbid];
+            goto done;
         } else {
-            // second-level indirect reference
-            
-            assert(0);
-            lbid -= 256*7;
-            
-            bdev_oneblkio(bdev, ref, self->ondisk.i_addr[7], false);
-            bdev_oneblkio(bdev, ref, ref[lbid / 256], false);
-            
-            return ref[lbid % 256];
+            newblk = datablock_alloc((void*)self->sb);
+            if (newblk == 0) goto fail;
+
+            self->ondisk.i_mode |= ILARG;
+            memset(ref, 0, sizeof(ref));
+            memcpy(ref, self->ondisk.i_addr, 8 * 2);
+            bdev_oneblkio(bdev, ref, newblk, true);
+            memset(self->ondisk.i_addr, 0, sizeof(self->ondisk.i_addr));
+            self->ondisk.i_addr[0] = newblk;
         }
     }
+
+    if (lbid < 256*7) {
+        // first-level indirect reference
+        pi_addr = &self->ondisk.i_addr[lbid / 256];
+        if (*pi_addr == 0) {
+            newblk = datablock_alloc((void*)self->sb);
+            if (newblk == 0) goto fail;
+            *pi_addr = newblk;
+        }
+
+        bdev_oneblkio(bdev, ref, (pbid = *pi_addr), false);
+        pret = &ref[lbid % 256];
+        
+    } else {
+        // second-level indirect reference
+        
+        lbid -= 256*7;
+        
+        pi_addr = &self->ondisk.i_addr[7];
+        if (*pi_addr == 0) {
+            newblk = datablock_alloc((void*)self->sb);
+            if (newblk == 0) goto fail;
+            *pi_addr = newblk;
+        }
+        
+        bdev_oneblkio(bdev, ref, (pbid = *pi_addr), false);
+        
+        pi_addr = &ref[lbid / 256];
+        if (*pi_addr == 0) {
+            newblk = datablock_alloc((void*)self->sb);
+            if (newblk == 0) goto fail;
+            *pi_addr = newblk;
+            
+            bdev_oneblkio(bdev, ref, pbid, true);
+        }
+        
+        bdev_oneblkio(bdev, ref, (pbid = *pi_addr), false);
+        pret = &ref[lbid % 256];
+    }
+
+done:
+    if (*pret == 0) {
+        newblk = datablock_alloc((void*)self->sb);
+        if (newblk == 0) goto fail;
+        *pret = newblk;
+        if (pbid) {
+            bdev_oneblkio(bdev, ref, pbid, true);
+        }
+    }
+    return *pret;
+fail:
+    return 0;
 }
 
 
@@ -125,11 +181,12 @@ static struct inode *v6fs_ino_lookup(struct inode *bself, const char *filename, 
     char target[14];
     strncpy(target, filename, 14);
     
-    struct bdev *bdev = (void*)self->sb->dev;
+    DECLBDEV(self->sb->dev);
     
     uint64_t i, j;
     for (i = 0; i < self->length; i++) {
         uint64_t blkid = inode_bmap(self, i/512);
+        assert(blkid != 0);
         struct v6fs_diritem direntry[512/16];
         bdev_oneblkio(bdev, direntry, blkid, false);
         static_assert(sizeof(direntry)==512, "error");
@@ -177,7 +234,7 @@ ssize_t v6fs_io(struct file *filp, userptr uptr, size_t len, uint64_t pos, bool 
     char buf[512];
     
     struct v6fs_inode *ino = (void *)filp->inode;
-    struct bdev *bdev = (void *)ino->sb->dev;
+    DECLBDEV(ino->sb->dev);
 
     ssize_t ret = 0;
     size_t curlen;    
@@ -196,12 +253,15 @@ ssize_t v6fs_io(struct file *filp, userptr uptr, size_t len, uint64_t pos, bool 
     while (len) {
         lbid = pos / 512;
         pbid = inode_bmap(ino, lbid);
+        if (pbid == 0) break;
+        
         curlen = 512 - pos % 512;
         if (len < curlen) curlen = len;
         
         if (iswrite) {
             if (curlen < 512) bdev_oneblkio(bdev, &buf, pbid, false);
             copy_from_user(buf + pos % 512, uptr, curlen);
+            kprintf("write!\n");
             bdev_oneblkio(bdev, buf, pbid, true);
         } else {
             bdev_oneblkio(bdev, buf, pbid, false);
@@ -230,30 +290,35 @@ static struct file_ops v6fs_file_ops = {
 
 ///// superblock
 
-static uint64_t datablock_alloc(struct v6fs_superblock *self) // alloc a data block, physical block id
+// alloc a data block, will zero that block, return physical block id, if no-space, return 0
+static uint64_t datablock_alloc(struct v6fs_superblock *self)
 {
     uint64_t ret;
-    struct bdev *bdev = (void *)self->dev;
+    DECLBDEV(self->dev);
+    char buf[512];
     
-    assert(self->ondisk.s_nfree > 0);
+    if (self->ondisk.s_nfree <= 0) return 0;
     ret = self->ondisk.s_free[--self->ondisk.s_nfree];
     //kprintf("%d\n", (int)ret);
-    assert(self->ondisk.s_isize + 2 <= ret && ret < self->ondisk.s_fsize);
+    if (!(self->ondisk.s_isize + 2 <= ret && ret < self->ondisk.s_fsize)) return 0;
     
     if (self->ondisk.s_nfree == 0) {
         // load next queue
-        char buf[512];
+        
         bdev_oneblkio(bdev, buf, ret, false);
         memcpy(&self->ondisk.s_nfree, buf, 2);
         memcpy(self->ondisk.s_free, buf + 2, 2 * 100);
     }
     
+    memset(buf, 0, sizeof(buf));
+    bdev_oneblkio(bdev, buf, ret, true);
+    
     return ret;
 }
 
-static void datablock_free(struct v6fs_superblock *self, uint64_t id) // free a datablock
+/*static void datablock_free(struct v6fs_superblock *self, uint64_t id) // free a datablock
 {
-    struct bdev *bdev = (void *)self->dev;
+    DECLBDEV(self->dev);
     
     if (self->ondisk.s_nfree >= 100) {
         char buf[512];
@@ -266,7 +331,7 @@ static void datablock_free(struct v6fs_superblock *self, uint64_t id) // free a 
     } else {
         self->ondisk.s_free[self->ondisk.s_nfree++] = id;
     }
-}
+}*/
 
 static struct v6fs_inode *inopool_find(struct v6fs_superblock *self, uint64_t id)
 {
@@ -313,8 +378,21 @@ static void inopool_remove(struct v6fs_superblock *self, struct v6fs_inode *ino)
 static void v6fs_ino_decref(struct inode *bself)
 {
     DECLSELF(struct v6fs_inode);
+    DECLBDEV(self->sb->dev);
     
     if (inode_decref(self) == 0) {
+    
+        assert(self->length < (1<<24));
+        set_inodesz(self, self->length);
+        
+        // write inode to disk
+        struct v6fs_inode_ondisk buf[16]; // 16 inode per sector
+
+        bdev_oneblkio(bdev, buf, 2 + ((self->id-1)/16), false);
+        buf[(self->id-1)%16] = self->ondisk;
+        bdev_oneblkio(bdev, buf, 2 + ((self->id-1)/16), true);
+        
+        
         kprintf("inode delete %p\n", bself);
         inopool_remove((void*)self->sb, self);
         kfree(self);
@@ -340,8 +418,8 @@ static struct inode *v6fs_sb_get_inode(struct superblock *bself, uint64_t id)
     
     bdev_oneblkio(bdev, &buf, 2 + ((id-1)/16), false);
     
-    ino->ondisk = buf[(id-1)%16];    
-    ino->length = inodesz(ino);
+    ino->ondisk = buf[(id-1)%16];
+    ino->length = get_inodesz(ino);
     
     inopool_insert(self, ino);
         
@@ -353,9 +431,22 @@ static struct inode *v6fs_sb_get_inode(struct superblock *bself, uint64_t id)
 
 
 
+static void v6fs_sb_sync(struct superblock *bself)
+{
+    DECLSELF(struct v6fs_superblock);
+    DECLBDEV(self->dev);
+    
+    // FIXME: sync inode
+    
+    // sync superblock
+    bdev_oneblkio(bdev, self->ondisk.raw, 1, true);
+}
+
+
 
 static struct superblock_ops v6fs_sb_ops = { // virtual function table
     .get_inode = v6fs_sb_get_inode,
+    .sync = v6fs_sb_sync,
 };
 
 struct superblock *v6fs_superblock_create(struct bdev *bdev)
@@ -377,17 +468,6 @@ struct superblock *v6fs_superblock_create(struct bdev *bdev)
     // read root inode
     self->root = self->ops->get_inode(self, 1);
 
-    while (1) {
-        uint64_t x[1000];
-        for (int i = 0; i < 1000; i++) {
-            x[i] = datablock_alloc(self);
-            kprintf("%llx\n", x[i]);
-        }
-        for (int i = 0; i < 1000; i++) { 
-            datablock_free(self,x[i]);
-        }
-        panic("hehe");
-    }
-    
+
     return self;
 }

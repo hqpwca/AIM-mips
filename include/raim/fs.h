@@ -43,6 +43,7 @@ struct superblock {
 
 struct superblock_ops {
     struct inode *(*get_inode)(struct superblock *self, uint64_t id); // read inode from disk, will increase refcnt
+    void (*sync)(struct superblock *self); // sync whole file system
 };
 
 

@@ -110,13 +110,19 @@ struct file *f = vfs_open(fsroot, "/bin/dsw", 0);
 kprintf("f = %p\n",f);
 
 char buf[16];
-while(1){
-uint64_t l = vfs_read(f, (userptr)buf, sizeof(buf));
+for(int i=0;i<1000;i++){
+memset(buf,0xcc,sizeof(buf));
+
+snprintf(buf, sizeof(buf),"zbyzby%d", i);
+ssize_t l = vfs_write(f, (userptr)buf, sizeof(buf));
 if (l == 0) break;
-dump(buf,l);
+kprintf("l=%d\n", (int)l);
+//dump(buf,l);
 }
 
 vfs_close(f);
+
+sb->ops->sync(sb);
 
 
 
