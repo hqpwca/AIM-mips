@@ -25,7 +25,7 @@ struct inode *inode_addref(struct inode *ino)
     ino->ref++; // FIXME: use atomic increase
     return ino;
 }
-atomic_t inode_decref(struct inode *ino) // should not called directly! call ino->ops->decref(ino)
+atomic_t inode_base_decref(struct inode *ino) // should not called directly! call ino->ops->decref(ino)
 {
     return --ino->ref; //FIXME: use atomic decrease
 }

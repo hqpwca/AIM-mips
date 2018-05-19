@@ -23,6 +23,7 @@ struct inode { // vfs-inode object
 };
 
 struct inode_ops {
+    void (*sync)(struct inode *self);
     void (*decref)(struct inode *self); // decrease reference count, if zero, free it
     struct inode *(*lookup)(struct inode *self, const char *path, int flags); // find a existing file/dir in current directory
 };
@@ -30,7 +31,7 @@ struct inode_ops {
 #define DECLINO(type,ptr) type *ino = (void*)ptr
 extern struct inode *inode_ctor(struct inode *ino, struct superblock *sb);
 extern struct inode *inode_addref(struct inode *ino);
-extern atomic_t inode_decref(struct inode *ino);
+extern atomic_t inode_base_decref(struct inode *ino); // should not call this from functions other than xxxx_inode_decref, call ino->ops->decref(ino) instead
 
 
 
@@ -42,7 +43,6 @@ struct superblock {
 };
 
 struct superblock_ops {
-    struct inode *(*get_inode)(struct superblock *self, uint64_t id); // read inode from disk, will increase refcnt
     void (*sync)(struct superblock *self); // sync whole file system
 };
 

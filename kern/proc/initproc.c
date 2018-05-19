@@ -39,7 +39,7 @@
 #include <platform.h>
 #include <libc/string.h>
 #include <libc/stdio.h>
-
+#include <fcntl.h>
 
 
 static struct proc *initproc;
@@ -105,22 +105,29 @@ fsroot=sb->root;
 
 //struct inode *ino = vfs_lookup(fsroot, "/usr/lib/quiz/bard", 0);
 //kprintf("ino=%p\n", ino);
-struct file *f = vfs_open(fsroot, "/bin/dsw", 0);
+for (int r = 1; r < 100; r++) {
+char fn[100];
+snprintf(fn, sizeof(fn), "/zbytest%d", r);
+kprintf("%s\n", fn);
+struct file *f = vfs_open(fsroot, fn, O_CREAT);
 
 kprintf("f = %p\n",f);
 
 char buf[16];
-for(int i=0;i<1000;i++){
+for(int i=0;i<100;i++){
 memset(buf,0xcc,sizeof(buf));
 
-snprintf(buf, sizeof(buf),"zbyzby%d", i);
+snprintf(buf, sizeof(buf),"%d%s", i,fn);
 ssize_t l = vfs_write(f, (userptr)buf, sizeof(buf));
 if (l == 0) break;
-kprintf("l=%d\n", (int)l);
+//kprintf("l=%d\n", (int)l);
 //dump(buf,l);
 }
 
 vfs_close(f);
+
+}
+
 
 sb->ops->sync(sb);
 
