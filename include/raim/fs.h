@@ -53,6 +53,8 @@ extern struct inode *fsroot;
 
 extern struct file *vfs_open(struct inode *curdir, const char *path, int flags);
 extern void vfs_close(struct file *filp);
-extern ssize_t vfs_read(struct file *filp, userptr dest, size_t len);
+extern ssize_t vfs_read(struct file *filp, userptr udest, size_t len);
+extern ssize_t vfs_write(struct file *filp, userptr usrc, size_t len);
+
 
 #endif

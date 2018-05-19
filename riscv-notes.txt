@@ -15,7 +15,7 @@ cd riscv-pk
 mkdir build
 cd build
 ../configure --host=riscv64-unknown-elf --enable-print-device-tree --enable-logo --with-payload=../../RAIM/boot/boot.bin
-make && qemu-system-riscv64 -m 1024 -drive file=disk.raw,format=raw,id=hd0 -device virtio-blk-device,drive=hd0 -nographic -machine virt -kernel bbl -initrd ../../RAIM/kern/vmraim.elf -d guest_errors
+cp /home/zby/src/riscv-aim/v6/V6FS/v6bin v6bin && make && qemu-system-riscv64 -m 1024 -drive file=disk.raw,format=raw,id=hd0 -device virtio-blk-device,drive=hd0 -nographic -machine virt -kernel bbl -initrd ../../RAIM/kern/vmraim.elf -d guest_errors
 
 
 

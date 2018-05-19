@@ -105,19 +105,16 @@ fsroot=sb->root;
 
 //struct inode *ino = vfs_lookup(fsroot, "/usr/lib/quiz/bard", 0);
 //kprintf("ino=%p\n", ino);
-struct file *f = vfs_open(fsroot, "/usr/games/wump", 0);
+struct file *f = vfs_open(fsroot, "/bin/dsw", 0);
 
 kprintf("f = %p\n",f);
 
 char buf[16];
-vfs_read(f, (userptr)buf, sizeof(buf));
-dump(buf,sizeof(buf));
-vfs_read(f, (userptr)buf, sizeof(buf));
-dump(buf,sizeof(buf));
-vfs_read(f, (userptr)buf, sizeof(buf));
-dump(buf,sizeof(buf));
-vfs_read(f, (userptr)buf, sizeof(buf));
-dump(buf,sizeof(buf));
+while(1){
+uint64_t l = vfs_read(f, (userptr)buf, sizeof(buf));
+if (l == 0) break;
+dump(buf,l);
+}
 
 vfs_close(f);
 

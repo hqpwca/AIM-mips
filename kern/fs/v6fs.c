@@ -4,6 +4,7 @@
 #endif /* HAVE_CONFIG_H */
 
 #include <sys/types.h>
+#include <errno.h>
 #include <libc/string.h>
 #include <raim/fs.h>
 #include <raim/device.h>
@@ -25,9 +26,9 @@ struct v6fs_superblock {
 	        int16_t s_isize;        /* size in blocks of I list */
 	        int16_t s_fsize;        /* size in blocks of entire volume */
 	        int16_t s_nfree;        /* number of in core free blocks (0-100) */
-	        int16_t s_free[100];    /* in core free blocks */
+	        uint16_t s_free[100];    /* in core free blocks */
 	        int16_t s_ninode;       /* number of in core I nodes (0-100) */
-	        int16_t s_inode[100];   /* in core free I nodes */
+	        uint16_t s_inode[100];   /* in core free I nodes */
 	        int8_t  s_flock;        /* lock during free list manipulation */
 	        int8_t  s_ilock;        /* lock during I list manipulation */
 	        int8_t  s_fmod;         /* super block modified flag */
@@ -171,46 +172,101 @@ void v6fs_at_close(struct file *filp)
 {
     kprintf("close %p\n", filp);
 }
-ssize_t v6fs_read(struct file *filp, userptr dest, size_t len, uint64_t pos)
+ssize_t v6fs_io(struct file *filp, userptr uptr, size_t len, uint64_t pos, bool iswrite)
 {
     char buf[512];
     
     struct v6fs_inode *ino = (void *)filp->inode;
     struct bdev *bdev = (void *)ino->sb->dev;
 
-    // FIXME: check boundary
-    
     ssize_t ret = 0;
     size_t curlen;    
     uint64_t lbid, pbid; // logical / physical block id
+    
+    if (pos + len < pos) { // avoid interger overflow
+        ret = -EINVAL;
+        goto done;
+    }
+    
+    // check boundary
+    if (!iswrite && pos + len > ino->length) {
+        if (pos > ino->length) len = 0; else len = ino->length - pos;
+    }
+    
     while (len) {
         lbid = pos / 512;
         pbid = inode_bmap(ino, lbid);
         curlen = 512 - pos % 512;
         if (len < curlen) curlen = len;
         
-        bdev_oneblkio(bdev, &buf, pbid, false);
-        copy_to_user(dest, buf + pos % 512, curlen);
+        if (iswrite) {
+            if (curlen < 512) bdev_oneblkio(bdev, &buf, pbid, false);
+            copy_from_user(buf + pos % 512, uptr, curlen);
+            bdev_oneblkio(bdev, buf, pbid, true);
+        } else {
+            bdev_oneblkio(bdev, buf, pbid, false);
+            copy_to_user(uptr, buf + pos % 512, curlen);
+        }
+        
         len -= curlen;
-        dest += curlen;
+        uptr += curlen;
         pos += curlen;
         ret += curlen;
     }
+    
+    // update inode length if necessary
+    if (pos > ino->length) {
+        ino->length = pos;
+    }
+done:
     return ret;
-}
-ssize_t v6fs_write(struct file *filp, userptr src, size_t len, uint64_t pos)
-{
-    while(1);
 }
 static struct file_ops v6fs_file_ops = {
     .at_open = v6fs_at_open,
     .at_close = v6fs_at_close,
-    .read = v6fs_read,
-    .write = v6fs_write,
+    .io = v6fs_io,
 };
 
 
 ///// superblock
+
+static uint64_t datablock_alloc(struct v6fs_superblock *self) // alloc a data block, physical block id
+{
+    uint64_t ret;
+    struct bdev *bdev = (void *)self->dev;
+    
+    assert(self->ondisk.s_nfree > 0);
+    ret = self->ondisk.s_free[--self->ondisk.s_nfree];
+    //kprintf("%d\n", (int)ret);
+    assert(self->ondisk.s_isize + 2 <= ret && ret < self->ondisk.s_fsize);
+    
+    if (self->ondisk.s_nfree == 0) {
+        // load next queue
+        char buf[512];
+        bdev_oneblkio(bdev, buf, ret, false);
+        memcpy(&self->ondisk.s_nfree, buf, 2);
+        memcpy(self->ondisk.s_free, buf + 2, 2 * 100);
+    }
+    
+    return ret;
+}
+
+static void datablock_free(struct v6fs_superblock *self, uint64_t id) // free a datablock
+{
+    struct bdev *bdev = (void *)self->dev;
+    
+    if (self->ondisk.s_nfree >= 100) {
+        char buf[512];
+        memset(buf, 0, sizeof(buf));
+        memcpy(buf, &self->ondisk.s_nfree, 2);
+        memcpy(buf + 2, self->ondisk.s_free, 2 * 100);
+        bdev_oneblkio(bdev, buf, id, true);
+        self->ondisk.s_nfree = 1;
+        self->ondisk.s_free[0] = id;
+    } else {
+        self->ondisk.s_free[self->ondisk.s_nfree++] = id;
+    }
+}
 
 static struct v6fs_inode *inopool_find(struct v6fs_superblock *self, uint64_t id)
 {
@@ -321,5 +377,17 @@ struct superblock *v6fs_superblock_create(struct bdev *bdev)
     // read root inode
     self->root = self->ops->get_inode(self, 1);
 
+    while (1) {
+        uint64_t x[1000];
+        for (int i = 0; i < 1000; i++) {
+            x[i] = datablock_alloc(self);
+            kprintf("%llx\n", x[i]);
+        }
+        for (int i = 0; i < 1000; i++) { 
+            datablock_free(self,x[i]);
+        }
+        panic("hehe");
+    }
+    
     return self;
 }

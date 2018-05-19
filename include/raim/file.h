@@ -15,8 +15,7 @@ struct file { // represent a file descriptor of a process
 struct file_ops {
     int (*at_open)(struct file *filp);
     void (*at_close)(struct file *filp);
-    ssize_t (*read)(struct file *filp, userptr dest, size_t len, uint64_t pos);
-    ssize_t (*write)(struct file *filp, userptr src, size_t len, uint64_t pos);
+    ssize_t (*io)(struct file *filp, userptr uptr, size_t len, uint64_t pos, bool iswrite);
 };
 
 #endif

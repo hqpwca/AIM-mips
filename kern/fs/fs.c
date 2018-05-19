@@ -113,10 +113,15 @@ void vfs_close(struct file *filp)
     vfs_freefile(filp);
 }
 
-ssize_t vfs_read(struct file *filp, userptr dest, size_t len)
+ssize_t vfs_read(struct file *filp, userptr udest, size_t len)
 {
-    ssize_t sz = filp->ops->read(filp, dest, len, filp->pos);
+    ssize_t sz = filp->ops->io(filp, udest, len, filp->pos, false);
     if (sz > 0) filp->pos += sz;
     return sz;
 }
-
+ssize_t vfs_write(struct file *filp, userptr usrc, size_t len)
+{
+    ssize_t sz = filp->ops->io(filp, usrc, len, filp->pos, true);
+    if (sz > 0) filp->pos += sz;
+    return sz;
+}

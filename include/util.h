@@ -120,13 +120,16 @@
 #define BUG() panic("bug")
 
 
-
 // check if A + B <= C
 static inline int ADDLEQ(uint64_t a, uint64_t b, uint64_t c)
 {
     return a + b <= c && a + b >= a; // avoid OVERFLOW!!!
 }
-
+// check if A + B > C
+static inline int ADDG(uint64_t a, uint64_t b, uint64_t c)
+{
+    return a + b > c || a + b < a;
+}
 
 #define DECLSELF(type) type *self=(void*)bself
 #define NEW(type) kmalloc(sizeof(type),0)
