@@ -7,6 +7,5 @@ noinst_LTLIBRARIES = \
 
 libmach_la_SOURCES = \
     console.c \
-    panic.c \
-    virtio.c
+    panic.c
 

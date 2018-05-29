@@ -35,7 +35,7 @@ void riscv_map_kernel(pgindex_t *pgtable, int map_identity)
     size_t length = MEM_SIZE;
     //kprintf("mapping kernel to page table %016llx\n", (uint64_t) pgtable);
 
-    assert(vaddr>>37 == (1ULL<<(64-37))-1);
+    assert(vaddr>>38 == (1ULL<<(64-38))-1);
     assert(vaddr % GIGAPAGE_SIZE == 0);
     assert(paddr % GIGAPAGE_SIZE == 0);
     assert(length <= GIGAPAGE_SIZE);//can't handle more than 1GB phys memory
@@ -226,7 +226,7 @@ void riscv_pte(pte_t *pte, addr_t vaddr, addr_t paddr, uint32_t flags)
 void riscv_map_pages(pgindex_t *pgindex, addr_t vaddr, addr_t paddr, size_t size, uint32_t flags, int level)
 {
     kprintf("map: pgindex=%016llx vaddr=%016llx paddr=%016llx size=%016llx flags=%x level=%d\n", (uint64_t)pgindex, vaddr, paddr, size, flags, level);
-    assert(vaddr>>37==(1ULL<<(64-37))-1 || vaddr>>37==0);
+    assert(vaddr>>38==(1ULL<<(64-38))-1 || vaddr>>38==0);
     assert(IS_ALIGNED(vaddr, PAGE_SIZE));
     assert(IS_ALIGNED(paddr, PAGE_SIZE));
     assert(size<=1ULL<<((level+1)*9+12));
@@ -272,7 +272,7 @@ size_t riscv_unmap_pages(pgindex_t *pgindex, addr_t vaddr, size_t size, addr_t *
 {
     kprintf("unmap: pgindex=%016llx vaddr=%016llx size=%016llx ppaddr=%016llx level=%d\n", (uint64_t)pgindex, vaddr, size, (uint64_t)ppaddr, level);
     
-    assert(vaddr>>37==(1ULL<<(64-37))-1 || vaddr>>37==0);
+    assert(vaddr>>38==(1ULL<<(64-38))-1 || vaddr>>38==0);
     assert(IS_ALIGNED(vaddr, PAGE_SIZE));
     assert(size<=1ULL<<((level+1)*9+12));
 

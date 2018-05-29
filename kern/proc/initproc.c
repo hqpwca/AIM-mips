@@ -81,55 +81,55 @@ void initproc_entry(void)
 
 ////////////////////////////////////////////////////////////
 
-struct bdev *virtblock_create(struct mmiobus *bus);
-struct bdev *bd = virtblock_create(mmiobus_create((void*)VIRTBLOCK_BASE,0x1000));
+    struct bdev *virtblock_create(struct mmiobus *bus);
+    struct bdev *bd = virtblock_create(mmiobus_create((void*)VIRTBLOCK_BASE,0x1000));
 
-/*for(int i=0;i<1000;i++){
-    kprintf("i=%d\n",i);
-    char buf[512];
-    memset(buf,0xdd,512);
-    struct bio req = {
-    .blkid=i,
-    .data=buf,
-    .size=1,
-    .write=false,
-    .offset=0,
-    };
-    bd->io(bd, &req);
-    dump(buf, sizeof(buf));
-}*/
+    /*for(int i=0;i<1000;i++){
+        kprintf("i=%d\n",i);
+        char buf[512];
+        memset(buf,0xdd,512);
+        struct bio req = {
+        .blkid=i,
+        .data=buf,
+        .size=1,
+        .write=false,
+        .offset=0,
+        };
+        bd->io(bd, &req);
+        dump(buf, sizeof(buf));
+    }*/
 
-struct superblock *v6fs_superblock_create(struct bdev *bdev);
-struct superblock *sb = v6fs_superblock_create(bd);
-fsroot=sb->root;
+    struct superblock *v6fs_superblock_create(struct bdev *bdev);
+    struct superblock *sb = v6fs_superblock_create(bd);
+    fsroot=sb->root;
 
-//struct inode *ino = vfs_lookup(fsroot, "/usr/lib/quiz/bard", 0);
-//kprintf("ino=%p\n", ino);
-for (int r = 1; r < 100; r++) {
-char fn[100];
-snprintf(fn, sizeof(fn), "/zbytest%d", r);
-kprintf("%s\n", fn);
-struct file *f = vfs_open(fsroot, fn, O_CREAT);
+    //struct inode *ino = vfs_lookup(fsroot, "/usr/lib/quiz/bard", 0);
+    //kprintf("ino=%p\n", ino);
+    for (int r = 1; r < 100; r++) {
+        char fn[100];
+        snprintf(fn, sizeof(fn), "/zbytest%d", r);
+        kprintf("%s\n", fn);
+        struct file *f = vfs_open(fsroot, fn, O_CREAT);
 
-kprintf("f = %p\n",f);
+        kprintf("f = %p\n",f);
 
-char buf[16];
-for(int i=0;i<100;i++){
-memset(buf,0xcc,sizeof(buf));
+        char buf[16];
+        for(int i=0;i<100;i++){
+            memset(buf,0xcc,sizeof(buf));
 
-snprintf(buf, sizeof(buf),"%d%s", i,fn);
-ssize_t l = vfs_write(f, (userptr)buf, sizeof(buf));
-if (l == 0) break;
-//kprintf("l=%d\n", (int)l);
-//dump(buf,l);
-}
+            snprintf(buf, sizeof(buf),"%d%s", i,fn);
+            ssize_t l = vfs_write(f, (userptr)buf, sizeof(buf));
+            if (l == 0) break;
+            //kprintf("l=%d\n", (int)l);
+            //dump(buf,l);
+        }
 
-vfs_close(f);
+        vfs_close(f);
 
-}
+    }
 
 
-sb->ops->sync(sb);
+    sb->ops->sync(sb);
 
 
 

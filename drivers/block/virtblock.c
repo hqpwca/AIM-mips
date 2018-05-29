@@ -181,7 +181,9 @@ static void virtblock_io(struct bdev *bself, struct bio *request)
         
         bus_w32(self->bus,0x050,0);//Notify Queue 0
         
+        
         while (self->QueueUsed->idx == oldusedidx) mb();
+        // FIXME: hardware may rearrange requests, check if finished request is what we issued before
     }
 }
 
